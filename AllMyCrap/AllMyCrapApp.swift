@@ -1,11 +1,5 @@
-//
-//  AllMyCrapApp.swift
-//  AllMyCrap
-//
-//  Created by Aidan O'Brien on 22/06/2025.
-//
-
 import SwiftUI
+import SwiftData
 
 @main
 struct AllMyCrapApp: App {
@@ -13,5 +7,7 @@ struct AllMyCrapApp: App {
         WindowGroup {
             ContentView()
         }
+        // This makes the data models available to the entire app.
+        .modelContainer(for: [Location.self, Item.self])
     }
 }
