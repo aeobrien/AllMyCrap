@@ -10,6 +10,8 @@ struct ContentView: View {
 
     @State private var isAddingRoom = false
     @State private var isSearching  = false
+    @State private var showingSettings = false
+    @State private var showingTagSearch = false
 
     var body: some View {
         NavigationStack {
@@ -22,9 +24,29 @@ struct ContentView: View {
             .navigationTitle("All My Crap")
             .navigationDestination(for: Location.self) { LocationDetailView(location: $0) }
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button { isSearching = true }      label: { Image(systemName: "magnifyingglass") }
-                    Button { isAddingRoom = true }    label: { Label("Add Room", systemImage: "plus") }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Menu {
+                        Button("Search by Name", systemImage: "magnifyingglass") {
+                            isSearching = true
+                        }
+                        Button("Browse by Tag", systemImage: "tag") {
+                            showingTagSearch = true
+                        }
+                    } label: {
+                        Label("Search", systemImage: "magnifyingglass")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Button("Add Room", systemImage: "plus") {
+                            isAddingRoom = true
+                        }
+                        Button("Settings", systemImage: "gear") {
+                            showingSettings = true
+                        }
+                    } label: {
+                        Label("Menu", systemImage: "ellipsis.circle")
+                    }
                 }
             }
             .overlay {
@@ -36,6 +58,12 @@ struct ContentView: View {
             }
             .sheet(isPresented: $isAddingRoom) { LocationEditView(location: nil, parentLocation: nil) }
             .sheet(isPresented: $isSearching)  { SearchView() }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
+            }
+            .sheet(isPresented: $showingTagSearch) {
+                TagSearchView()
+            }
         }
     }
 
@@ -46,5 +74,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: [Location.self, Item.self], inMemory: true)
+        .modelContainer(for: [Location.self, Item.self, Tag.self, ReviewHistory.self], inMemory: true)
 }

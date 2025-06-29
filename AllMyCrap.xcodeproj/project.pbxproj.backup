@@ -3,29 +3,8 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 77;
 	objects = {
-
-/* Begin PBXBuildFile section */
-		DDB89A1A2E08550700A24E47 /* AllMyCrapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */; };
-		DDB89A1C2E08550700A24E47 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A1B2E08550700A24E47 /* ContentView.swift */; };
-		DDB89A1E2E08550900A24E47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDB89A1D2E08550900A24E47 /* Assets.xcassets */; };
-		DDB89A402E08550900A24E47 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A412E08550900A24E47 /* Item.swift */; };
-		DDB89A422E08550900A24E47 /* ItemEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A432E08550900A24E47 /* ItemEditView.swift */; };
-		DDB89A442E08550900A24E47 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A452E08550900A24E47 /* Location.swift */; };
-		DDB89A462E08550900A24E47 /* LocationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A472E08550900A24E47 /* LocationDetailView.swift */; };
-		DDB89A482E08550900A24E47 /* LocationEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A492E08550900A24E47 /* LocationEditView.swift */; };
-		DDB89A4A2E08550900A24E47 /* BulkItemAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A4B2E08550900A24E47 /* BulkItemAddView.swift */; };
-		DDB89A4C2E08550900A24E47 /* BulkLocationAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */; };
-		DDB89A4E2E08550900A24E47 /* ReviewHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A4F2E08550900A24E47 /* ReviewHistory.swift */; };
-		DDB89A502E08550900A24E47 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A512E08550900A24E47 /* SettingsView.swift */; };
-		DDB89A522E08550900A24E47 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A532E08550900A24E47 /* Tag.swift */; };
-		DDB89A542E08550900A24E47 /* TagPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A552E08550900A24E47 /* TagPicker.swift */; };
-		DDB89A562E08550900A24E47 /* TagSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A572E08550900A24E47 /* TagSearchView.swift */; };
-		DDB89A582E08550900A24E47 /* TagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A592E08550900A24E47 /* TagView.swift */; };
-		DDB89A5A2E08550900A24E47 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A5B2E08550900A24E47 /* SearchView.swift */; };
-		DDB89A5C2E08550900A24E47 /* MoveDestinationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */; };
-/* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		DDB89A242E08550900A24E47 /* PBXContainerItemProxy */ = {
@@ -46,27 +25,27 @@
 
 /* Begin PBXFileReference section */
 		DDB89A162E08550700A24E47 /* AllMyCrap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllMyCrap.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllMyCrapApp.swift; sourceTree = "<group>"; };
-		DDB89A1B2E08550700A24E47 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		DDB89A1D2E08550900A24E47 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DDB89A232E08550900A24E47 /* AllMyCrapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllMyCrapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDB89A2D2E08550900A24E47 /* AllMyCrapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AllMyCrapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DDB89A412E08550900A24E47 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
-		DDB89A432E08550900A24E47 /* ItemEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemEditView.swift; sourceTree = "<group>"; };
-		DDB89A452E08550900A24E47 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
-		DDB89A472E08550900A24E47 /* LocationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailView.swift; sourceTree = "<group>"; };
-		DDB89A492E08550900A24E47 /* LocationEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationEditView.swift; sourceTree = "<group>"; };
-		DDB89A4B2E08550900A24E47 /* BulkItemAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkItemAddView.swift; sourceTree = "<group>"; };
-		DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkLocationAddView.swift; sourceTree = "<group>"; };
-		DDB89A4F2E08550900A24E47 /* ReviewHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewHistory.swift; sourceTree = "<group>"; };
-		DDB89A512E08550900A24E47 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		DDB89A532E08550900A24E47 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
-		DDB89A552E08550900A24E47 /* TagPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagPicker.swift; sourceTree = "<group>"; };
-		DDB89A572E08550900A24E47 /* TagSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSearchView.swift; sourceTree = "<group>"; };
-		DDB89A592E08550900A24E47 /* TagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagView.swift; sourceTree = "<group>"; };
-		DDB89A5B2E08550900A24E47 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
-		DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveDestinationPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		DDB89A182E08550700A24E47 /* AllMyCrap */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AllMyCrap;
+			sourceTree = "<group>";
+		};
+		DDB89A262E08550900A24E47 /* AllMyCrapTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AllMyCrapTests;
+			sourceTree = "<group>";
+		};
+		DDB89A302E08550900A24E47 /* AllMyCrapUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AllMyCrapUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DDB89A132E08550700A24E47 /* Frameworks */ = {
@@ -113,45 +92,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DDB89A182E08550700A24E47 /* AllMyCrap */ = {
-			isa = PBXGroup;
-			children = (
-				DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */,
-				DDB89A1B2E08550700A24E47 /* ContentView.swift */,
-				DDB89A412E08550900A24E47 /* Item.swift */,
-				DDB89A432E08550900A24E47 /* ItemEditView.swift */,
-				DDB89A452E08550900A24E47 /* Location.swift */,
-				DDB89A472E08550900A24E47 /* LocationDetailView.swift */,
-				DDB89A492E08550900A24E47 /* LocationEditView.swift */,
-				DDB89A4B2E08550900A24E47 /* BulkItemAddView.swift */,
-				DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */,
-				DDB89A4F2E08550900A24E47 /* ReviewHistory.swift */,
-				DDB89A512E08550900A24E47 /* SettingsView.swift */,
-				DDB89A532E08550900A24E47 /* Tag.swift */,
-				DDB89A552E08550900A24E47 /* TagPicker.swift */,
-				DDB89A572E08550900A24E47 /* TagSearchView.swift */,
-				DDB89A592E08550900A24E47 /* TagView.swift */,
-				DDB89A5B2E08550900A24E47 /* SearchView.swift */,
-				DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */,
-				DDB89A1D2E08550900A24E47 /* Assets.xcassets */,
-			);
-			path = AllMyCrap;
-			sourceTree = "<group>";
-		};
-		DDB89A262E08550900A24E47 /* AllMyCrapTests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = AllMyCrapTests;
-			sourceTree = "<group>";
-		};
-		DDB89A302E08550900A24E47 /* AllMyCrapUITests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = AllMyCrapUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -166,6 +106,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DDB89A182E08550700A24E47 /* AllMyCrap */,
 			);
 			name = AllMyCrap;
 			packageProductDependencies = (
@@ -187,6 +130,9 @@
 			dependencies = (
 				DDB89A252E08550900A24E47 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				DDB89A262E08550900A24E47 /* AllMyCrapTests */,
+			);
 			name = AllMyCrapTests;
 			packageProductDependencies = (
 			);
@@ -206,6 +152,9 @@
 			);
 			dependencies = (
 				DDB89A2F2E08550900A24E47 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DDB89A302E08550900A24E47 /* AllMyCrapUITests */,
 			);
 			name = AllMyCrapUITests;
 			packageProductDependencies = (
@@ -238,7 +187,6 @@
 				};
 			};
 			buildConfigurationList = DDB89A112E08550700A24E47 /* Build configuration list for PBXProject "AllMyCrap" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -246,6 +194,8 @@
 				Base,
 			);
 			mainGroup = DDB89A0D2E08550700A24E47;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = DDB89A172E08550700A24E47 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -262,7 +212,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDB89A1E2E08550900A24E47 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,23 +236,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DDB89A1C2E08550700A24E47 /* ContentView.swift in Sources */,
-				DDB89A402E08550900A24E47 /* Item.swift in Sources */,
-				DDB89A1A2E08550700A24E47 /* AllMyCrapApp.swift in Sources */,
-				DDB89A422E08550900A24E47 /* ItemEditView.swift in Sources */,
-				DDB89A442E08550900A24E47 /* Location.swift in Sources */,
-				DDB89A462E08550900A24E47 /* LocationDetailView.swift in Sources */,
-				DDB89A482E08550900A24E47 /* LocationEditView.swift in Sources */,
-				DDB89A4A2E08550900A24E47 /* BulkItemAddView.swift in Sources */,
-				DDB89A4C2E08550900A24E47 /* BulkLocationAddView.swift in Sources */,
-				DDB89A4E2E08550900A24E47 /* ReviewHistory.swift in Sources */,
-				DDB89A502E08550900A24E47 /* SettingsView.swift in Sources */,
-				DDB89A522E08550900A24E47 /* Tag.swift in Sources */,
-				DDB89A542E08550900A24E47 /* TagPicker.swift in Sources */,
-				DDB89A562E08550900A24E47 /* TagSearchView.swift in Sources */,
-				DDB89A582E08550900A24E47 /* TagView.swift in Sources */,
-				DDB89A5A2E08550900A24E47 /* SearchView.swift in Sources */,
-				DDB89A5C2E08550900A24E47 /* MoveDestinationPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +304,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 5R2D4Y969H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -435,6 +368,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 5R2D4Y969H;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;

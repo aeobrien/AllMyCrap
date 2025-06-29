@@ -10,6 +10,8 @@ struct ItemEditView: View {
 
     // MARK: - State
     @State private var name = ""
+    @State private var selectedTags: [Tag] = []
+    @State private var showingTagPicker = false
 
     /// When non-nil this triggers the duplicate-warning sheet.
     @State private var duplicatePayload: DuplicatePayload?
@@ -26,6 +28,29 @@ struct ItemEditView: View {
         NavigationStack {
             Form {
                 TextField("Item Name", text: $name)
+                
+                Section("Tags") {
+                    if selectedTags.isEmpty {
+                        Button(action: { showingTagPicker = true }) {
+                            Label("Add Tags", systemImage: "tag")
+                                .foregroundColor(.blue)
+                        }
+                    } else {
+                        ForEach(selectedTags) { tag in
+                            HStack {
+                                Circle()
+                                    .fill(Color(hex: tag.color) ?? .blue)
+                                    .frame(width: 16, height: 16)
+                                Text(tag.name)
+                                Spacer()
+                            }
+                        }
+                        Button(action: { showingTagPicker = true }) {
+                            Label("Manage Tags", systemImage: "tag")
+                                .font(.caption)
+                        }
+                    }
+                }
             }
             .navigationTitle(item == nil ? "Add Item" : "Edit Item")
             .navigationBarTitleDisplayMode(.inline)
@@ -38,7 +63,12 @@ struct ItemEditView: View {
                         .disabled(name.isEmpty)
                 }
             }
-            .onAppear { if let item { name = item.name } }
+            .onAppear {
+                if let item {
+                    name = item.name
+                    selectedTags = item.tags
+                }
+            }
             // ───────── Duplicate sheet ─────────
             .sheet(item: $duplicatePayload) { payload in
                 NavigationStack {
@@ -50,6 +80,9 @@ struct ItemEditView: View {
                             duplicatePayload = nil
                         })
                 }
+            }
+            .sheet(isPresented: $showingTagPicker) {
+                TagPicker(selectedTags: $selectedTags)
             }
         }
     }
@@ -79,8 +112,14 @@ struct ItemEditView: View {
 
     // MARK: - Helpers
     private func save() {
-        if let item { item.name = name }
-        else { modelContext.insert(Item(name: name, location: location)) }
+        if let item {
+            item.name = name
+            item.tags = selectedTags
+        } else {
+            let newItem = Item(name: name, location: location)
+            newItem.tags = selectedTags
+            modelContext.insert(newItem)
+        }
         dismiss()
     }
 

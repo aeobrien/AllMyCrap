@@ -17,6 +17,14 @@ final class Location {
     // Items stored here
     @Relationship(deleteRule: .cascade, inverse: \Item.location)
     var items: [Item] = []
+    
+    // Review tracking
+    var isReviewed: Bool = false
+    var lastReviewedDate: Date?
+    
+    // Review history
+    @Relationship(deleteRule: .cascade, inverse: \ReviewHistory.location)
+    var reviewHistory: [ReviewHistory] = []
 
     // MARK: - Convenience
 
