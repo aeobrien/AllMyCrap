@@ -12,7 +12,7 @@ struct SearchView: View {
 
     // Filter in memory – fine for thousands of rows.
     private var filteredItems: [Item] {
-        guard !searchText.isEmpty else { return [] }
+        guard !searchText.isEmpty else { return allItems }
         return allItems.filter {
             $0.name.localizedCaseInsensitiveContains(searchText)
         }
@@ -21,7 +21,11 @@ struct SearchView: View {
     var body: some View {
         NavigationStack {
             List {
-                if filteredItems.isEmpty {
+                if allItems.isEmpty {
+                    ContentUnavailableView("No items yet",
+                                           systemImage: "square.stack.3d.up.slash",
+                                           description: Text("Add items to your locations to see them here."))
+                } else if !searchText.isEmpty && filteredItems.isEmpty {
                     ContentUnavailableView("No matches",
                                            systemImage: "magnifyingglass",
                                            description: Text("Try a different name."))

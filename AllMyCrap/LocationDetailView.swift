@@ -111,6 +111,13 @@ struct LocationDetailView: View {
                         
                         Spacer()
                         
+                        // Plan indicator
+                        if let plan = item.plan {
+                            planIcon(for: plan)
+                                .foregroundColor(planColor(for: plan))
+                                .padding(.horizontal, 4)
+                        }
+                        
                         // Tag button
                         Button(action: {
                             itemForTags = item
@@ -121,8 +128,8 @@ struct LocationDetailView: View {
                         }
                         .buttonStyle(BorderlessButtonStyle())
                     }
-                    // Swipe for move / edit / delete
-                    .swipeActions(allowsFullSwipe: false) {
+                    // Swipe left for move / edit / delete
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button("Move") {
                             moveTarget = .item(item)
                             showMoveSheet = true
@@ -135,6 +142,43 @@ struct LocationDetailView: View {
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
+                    }
+                    // Swipe right for plan assignment
+                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                        Button {
+                            assignPlan(.keep, to: item)
+                        } label: {
+                            Image(systemName: "checkmark")
+                        }
+                        .tint(.green)
+                        
+                        Button {
+                            assignPlan(.throwAway, to: item)
+                        } label: {
+                            Text("✕")
+                        }
+                        .tint(.red)
+                        
+                        Button {
+                            assignPlan(.sell, to: item)
+                        } label: {
+                            Text("£")
+                        }
+                        .tint(.blue)
+                        
+                        Button {
+                            assignPlan(.charity, to: item)
+                        } label: {
+                            Image(systemName: "heart.fill")
+                        }
+                        .tint(.yellow)
+                        
+                        Button {
+                            assignPlan(.move, to: item)
+                        } label: {
+                            Image(systemName: "house")
+                        }
+                        .tint(.purple)
                     }
                 }
                 .onDelete(perform: deleteItems)
@@ -161,17 +205,19 @@ struct LocationDetailView: View {
                         isAddingLocation = true
                     }
                     .disabled(location.depth >= 15)   // keep depth cap
+                    Button("Add Multiple Sub-Locations",
+                           systemImage: "plus.rectangle.on.folder.fill") {
+                        isAddingMultipleLocations = true
+                    }
+                    .disabled(location.depth >= 15)   // keep depth cap
+                    Divider()
                     Button("Add Item",
                            systemImage: "plus.square.on.square") {
                         isAddingItem = true
                     }
                     Button("Add Multiple Items",
-                           systemImage: "plus.square.on.square.dashed") {
+                           systemImage: "square.stack") {
                         isAddingMultipleItems = true
-                    }
-                    Button("Add Multiple Sub-Locations",
-                           systemImage: "plus.rectangle.on.folder.fill") {
-                        isAddingMultipleLocations = true
                     }
                 } label: { Label("Add", systemImage: "plus") }
             }
@@ -224,7 +270,17 @@ struct LocationDetailView: View {
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button("Done") {
+                                // Remove item from old tags
+                                for tag in item.tags {
+                                    tag.items.removeAll { $0.id == item.id }
+                                }
+                                // Set new tags and update bidirectional relationship
                                 item.tags = selectedTagsForItem
+                                for tag in selectedTagsForItem {
+                                    if !tag.items.contains(where: { $0.id == item.id }) {
+                                        tag.items.append(item)
+                                    }
+                                }
                                 do {
                                     try modelContext.save()
                                 } catch {
@@ -302,6 +358,49 @@ struct LocationDetailView: View {
             } catch {
                 print("Failed to save review status: \(error)")
             }
+        }
+    }
+    
+    // MARK: - Plan helpers
+    private func assignPlan(_ plan: ItemPlan, to item: Item) {
+        withAnimation {
+            item.plan = plan
+            do {
+                try modelContext.save()
+            } catch {
+                print("Failed to save plan: \(error)")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func planIcon(for plan: ItemPlan) -> some View {
+        switch plan {
+        case .keep:
+            Image(systemName: "checkmark")
+        case .throwAway:
+            Text("✕")
+        case .sell:
+            Text("£")
+        case .charity:
+            Image(systemName: "heart.fill")
+        case .move:
+            Image(systemName: "house")
+        }
+    }
+    
+    private func planColor(for plan: ItemPlan) -> Color {
+        switch plan {
+        case .keep:
+            return .green
+        case .throwAway:
+            return .red
+        case .sell:
+            return .blue
+        case .charity:
+            return .yellow
+        case .move:
+            return .purple
         }
     }
 }

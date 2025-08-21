@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD70B6A02E22AD5800673D79 /* PlanSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B69F2E22AD5800673D79 /* PlanSearchView.swift */; };
+		DD70B6A22E22AD7900673D79 /* BulkItemPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */; };
 		DDB89A1A2E08550700A24E47 /* AllMyCrapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */; };
 		DDB89A1C2E08550700A24E47 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A1B2E08550700A24E47 /* ContentView.swift */; };
 		DDB89A1E2E08550900A24E47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDB89A1D2E08550900A24E47 /* Assets.xcassets */; };
@@ -45,6 +47,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DD70B69F2E22AD5800673D79 /* PlanSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanSearchView.swift; sourceTree = "<group>"; };
+		DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkItemPreviewView.swift; sourceTree = "<group>"; };
 		DDB89A162E08550700A24E47 /* AllMyCrap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllMyCrap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllMyCrapApp.swift; sourceTree = "<group>"; };
 		DDB89A1B2E08550700A24E47 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -125,6 +129,8 @@
 				DDB89A492E08550900A24E47 /* LocationEditView.swift */,
 				DDB89A4B2E08550900A24E47 /* BulkItemAddView.swift */,
 				DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */,
+				DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */,
+				DD70B69F2E22AD5800673D79 /* PlanSearchView.swift */,
 				DDB89A4F2E08550900A24E47 /* ReviewHistory.swift */,
 				DDB89A512E08550900A24E47 /* SettingsView.swift */,
 				DDB89A532E08550900A24E47 /* Tag.swift */,
@@ -288,6 +294,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDB89A1C2E08550700A24E47 /* ContentView.swift in Sources */,
+				DD70B6A02E22AD5800673D79 /* PlanSearchView.swift in Sources */,
 				DDB89A402E08550900A24E47 /* Item.swift in Sources */,
 				DDB89A1A2E08550700A24E47 /* AllMyCrapApp.swift in Sources */,
 				DDB89A422E08550900A24E47 /* ItemEditView.swift in Sources */,
@@ -297,6 +304,7 @@
 				DDB89A4A2E08550900A24E47 /* BulkItemAddView.swift in Sources */,
 				DDB89A4C2E08550900A24E47 /* BulkLocationAddView.swift in Sources */,
 				DDB89A4E2E08550900A24E47 /* ReviewHistory.swift in Sources */,
+				DD70B6A22E22AD7900673D79 /* BulkItemPreviewView.swift in Sources */,
 				DDB89A502E08550900A24E47 /* SettingsView.swift in Sources */,
 				DDB89A522E08550900A24E47 /* Tag.swift in Sources */,
 				DDB89A542E08550900A24E47 /* TagPicker.swift in Sources */,

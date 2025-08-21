@@ -11,7 +11,14 @@ struct ItemEditView: View {
     // MARK: - State
     @State private var name = ""
     @State private var selectedTags: [Tag] = []
-    @State private var showingTagPicker = false
+    @State private var showingNewTag = false
+    @State private var newTagName = ""
+    @State private var newTagColor = Color.blue
+    @Query private var allTags: [Tag]
+    @State private var tagToEdit: Tag?
+    @State private var editingTagName = ""
+    @State private var showDeleteAlert = false
+    @State private var tagToDelete: Tag?
 
     /// When non-nil this triggers the duplicate-warning sheet.
     @State private var duplicatePayload: DuplicatePayload?
@@ -30,25 +37,43 @@ struct ItemEditView: View {
                 TextField("Item Name", text: $name)
                 
                 Section("Tags") {
-                    if selectedTags.isEmpty {
-                        Button(action: { showingTagPicker = true }) {
-                            Label("Add Tags", systemImage: "tag")
-                                .foregroundColor(.blue)
-                        }
-                    } else {
-                        ForEach(selectedTags) { tag in
-                            HStack {
-                                Circle()
-                                    .fill(Color(hex: tag.color) ?? .blue)
-                                    .frame(width: 16, height: 16)
-                                Text(tag.name)
-                                Spacer()
+                    // Available tags to select from
+                    ForEach(allTags.sorted { $0.name < $1.name }) { tag in
+                        HStack {
+                            Circle()
+                                .fill(Color(hex: tag.color) ?? .blue)
+                                .frame(width: 20, height: 20)
+                            Text(tag.name)
+                            Spacer()
+                            if selectedTags.contains(where: { $0.id == tag.id }) {
+                                Image(systemName: "checkmark")
+                                    .foregroundColor(.blue)
                             }
                         }
-                        Button(action: { showingTagPicker = true }) {
-                            Label("Manage Tags", systemImage: "tag")
-                                .font(.caption)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if let index = selectedTags.firstIndex(where: { $0.id == tag.id }) {
+                                selectedTags.remove(at: index)
+                            } else {
+                                selectedTags.append(tag)
+                            }
                         }
+                        .swipeActions {
+                            Button("Delete", role: .destructive) {
+                                tagToDelete = tag
+                                showDeleteAlert = true
+                            }
+                            Button("Edit") {
+                                tagToEdit = tag
+                                editingTagName = tag.name
+                            }
+                            .tint(.blue)
+                        }
+                    }
+                    
+                    Button(action: { showingNewTag = true }) {
+                        Label("Create New Tag", systemImage: "plus.circle.fill")
+                            .foregroundColor(.blue)
                     }
                 }
             }
@@ -81,8 +106,86 @@ struct ItemEditView: View {
                         })
                 }
             }
-            .sheet(isPresented: $showingTagPicker) {
-                TagPicker(selectedTags: $selectedTags)
+            .sheet(isPresented: $showingNewTag) {
+                NavigationStack {
+                    Form {
+                        TextField("Tag Name", text: $newTagName)
+                        ColorPicker("Color", selection: $newTagColor)
+                    }
+                    .navigationTitle("New Tag")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Cancel") {
+                                newTagName = ""
+                                showingNewTag = false
+                            }
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Save") {
+                                let tag = Tag(name: newTagName, color: newTagColor.toHex())
+                                modelContext.insert(tag)
+                                selectedTags.append(tag)
+                                newTagName = ""
+                                showingNewTag = false
+                            }
+                            .disabled(newTagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        }
+                    }
+                }
+            }
+            .sheet(item: $tagToEdit) { tag in
+                NavigationStack {
+                    Form {
+                        TextField("Tag Name", text: $editingTagName)
+                    }
+                    .navigationTitle("Edit Tag")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Cancel") {
+                                tagToEdit = nil
+                            }
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Save") {
+                                if let tagToEdit = tagToEdit {
+                                    tagToEdit.name = editingTagName
+                                    do {
+                                        try modelContext.save()
+                                    } catch {
+                                        print("Failed to save tag: \(error)")
+                                    }
+                                }
+                                tagToEdit = nil
+                            }
+                            .disabled(editingTagName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        }
+                    }
+                }
+            }
+            .alert("Delete Tag", isPresented: $showDeleteAlert) {
+                Button("Delete", role: .destructive) {
+                    if let tag = tagToDelete {
+                        // Remove tag from all items
+                        for item in tag.items {
+                            item.tags.removeAll { $0.id == tag.id }
+                        }
+                        // Remove from selected tags if present
+                        selectedTags.removeAll { $0.id == tag.id }
+                        modelContext.delete(tag)
+                        do {
+                            try modelContext.save()
+                        } catch {
+                            print("Failed to delete tag: \(error)")
+                        }
+                    }
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                if let tag = tagToDelete {
+                    Text("This will remove the '\(tag.name)' tag from \(tag.items.count) item(s). This action cannot be undone.")
+                }
             }
         }
     }
@@ -114,11 +217,25 @@ struct ItemEditView: View {
     private func save() {
         if let item {
             item.name = name
+            // Remove item from old tags
+            for tag in item.tags {
+                tag.items.removeAll { $0.id == item.id }
+            }
+            // Add item to new tags
             item.tags = selectedTags
+            for tag in selectedTags {
+                if !tag.items.contains(where: { $0.id == item.id }) {
+                    tag.items.append(item)
+                }
+            }
         } else {
             let newItem = Item(name: name, location: location)
             newItem.tags = selectedTags
             modelContext.insert(newItem)
+            // Add the new item to each selected tag
+            for tag in selectedTags {
+                tag.items.append(newItem)
+            }
         }
         dismiss()
     }
