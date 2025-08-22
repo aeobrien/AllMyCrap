@@ -12,6 +12,7 @@ struct SettingsView: View {
     @State private var showingBackupView = false
     @State private var processingHyphens = false
     @State private var hyphenRemovalResult = ""
+    @State private var showingBookDetection = false
     
     var body: some View {
         NavigationStack {
@@ -123,10 +124,14 @@ struct SettingsView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
+                    
+                    Button(action: { showingBookDetection = true }) {
+                        Label("Detect Books", systemImage: "books.vertical")
+                    }
                 } header: {
                     Text("Maintenance")
                 } footer: {
-                    Text("Removes leading \"- \" from all item names.")
+                    Text("Remove leading hyphens or detect and convert items to books.")
                         .font(.caption)
                 }
             }
@@ -140,6 +145,9 @@ struct SettingsView: View {
             .sheet(isPresented: $showingBackupView) {
                 BackupRestoreView()
                     .environmentObject(backupManager)
+            }
+            .sheet(isPresented: $showingBookDetection) {
+                BookDetectionView()
             }
         }
     }

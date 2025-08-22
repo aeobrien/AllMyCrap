@@ -11,6 +11,7 @@
 		DD70B6A22E22AD7900673D79 /* BulkItemPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */; };
 		DD70B6A42E22AD8100673D79 /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B6A32E22AD8100673D79 /* BackupManager.swift */; };
 		DD70B6A62E22AD8200673D79 /* BackupRestoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B6A52E22AD8200673D79 /* BackupRestoreView.swift */; };
+		DD70B6A82E22AD8300673D79 /* BookDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B6A72E22AD8300673D79 /* BookDetectionView.swift */; };
 		DDB89A1A2E08550700A24E47 /* AllMyCrapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */; };
 		DDB89A1C2E08550700A24E47 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB89A1B2E08550700A24E47 /* ContentView.swift */; };
 		DDB89A1E2E08550900A24E47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDB89A1D2E08550900A24E47 /* Assets.xcassets */; };
@@ -54,6 +55,7 @@
 		DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkItemPreviewView.swift; sourceTree = "<group>"; };
 		DD70B6A32E22AD8100673D79 /* BackupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManager.swift; sourceTree = "<group>"; };
 		DD70B6A52E22AD8200673D79 /* BackupRestoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreView.swift; sourceTree = "<group>"; };
+		DD70B6A72E22AD8300673D79 /* BookDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookDetectionView.swift; sourceTree = "<group>"; };
 		DDB89A162E08550700A24E47 /* AllMyCrap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AllMyCrap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllMyCrapApp.swift; sourceTree = "<group>"; };
 		DDB89A1B2E08550700A24E47 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */,
 				DD70B6A32E22AD8100673D79 /* BackupManager.swift */,
 				DD70B6A52E22AD8200673D79 /* BackupRestoreView.swift */,
+				DD70B6A72E22AD8300673D79 /* BookDetectionView.swift */,
 				DDB89A1D2E08550900A24E47 /* Assets.xcassets */,
 			);
 			path = AllMyCrap;
@@ -322,6 +325,7 @@
 				DDB89A5C2E08550900A24E47 /* MoveDestinationPicker.swift in Sources */,
 				DD70B6A42E22AD8100673D79 /* BackupManager.swift in Sources */,
 				DD70B6A62E22AD8200673D79 /* BackupRestoreView.swift in Sources */,
+				DD70B6A82E22AD8300673D79 /* BookDetectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

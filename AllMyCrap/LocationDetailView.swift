@@ -30,7 +30,6 @@ struct LocationDetailView: View {
     // MARK: - Batch selection state
     @State private var isInSelectionMode = false
     @State private var selectedItems: Set<Item> = []
-    @State private var selectedLocations: Set<Location> = []
     @State private var showBatchActionSheet = false
     @State private var showBatchTagPicker = false
     @State private var selectedBatchTags: [Tag] = []
@@ -81,40 +80,41 @@ struct LocationDetailView: View {
         }
         return allItems
     }
+    
+    private func getRelativePath(for item: Item) -> String? {
+        guard let itemLocation = item.location, itemLocation != location else {
+            return nil
+        }
+        
+        var path: [String] = []
+        var current: Location? = itemLocation
+        
+        while let loc = current, loc != location {
+            path.insert(loc.name, at: 0)
+            current = loc.parent
+        }
+        
+        return path.isEmpty ? nil : path.joined(separator: " > ")
+    }
 
     var body: some View {
         List {
             // ───────── Sub‑locations ─────────
             Section("Sub‑Locations") {
                 ForEach(location.children.sorted { $0.name < $1.name }) { child in
-                    let isSelected = selectedLocations.contains(child)
-                    HStack {
-                        if isInSelectionMode {
-                            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(isSelected ? .accentColor : .gray)
-                                .onTapGesture {
-                                    if isSelected {
-                                        selectedLocations.remove(child)
-                                    } else {
-                                        selectedLocations.insert(child)
-                                    }
-                                }
+                    NavigationLink(value: child) {
+                        HStack(spacing: 0) {
+                            // Review indicator
+                            Rectangle()
+                                .fill(child.isReviewed ? Color.green : Color.clear)
+                                .frame(width: 3)
+                                .padding(.trailing, 8)
+                            
+                            Text(child.name)
+                            Spacer()
                         }
-                        
-                        NavigationLink(value: child) {
-                            HStack(spacing: 0) {
-                                // Review indicator
-                                Rectangle()
-                                    .fill(child.isReviewed ? Color.green : Color.clear)
-                                    .frame(width: 3)
-                                    .padding(.trailing, 8)
-                                
-                                Text(child.name)
-                                Spacer()
-                            }
-                        }
-                        .disabled(isInSelectionMode)
                     }
+                    .disabled(isInSelectionMode)
                     .contextMenu {
                         Button(action: {
                             toggleReview(for: child)
@@ -241,8 +241,8 @@ struct LocationDetailView: View {
                             Text(item.displayName)
                                 .foregroundColor(.primary)
                             
-                            if showRecursiveItems && item.location != location {
-                                Text(item.location?.name ?? "")
+                            if showRecursiveItems, let relativePath = getRelativePath(for: item) {
+                                Text(relativePath)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -350,10 +350,9 @@ struct LocationDetailView: View {
                             selectAll()
                         }
                         
-                        if !selectedItems.isEmpty || !selectedLocations.isEmpty {
+                        if !selectedItems.isEmpty {
                             Button("Clear Selection") {
                                 selectedItems.removeAll()
-                                selectedLocations.removeAll()
                             }
                         }
                     } label: {
@@ -365,7 +364,7 @@ struct LocationDetailView: View {
                     }
                     .fontWeight(.semibold)
                     
-                    if !selectedItems.isEmpty || !selectedLocations.isEmpty {
+                    if !selectedItems.isEmpty {
                         Button("Actions") {
                             showBatchActionSheet = true
                         }
@@ -493,34 +492,30 @@ struct LocationDetailView: View {
         }
         // Batch action sheet
         .confirmationDialog("Batch Actions", isPresented: $showBatchActionSheet) {
-            if !selectedItems.isEmpty {
-                Button("Apply Tags") {
-                    selectedBatchTags = []
-                    showBatchTagPicker = true
-                }
-                
-                // Plan options (can't use Menu inside confirmationDialog)
-                Button("Set Plan: Keep") { batchApplyPlan(.keep) }
-                Button("Set Plan: Throw Away") { batchApplyPlan(.throwAway) }
-                Button("Set Plan: Sell") { batchApplyPlan(.sell) }
-                Button("Set Plan: Charity") { batchApplyPlan(.charity) }
-                Button("Set Plan: Move") { batchApplyPlan(.move) }
+            Button("Apply Tags") {
+                selectedBatchTags = []
+                showBatchTagPicker = true
             }
             
-            if !selectedItems.isEmpty || !selectedLocations.isEmpty {
-                Button("Move to Location") {
-                    // Create a combined move target
-                    showMoveSheet = true
-                }
-                
-                Button("Delete", role: .destructive) {
-                    batchDelete()
-                }
+            // Plan options
+            Button("Set Plan: Keep") { batchApplyPlan(.keep) }
+            Button("Set Plan: Throw Away") { batchApplyPlan(.throwAway) }
+            Button("Set Plan: Sell") { batchApplyPlan(.sell) }
+            Button("Set Plan: Charity") { batchApplyPlan(.charity) }
+            Button("Set Plan: Move") { batchApplyPlan(.move) }
+            Button("Clear Plan") { batchClearPlan() }
+            
+            Button("Move to Location") {
+                showMoveSheet = true
+            }
+            
+            Button("Delete", role: .destructive) {
+                batchDelete()
             }
             
             Button("Cancel", role: .cancel) { }
         } message: {
-            Text("Choose an action for \(selectedItems.count + selectedLocations.count) selected items")
+            Text("Choose an action for \(selectedItems.count) item\(selectedItems.count == 1 ? "" : "s")")
         }
     }
 
@@ -636,17 +631,12 @@ struct LocationDetailView: View {
     private func exitSelectionMode() {
         isInSelectionMode = false
         selectedItems.removeAll()
-        selectedLocations.removeAll()
     }
     
     private func selectAll() {
         // Select all visible items
         for item in itemsToDisplay {
             selectedItems.insert(item)
-        }
-        // Select all sub-locations
-        for child in location.children {
-            selectedLocations.insert(child)
         }
     }
     
@@ -678,16 +668,23 @@ struct LocationDetailView: View {
         exitSelectionMode()
     }
     
+    private func batchClearPlan() {
+        for item in selectedItems {
+            item.plan = nil
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to clear batch plans: \(error)")
+        }
+        
+        exitSelectionMode()
+    }
+    
     private func batchMove(to destination: Location) {
         for item in selectedItems {
             item.location = destination
-        }
-        
-        for location in selectedLocations {
-            let extraDepth = location.deepestSubtreeDistance()
-            if destination.depth + 1 + extraDepth <= 15 {
-                location.parent = destination
-            }
         }
         
         do {
@@ -702,10 +699,6 @@ struct LocationDetailView: View {
     private func batchDelete() {
         for item in selectedItems {
             modelContext.delete(item)
-        }
-        
-        for location in selectedLocations {
-            modelContext.delete(location)
         }
         
         do {
