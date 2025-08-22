@@ -1,10 +1,17 @@
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
     @AppStorage("openAIKey") private var openAIKey = ""
     @AppStorage("reviewExpirationDays") private var reviewExpirationDays = 30
+    @AppStorage("bulkItemPrompt") private var bulkItemPrompt = "Parse this list and return a JSON array of item names. Each item should be on its own line or separated clearly. Remove any numbering, bullets, or unnecessary formatting. Return only the JSON array with no additional text."
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var backupManager: BackupManager
     @State private var showingAPIKey = false
+    @State private var showingBackupView = false
+    @State private var processingHyphens = false
+    @State private var hyphenRemovalResult = ""
     
     var body: some View {
         NavigationStack {
@@ -44,6 +51,25 @@ struct SettingsView: View {
                 }
                 
                 Section {
+                    Button(action: { showingBackupView = true }) {
+                        HStack {
+                            Label("Backup & Restore", systemImage: "icloud")
+                            Spacer()
+                            if let date = backupManager.lastBackupDate {
+                                Text(date, style: .relative)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                                .font(.caption)
+                        }
+                    }
+                } header: {
+                    Text("Data Management")
+                }
+                
+                Section {
                     Picker("Auto-unmark reviews after", selection: $reviewExpirationDays) {
                         Text("Never").tag(0)
                         Text("7 days").tag(7)
@@ -60,12 +86,92 @@ struct SettingsView: View {
                     Text("Reviewed locations will automatically be marked as unreviewed after the selected period.")
                         .font(.caption)
                 }
+                
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Transcription Processing Prompt")
+                            .font(.headline)
+                        TextEditor(text: $bulkItemPrompt)
+                            .font(.system(.body, design: .monospaced))
+                            .frame(minHeight: 100)
+                            .padding(4)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                    }
+                } header: {
+                    Text("Voice Input Settings")
+                } footer: {
+                    Text("This prompt is used to process voice transcriptions into item lists.")
+                        .font(.caption)
+                }
+                
+                Section {
+                    Button(action: removeLeadingHyphens) {
+                        HStack {
+                            Label("Remove Leading Hyphens", systemImage: "minus.circle")
+                            Spacer()
+                            if processingHyphens {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            }
+                        }
+                    }
+                    .disabled(processingHyphens)
+                    
+                    if !hyphenRemovalResult.isEmpty {
+                        Text(hyphenRemovalResult)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                } header: {
+                    Text("Maintenance")
+                } footer: {
+                    Text("Removes leading \"- \" from all item names.")
+                        .font(.caption)
+                }
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
+                }
+            }
+            .sheet(isPresented: $showingBackupView) {
+                BackupRestoreView()
+                    .environmentObject(backupManager)
+            }
+        }
+    }
+    
+    private func removeLeadingHyphens() {
+        processingHyphens = true
+        hyphenRemovalResult = ""
+        
+        Task {
+            do {
+                let items = try modelContext.fetch(FetchDescriptor<Item>())
+                var updatedCount = 0
+                
+                for item in items {
+                    if item.name.hasPrefix("- ") {
+                        item.name = String(item.name.dropFirst(2))
+                        updatedCount += 1
+                    }
+                }
+                
+                if updatedCount > 0 {
+                    try modelContext.save()
+                }
+                
+                await MainActor.run {
+                    hyphenRemovalResult = "Updated \(updatedCount) item\(updatedCount == 1 ? "" : "s")"
+                    processingHyphens = false
+                }
+            } catch {
+                await MainActor.run {
+                    hyphenRemovalResult = "Error: \(error.localizedDescription)"
+                    processingHyphens = false
                 }
             }
         }

@@ -80,6 +80,15 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: [Location.self, Item.self, Tag.self, ReviewHistory.self], inMemory: true)
+    let schema = Schema([
+        Location.self,
+        Item.self,
+        Tag.self,
+        ReviewHistory.self
+    ])
+    let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: schema, configurations: [modelConfiguration])
+    
+    return ContentView()
+        .modelContainer(container)
 }

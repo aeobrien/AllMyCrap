@@ -6,6 +6,7 @@ struct BulkItemAddView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @AppStorage("openAIKey") private var openAIKey = ""
+    @AppStorage("bulkItemPrompt") private var bulkItemPrompt = "Parse this list and return a JSON array of item names. Each item should be on its own line or separated clearly. Remove any numbering, bullets, or unnecessary formatting. Return only the JSON array with no additional text."
     @Query private var allTags: [Tag]
     
     let location: Location
@@ -356,7 +357,7 @@ struct BulkItemAddView: View {
             
             let messages = [
                 ["role": "system", "content": systemPrompt],
-                ["role": "user", "content": "Process this transcription into a list of items: \(transcription)"]
+                ["role": "user", "content": bulkItemPrompt + "\n\nTranscription: \(transcription)"]
             ]
             
             let body = [

@@ -4,16 +4,44 @@ import SwiftData
 @main
 struct AllMyCrapApp: App {
     @AppStorage("reviewExpirationDays") private var reviewExpirationDays = 30
+    @StateObject private var backupManager = BackupManager()
+    
+    let container: ModelContainer = {
+        let schema = Schema([
+            Location.self,
+            Item.self,
+            Tag.self,
+            ReviewHistory.self
+        ])
+        
+        // Create configuration without CloudKit sync
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false,
+            cloudKitDatabase: .none  // Disable CloudKit sync
+        )
+        
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(backupManager)
                 .onAppear {
                     scheduleReviewExpirationCheck()
+                    performAutoBackup()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                    performAutoBackup()
                 }
         }
         // This makes the data models available to the entire app.
-        .modelContainer(for: [Location.self, Item.self, Tag.self, ReviewHistory.self])
+        .modelContainer(container)
     }
     
     private func scheduleReviewExpirationCheck() {
@@ -34,8 +62,6 @@ struct AllMyCrapApp: App {
     private func checkExpiredReviews() async {
         guard reviewExpirationDays > 0 else { return }
         
-        // Get the model container
-        guard let container = try? ModelContainer(for: Location.self, Item.self, Tag.self, ReviewHistory.self) else { return }
         let context = container.mainContext
         
         let descriptor = FetchDescriptor<Location>(
@@ -69,6 +95,20 @@ struct AllMyCrapApp: App {
             try context.save()
         } catch {
             print("Failed to check expired reviews: \(error)")
+        }
+    }
+    
+    private func performAutoBackup() {
+        guard backupManager.shouldAutoBackup() else { return }
+        
+        Task {
+            let context = container.mainContext
+            
+            do {
+                try await backupManager.createBackup(modelContext: context)
+            } catch {
+                print("Auto backup failed: \(error)")
+            }
         }
     }
 }

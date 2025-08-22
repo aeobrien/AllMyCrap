@@ -6,18 +6,6 @@ import SwiftData
 struct LocationDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var location: Location
-    
-    // Query to observe changes to children and items
-    @Query private var allLocations: [Location]
-    @Query private var allItems: [Item]
-    
-    private var currentChildren: [Location] {
-        allLocations.filter { $0.parent?.id == location.id }
-    }
-    
-    private var currentItems: [Item] {
-        allItems.filter { $0.location?.id == location.id }
-    }
 
     // MARK: - Creation state
     @State private var isAddingLocation   = false
@@ -37,23 +25,47 @@ struct LocationDetailView: View {
     @State private var moveTarget: MoveTarget?
     @State private var showMoveSheet = false
     @State private var showDepthAlert = false
+    
+    // MARK: - Batch selection state
+    @State private var isInSelectionMode = false
+    @State private var selectedItems: Set<Item> = []
+    @State private var selectedLocations: Set<Location> = []
+    @State private var showBatchActionSheet = false
+    @State private var showBatchTagPicker = false
+    @State private var selectedBatchTags: [Tag] = []
 
     var body: some View {
         List {
             // ───────── Sub‑locations ─────────
             Section("Sub‑Locations") {
-                ForEach(currentChildren.sorted { $0.name < $1.name }) { child in
-                    NavigationLink(value: child) {
-                        HStack(spacing: 0) {
-                            // Review indicator
-                            Rectangle()
-                                .fill(child.isReviewed ? Color.green : Color.clear)
-                                .frame(width: 3)
-                                .padding(.trailing, 8)
-                            
-                            Text(child.name)
-                            Spacer()
+                ForEach(location.children.sorted { $0.name < $1.name }) { child in
+                    let isSelected = selectedLocations.contains(child)
+                    HStack {
+                        if isInSelectionMode {
+                            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(isSelected ? .accentColor : .gray)
+                                .onTapGesture {
+                                    if isSelected {
+                                        selectedLocations.remove(child)
+                                    } else {
+                                        selectedLocations.insert(child)
+                                    }
+                                }
                         }
+                        
+                        NavigationLink(value: child) {
+                            HStack(spacing: 0) {
+                                // Review indicator
+                                Rectangle()
+                                    .fill(child.isReviewed ? Color.green : Color.clear)
+                                    .frame(width: 3)
+                                    .padding(.trailing, 8)
+                                
+                                Text(child.name)
+                                Spacer()
+                            }
+                        }
+                        .disabled(isInSelectionMode)
                     }
                     .contextMenu {
                         Button(action: {
@@ -102,12 +114,29 @@ struct LocationDetailView: View {
 
             // ───────── Items ─────────
             Section("Items in this Location") {
-                ForEach(currentItems.sorted { $0.name < $1.name }) { item in
+                ForEach(location.items.sorted { $0.name < $1.name }) { item in
+                    let isSelected = selectedItems.contains(item)
+                    
                     HStack {
+                        if isInSelectionMode {
+                            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(isSelected ? .accentColor : .gray)
+                                .onTapGesture {
+                                    if isSelected {
+                                        selectedItems.remove(item)
+                                    } else {
+                                        selectedItems.insert(item)
+                                    }
+                                }
+                        }
                         Text(item.name)
                             // Tapping the row = rename the item
                             .contentShape(Rectangle())
-                            .onTapGesture { itemToEdit = item }
+                            .onTapGesture { 
+                                if !isInSelectionMode {
+                                    itemToEdit = item
+                                }
+                            }
                         
                         Spacer()
                         
@@ -198,7 +227,24 @@ struct LocationDetailView: View {
         // ───────── Toolbar ─────────
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button("Edit", systemImage: "pencil") { isEditingLocation = true }
+                if isInSelectionMode {
+                    Button("Done") {
+                        exitSelectionMode()
+                    }
+                    .fontWeight(.semibold)
+                    
+                    if !selectedItems.isEmpty || !selectedLocations.isEmpty {
+                        Button("Actions") {
+                            showBatchActionSheet = true
+                        }
+                    }
+                } else {
+                    Button("Select") {
+                        isInSelectionMode = true
+                    }
+                    
+                    Button("Edit", systemImage: "pencil") { isEditingLocation = true }
+                }
                 Menu {
                     Button("Add Sub‑Location",
                            systemImage: "plus.rectangle.on.folder") {
@@ -292,8 +338,59 @@ struct LocationDetailView: View {
                     }
             }
         }
-        // Deep‑link navigation
-        .navigationDestination(for: Location.self) { LocationDetailView(location: $0) }
+        // Batch tag picker sheet
+        .sheet(isPresented: $showBatchTagPicker) {
+            NavigationStack {
+                TagPicker(selectedTags: $selectedBatchTags)
+                    .navigationTitle("Tags for \(selectedItems.count) items")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Cancel") {
+                                showBatchTagPicker = false
+                            }
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Apply") {
+                                batchApplyTags(selectedBatchTags)
+                                showBatchTagPicker = false
+                            }
+                        }
+                    }
+            }
+        }
+        // Batch action sheet
+        .confirmationDialog("Batch Actions", isPresented: $showBatchActionSheet) {
+            if !selectedItems.isEmpty {
+                Button("Apply Tags") {
+                    selectedBatchTags = []
+                    showBatchTagPicker = true
+                }
+                
+                Menu("Set Plan") {
+                    Button("Keep") { batchApplyPlan(.keep) }
+                    Button("Throw Away") { batchApplyPlan(.throwAway) }
+                    Button("Sell") { batchApplyPlan(.sell) }
+                    Button("Charity") { batchApplyPlan(.charity) }
+                    Button("Move") { batchApplyPlan(.move) }
+                }
+            }
+            
+            if !selectedItems.isEmpty || !selectedLocations.isEmpty {
+                Button("Move to Location") {
+                    // Create a combined move target
+                    showMoveSheet = true
+                }
+                
+                Button("Delete", role: .destructive) {
+                    batchDelete()
+                }
+            }
+            
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Choose an action for \(selectedItems.count + selectedLocations.count) selected items")
+        }
     }
 
     // MARK: - Move helpers (unchanged)
@@ -330,12 +427,12 @@ struct LocationDetailView: View {
 
     // Existing offset‑based deletes kept for iPadOS/macOS edit‑mode support
     private func deleteChildren(offsets: IndexSet) {
-        let sorted = currentChildren.sorted { $0.name < $1.name }
+        let sorted = location.children.sorted { $0.name < $1.name }
         withAnimation { offsets.forEach { modelContext.delete(sorted[$0]) } }
     }
 
     private func deleteItems(offsets: IndexSet) {
-        let sorted = currentItems.sorted { $0.name < $1.name }
+        let sorted = location.items.sorted { $0.name < $1.name }
         withAnimation { offsets.forEach { modelContext.delete(sorted[$0]) } }
     }
     
@@ -402,5 +499,79 @@ struct LocationDetailView: View {
         case .move:
             return .purple
         }
+    }
+    
+    // MARK: - Batch Selection
+    private func exitSelectionMode() {
+        isInSelectionMode = false
+        selectedItems.removeAll()
+        selectedLocations.removeAll()
+    }
+    
+    private func batchApplyTags(_ tags: [Tag]) {
+        for item in selectedItems {
+            item.tags = tags
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save batch tag changes: \(error)")
+        }
+        
+        exitSelectionMode()
+    }
+    
+    private func batchApplyPlan(_ plan: ItemPlan) {
+        for item in selectedItems {
+            item.plan = plan
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save batch plan changes: \(error)")
+        }
+        
+        exitSelectionMode()
+    }
+    
+    private func batchMove(to destination: Location) {
+        for item in selectedItems {
+            item.location = destination
+        }
+        
+        for location in selectedLocations {
+            let extraDepth = location.deepestSubtreeDistance()
+            if destination.depth + 1 + extraDepth <= 15 {
+                location.parent = destination
+            }
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save batch move: \(error)")
+        }
+        
+        exitSelectionMode()
+    }
+    
+    private func batchDelete() {
+        for item in selectedItems {
+            modelContext.delete(item)
+        }
+        
+        for location in selectedLocations {
+            modelContext.delete(location)
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save batch delete: \(error)")
+        }
+        
+        exitSelectionMode()
     }
 }
