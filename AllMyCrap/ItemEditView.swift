@@ -10,6 +10,9 @@ struct ItemEditView: View {
 
     // MARK: - State
     @State private var name = ""
+    @State private var isBook = false
+    @State private var bookTitle = ""
+    @State private var bookAuthor = ""
     @State private var selectedTags: [Tag] = []
     @State private var showingNewTag = false
     @State private var newTagName = ""
@@ -34,7 +37,16 @@ struct ItemEditView: View {
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Item Name", text: $name)
+                Section {
+                    Toggle("This is a book", isOn: $isBook)
+                    
+                    if isBook {
+                        TextField("Title", text: $bookTitle)
+                        TextField("Author", text: $bookAuthor)
+                    } else {
+                        TextField("Item Name", text: $name)
+                    }
+                }
                 
                 Section("Tags") {
                     // Available tags to select from
@@ -85,12 +97,18 @@ struct ItemEditView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { checkForDuplicates() }
-                        .disabled(name.isEmpty)
+                        .disabled(isBook ? (bookTitle.isEmpty || bookAuthor.isEmpty) : name.isEmpty)
                 }
             }
             .onAppear {
                 if let item {
-                    name = item.name
+                    isBook = item.isBook
+                    if item.isBook {
+                        bookTitle = item.bookTitle ?? ""
+                        bookAuthor = item.bookAuthor ?? ""
+                    } else {
+                        name = item.name
+                    }
                     selectedTags = item.tags
                 }
             }
@@ -197,7 +215,8 @@ struct ItemEditView: View {
             return other.id != item.id
         }
 
-        let nameLower = name.lowercased()
+        let checkName = isBook ? "\(bookTitle) by \(bookAuthor)" : name
+        let nameLower = checkName.lowercased()
         let matches = comparison.filter {
             similarity(between: nameLower, and: $0.name.lowercased()) >= 0.8
         }
@@ -216,7 +235,19 @@ struct ItemEditView: View {
     // MARK: - Helpers
     private func save() {
         if let item {
-            item.name = name
+            // Update existing item
+            if isBook {
+                item.isBook = true
+                item.bookTitle = bookTitle
+                item.bookAuthor = bookAuthor
+                item.name = "\(bookTitle) by \(bookAuthor)"
+            } else {
+                item.isBook = false
+                item.bookTitle = nil
+                item.bookAuthor = nil
+                item.name = name
+            }
+            
             // Remove item from old tags
             for tag in item.tags {
                 tag.items.removeAll { $0.id == item.id }
@@ -229,7 +260,13 @@ struct ItemEditView: View {
                 }
             }
         } else {
-            let newItem = Item(name: name, location: location)
+            // Create new item
+            let newItem: Item
+            if isBook {
+                newItem = Item(title: bookTitle, author: bookAuthor, location: location)
+            } else {
+                newItem = Item(name: name, location: location)
+            }
             newItem.tags = selectedTags
             modelContext.insert(newItem)
             // Add the new item to each selected tag

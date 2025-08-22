@@ -6,6 +6,7 @@ import SwiftData
 struct LocationDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var location: Location
+    @Query private var allTags: [Tag]
 
     // MARK: - Creation state
     @State private var isAddingLocation   = false
@@ -33,6 +34,53 @@ struct LocationDetailView: View {
     @State private var showBatchActionSheet = false
     @State private var showBatchTagPicker = false
     @State private var selectedBatchTags: [Tag] = []
+    
+    // MARK: - View options state
+    @State private var showRecursiveItems = false
+    @State private var filterTag: Tag? = nil
+    @State private var filterPlan: ItemPlan? = nil
+    
+    private var filterLabel: String {
+        if let plan = filterPlan {
+            return "Plan: \(plan.rawValue)"
+        } else if let tag = filterTag {
+            return "Tag: \(tag.name)"
+        } else {
+            return "Filter"
+        }
+    }
+    
+    // Computed property for items to display
+    private var itemsToDisplay: [Item] {
+        var items: [Item] = []
+        
+        if showRecursiveItems {
+            // Include items from this location and all sub-locations recursively
+            items = getAllItemsRecursively(from: location)
+        } else {
+            // Just items directly in this location
+            items = location.items
+        }
+        
+        // Apply filters
+        if let tag = filterTag {
+            items = items.filter { $0.tags.contains(tag) }
+        }
+        
+        if let plan = filterPlan {
+            items = items.filter { $0.plan == plan }
+        }
+        
+        return items.sorted { $0.displayName < $1.displayName }
+    }
+    
+    private func getAllItemsRecursively(from location: Location) -> [Item] {
+        var allItems = location.items
+        for child in location.children {
+            allItems.append(contentsOf: getAllItemsRecursively(from: child))
+        }
+        return allItems
+    }
 
     var body: some View {
         List {
@@ -114,7 +162,67 @@ struct LocationDetailView: View {
 
             // ───────── Items ─────────
             Section("Items in this Location") {
-                ForEach(location.items.sorted { $0.name < $1.name }) { item in
+                // View options
+                VStack(spacing: 10) {
+                    // Scope toggle
+                    Picker("Scope", selection: $showRecursiveItems) {
+                        Text("This Location Only").tag(false)
+                        Text("Include Sub-locations").tag(true)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    
+                    // Filter options
+                    HStack {
+                        Menu {
+                            Button("No Filter") {
+                                filterTag = nil
+                                filterPlan = nil
+                            }
+                            
+                            Section("Filter by Plan") {
+                                ForEach(ItemPlan.allCases, id: \.self) { plan in
+                                    Button(plan.rawValue) {
+                                        filterPlan = plan
+                                        filterTag = nil
+                                    }
+                                }
+                            }
+                            
+                            Section("Filter by Tag") {
+                                ForEach(allTags.sorted { $0.name < $1.name }) { tag in
+                                    Button(tag.name) {
+                                        filterTag = tag
+                                        filterPlan = nil
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                Text(filterLabel)
+                                    .foregroundColor(.primary)
+                                Image(systemName: "chevron.down")
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color(.systemGray5))
+                            .cornerRadius(8)
+                        }
+                        
+                        Spacer()
+                        
+                        if filterTag != nil || filterPlan != nil {
+                            Button("Clear") {
+                                filterTag = nil
+                                filterPlan = nil
+                            }
+                            .foregroundColor(.blue)
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+                
+                ForEach(itemsToDisplay) { item in
                     let isSelected = selectedItems.contains(item)
                     
                     HStack {
@@ -129,14 +237,23 @@ struct LocationDetailView: View {
                                     }
                                 }
                         }
-                        Text(item.name)
-                            // Tapping the row = rename the item
-                            .contentShape(Rectangle())
-                            .onTapGesture { 
-                                if !isInSelectionMode {
-                                    itemToEdit = item
-                                }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(item.displayName)
+                                .foregroundColor(.primary)
+                            
+                            if showRecursiveItems && item.location != location {
+                                Text(item.location?.name ?? "")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
                             }
+                        }
+                        // Tapping the row = rename the item
+                        .contentShape(Rectangle())
+                        .onTapGesture { 
+                            if !isInSelectionMode {
+                                itemToEdit = item
+                            }
+                        }
                         
                         Spacer()
                         
@@ -228,6 +345,21 @@ struct LocationDetailView: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 if isInSelectionMode {
+                    Menu {
+                        Button("Select All") {
+                            selectAll()
+                        }
+                        
+                        if !selectedItems.isEmpty || !selectedLocations.isEmpty {
+                            Button("Clear Selection") {
+                                selectedItems.removeAll()
+                                selectedLocations.removeAll()
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                    
                     Button("Done") {
                         exitSelectionMode()
                     }
@@ -367,13 +499,12 @@ struct LocationDetailView: View {
                     showBatchTagPicker = true
                 }
                 
-                Menu("Set Plan") {
-                    Button("Keep") { batchApplyPlan(.keep) }
-                    Button("Throw Away") { batchApplyPlan(.throwAway) }
-                    Button("Sell") { batchApplyPlan(.sell) }
-                    Button("Charity") { batchApplyPlan(.charity) }
-                    Button("Move") { batchApplyPlan(.move) }
-                }
+                // Plan options (can't use Menu inside confirmationDialog)
+                Button("Set Plan: Keep") { batchApplyPlan(.keep) }
+                Button("Set Plan: Throw Away") { batchApplyPlan(.throwAway) }
+                Button("Set Plan: Sell") { batchApplyPlan(.sell) }
+                Button("Set Plan: Charity") { batchApplyPlan(.charity) }
+                Button("Set Plan: Move") { batchApplyPlan(.move) }
             }
             
             if !selectedItems.isEmpty || !selectedLocations.isEmpty {
@@ -506,6 +637,17 @@ struct LocationDetailView: View {
         isInSelectionMode = false
         selectedItems.removeAll()
         selectedLocations.removeAll()
+    }
+    
+    private func selectAll() {
+        // Select all visible items
+        for item in itemsToDisplay {
+            selectedItems.insert(item)
+        }
+        // Select all sub-locations
+        for child in location.children {
+            selectedLocations.insert(child)
+        }
     }
     
     private func batchApplyTags(_ tags: [Tag]) {
