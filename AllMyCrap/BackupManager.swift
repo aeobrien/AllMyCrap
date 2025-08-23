@@ -9,6 +9,7 @@ struct BackupData: Codable {
     let items: [ItemData]
     let tags: [TagData]
     let reviewHistory: [ReviewHistoryData]
+    let settings: SettingsData?
     
     struct LocationData: Codable {
         let id: UUID
@@ -26,6 +27,9 @@ struct BackupData: Codable {
         let locationID: UUID?
         let tagIDs: [UUID]
         let plan: String?
+        let isBook: Bool?
+        let bookTitle: String?
+        let bookAuthor: String?
     }
     
     struct TagData: Codable {
@@ -40,6 +44,13 @@ struct BackupData: Codable {
         let action: String
         let isAutomatic: Bool
         let locationID: UUID?
+    }
+    
+    struct SettingsData: Codable {
+        let openAIKey: String?
+        let bulkItemPrompt: String?
+        let reviewDaysThreshold: Int?
+        let showReviewReminders: Bool?
     }
 }
 
@@ -119,6 +130,14 @@ class BackupManager: ObservableObject {
         let tags = try modelContext.fetch(FetchDescriptor<Tag>())
         let reviewHistory = try modelContext.fetch(FetchDescriptor<ReviewHistory>())
         
+        // Get settings from UserDefaults
+        let settings = BackupData.SettingsData(
+            openAIKey: UserDefaults.standard.string(forKey: "openAIKey"),
+            bulkItemPrompt: UserDefaults.standard.string(forKey: "bulkItemPrompt"),
+            reviewDaysThreshold: UserDefaults.standard.object(forKey: "reviewDaysThreshold") as? Int,
+            showReviewReminders: UserDefaults.standard.object(forKey: "showReviewReminders") as? Bool
+        )
+        
         // Convert to backup format
         let backupData = BackupData(
             version: 1,
@@ -140,7 +159,10 @@ class BackupManager: ObservableObject {
                     dateAdded: item.dateAdded,
                     locationID: item.location?.id,
                     tagIDs: item.tags.map { $0.id },
-                    plan: item.plan?.rawValue
+                    plan: item.plan?.rawValue,
+                    isBook: item.isBook,
+                    bookTitle: item.bookTitle,
+                    bookAuthor: item.bookAuthor
                 )
             },
             tags: tags.map { tag in
@@ -158,7 +180,8 @@ class BackupManager: ObservableObject {
                     isAutomatic: history.isAutomatic,
                     locationID: history.location?.id
                 )
-            }
+            },
+            settings: settings
         )
         
         // Save to iCloud
@@ -243,6 +266,9 @@ class BackupManager: ObservableObject {
             let item = Item(name: itemData.name)
             item.id = itemData.id
             item.dateAdded = itemData.dateAdded
+            item.isBook = itemData.isBook ?? false
+            item.bookTitle = itemData.bookTitle
+            item.bookAuthor = itemData.bookAuthor
             
             if let locationID = itemData.locationID,
                let location = locationMap[locationID] {
@@ -269,6 +295,22 @@ class BackupManager: ObservableObject {
                 history.id = historyData.id
                 history.date = historyData.date
                 modelContext.insert(history)
+            }
+        }
+        
+        // Restore settings if available
+        if let settings = backupData.settings {
+            if let openAIKey = settings.openAIKey {
+                UserDefaults.standard.set(openAIKey, forKey: "openAIKey")
+            }
+            if let bulkItemPrompt = settings.bulkItemPrompt {
+                UserDefaults.standard.set(bulkItemPrompt, forKey: "bulkItemPrompt")
+            }
+            if let reviewDaysThreshold = settings.reviewDaysThreshold {
+                UserDefaults.standard.set(reviewDaysThreshold, forKey: "reviewDaysThreshold")
+            }
+            if let showReviewReminders = settings.showReviewReminders {
+                UserDefaults.standard.set(showReviewReminders, forKey: "showReviewReminders")
             }
         }
         

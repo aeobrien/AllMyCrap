@@ -12,8 +12,17 @@ struct BulkItemPreviewView: View {
             List {
                 ForEach($parsedItems) { $item in
                     VStack(alignment: .leading, spacing: 8) {
-                        TextField("Item name", text: $item.name)
-                            .font(.headline)
+                        HStack {
+                            TextField("Item name", text: $item.name)
+                                .font(.headline)
+                            
+                            // Show book indicator if detected
+                            if item.name.contains(" by ") {
+                                Image(systemName: "books.vertical.fill")
+                                    .foregroundColor(.purple)
+                                    .font(.caption)
+                            }
+                        }
                         
                         // Tags section
                         HStack {

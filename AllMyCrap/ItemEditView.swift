@@ -22,6 +22,9 @@ struct ItemEditView: View {
     @State private var editingTagName = ""
     @State private var showDeleteAlert = false
     @State private var tagToDelete: Tag?
+    @State private var showBookSuggestion = false
+    @State private var suggestedTitle = ""
+    @State private var suggestedAuthor = ""
 
     /// When non-nil this triggers the duplicate-warning sheet.
     @State private var duplicatePayload: DuplicatePayload?
@@ -45,6 +48,9 @@ struct ItemEditView: View {
                         TextField("Author", text: $bookAuthor)
                     } else {
                         TextField("Item Name", text: $name)
+                            .onChange(of: name) { oldValue, newValue in
+                                checkForBookPattern(in: newValue)
+                            }
                     }
                 }
                 
@@ -205,6 +211,18 @@ struct ItemEditView: View {
                     Text("This will remove the '\(tag.name)' tag from \(tag.items.count) item(s). This action cannot be undone.")
                 }
             }
+            // Book suggestion alert
+            .alert("Convert to Book?", isPresented: $showBookSuggestion) {
+                Button("Convert") {
+                    isBook = true
+                    bookTitle = suggestedTitle
+                    bookAuthor = suggestedAuthor
+                    name = ""
+                }
+                Button("Keep as Item", role: .cancel) { }
+            } message: {
+                Text("This looks like a book:\n\nTitle: \(suggestedTitle)\nAuthor: \(suggestedAuthor)\n\nWould you like to convert it?")
+            }
         }
     }
 
@@ -283,6 +301,26 @@ struct ItemEditView: View {
         var current = loc.parent
         while let next = current { parts.append(next.name); current = next.parent }
         return parts.reversed().joined(separator: " › ")
+    }
+    
+    private func checkForBookPattern(in text: String) {
+        // Only check if we're creating a new item (not editing)
+        guard item == nil else { return }
+        
+        let lowercased = text.lowercased()
+        if let byRange = lowercased.range(of: " by ") {
+            let titleEndIndex = text.index(text.startIndex, offsetBy: text.distance(from: text.startIndex, to: byRange.lowerBound))
+            let authorStartIndex = text.index(text.startIndex, offsetBy: text.distance(from: text.startIndex, to: byRange.upperBound))
+            
+            let title = String(text[..<titleEndIndex]).trimmingCharacters(in: .whitespacesAndNewlines)
+            let author = String(text[authorStartIndex...]).trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if !title.isEmpty && !author.isEmpty {
+                suggestedTitle = title
+                suggestedAuthor = author
+                showBookSuggestion = true
+            }
+        }
     }
     // Levenshtein similarity
     private func similarity(between a: String, and b: String) -> Double {

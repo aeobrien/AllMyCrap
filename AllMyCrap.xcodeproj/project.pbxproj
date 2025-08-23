@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD3E27A72E58CCC700BE10DF /* BookSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */; };
+		DD3E27A92E58CDD900BE10DF /* ItemStandardizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */; };
 		DD70B6A02E22AD5800673D79 /* PlanSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B69F2E22AD5800673D79 /* PlanSearchView.swift */; };
 		DD70B6A22E22AD7900673D79 /* BulkItemPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */; };
 		DD70B6A42E22AD8100673D79 /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70B6A32E22AD8100673D79 /* BackupManager.swift */; };
@@ -51,6 +53,8 @@
 
 /* Begin PBXFileReference section */
 		DD3E27A52E57914C00BE10DF /* AllMyCrap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AllMyCrap.entitlements; sourceTree = "<group>"; };
+		DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSearchView.swift; sourceTree = "<group>"; };
+		DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemStandardizationView.swift; sourceTree = "<group>"; };
 		DD70B69F2E22AD5800673D79 /* PlanSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanSearchView.swift; sourceTree = "<group>"; };
 		DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkItemPreviewView.swift; sourceTree = "<group>"; };
 		DD70B6A32E22AD8100673D79 /* BackupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManager.swift; sourceTree = "<group>"; };
@@ -129,28 +133,30 @@
 			children = (
 				DD3E27A52E57914C00BE10DF /* AllMyCrap.entitlements */,
 				DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */,
+				DDB89A1D2E08550900A24E47 /* Assets.xcassets */,
+				DD70B6A32E22AD8100673D79 /* BackupManager.swift */,
+				DD70B6A52E22AD8200673D79 /* BackupRestoreView.swift */,
+				DD70B6A72E22AD8300673D79 /* BookDetectionView.swift */,
+				DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */,
+				DDB89A4B2E08550900A24E47 /* BulkItemAddView.swift */,
+				DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */,
+				DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */,
 				DDB89A1B2E08550700A24E47 /* ContentView.swift */,
 				DDB89A412E08550900A24E47 /* Item.swift */,
 				DDB89A432E08550900A24E47 /* ItemEditView.swift */,
+				DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */,
 				DDB89A452E08550900A24E47 /* Location.swift */,
 				DDB89A472E08550900A24E47 /* LocationDetailView.swift */,
 				DDB89A492E08550900A24E47 /* LocationEditView.swift */,
-				DDB89A4B2E08550900A24E47 /* BulkItemAddView.swift */,
-				DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */,
-				DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */,
+				DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */,
 				DD70B69F2E22AD5800673D79 /* PlanSearchView.swift */,
 				DDB89A4F2E08550900A24E47 /* ReviewHistory.swift */,
+				DDB89A5B2E08550900A24E47 /* SearchView.swift */,
 				DDB89A512E08550900A24E47 /* SettingsView.swift */,
 				DDB89A532E08550900A24E47 /* Tag.swift */,
 				DDB89A552E08550900A24E47 /* TagPicker.swift */,
 				DDB89A572E08550900A24E47 /* TagSearchView.swift */,
 				DDB89A592E08550900A24E47 /* TagView.swift */,
-				DDB89A5B2E08550900A24E47 /* SearchView.swift */,
-				DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */,
-				DD70B6A32E22AD8100673D79 /* BackupManager.swift */,
-				DD70B6A52E22AD8200673D79 /* BackupRestoreView.swift */,
-				DD70B6A72E22AD8300673D79 /* BookDetectionView.swift */,
-				DDB89A1D2E08550900A24E47 /* Assets.xcassets */,
 			);
 			path = AllMyCrap;
 			sourceTree = "<group>";
@@ -307,6 +313,8 @@
 				DDB89A1C2E08550700A24E47 /* ContentView.swift in Sources */,
 				DD70B6A02E22AD5800673D79 /* PlanSearchView.swift in Sources */,
 				DDB89A402E08550900A24E47 /* Item.swift in Sources */,
+				DD3E27A72E58CCC700BE10DF /* BookSearchView.swift in Sources */,
+				DD3E27A92E58CDD900BE10DF /* ItemStandardizationView.swift in Sources */,
 				DDB89A1A2E08550700A24E47 /* AllMyCrapApp.swift in Sources */,
 				DDB89A422E08550900A24E47 /* ItemEditView.swift in Sources */,
 				DDB89A442E08550900A24E47 /* Location.swift in Sources */,

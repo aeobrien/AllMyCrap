@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var showingSettings = false
     @State private var showingTagSearch = false
     @State private var showingPlanSearch = false
+    @State private var showingBookSearch = false
 
     var body: some View {
         NavigationStack {
@@ -35,6 +36,9 @@ struct ContentView: View {
                         }
                         Button("Browse by Plan", systemImage: "list.bullet.rectangle") {
                             showingPlanSearch = true
+                        }
+                        Button("Search Books", systemImage: "books.vertical") {
+                            showingBookSearch = true
                         }
                     } label: {
                         Label("Search", systemImage: "magnifyingglass")
@@ -70,6 +74,9 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showingPlanSearch) {
                 PlanSearchView()
+            }
+            .sheet(isPresented: $showingBookSearch) {
+                BookSearchView()
             }
         }
     }

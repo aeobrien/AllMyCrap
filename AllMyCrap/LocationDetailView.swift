@@ -30,7 +30,6 @@ struct LocationDetailView: View {
     // MARK: - Batch selection state
     @State private var isInSelectionMode = false
     @State private var selectedItems: Set<Item> = []
-    @State private var showBatchActionSheet = false
     @State private var showBatchTagPicker = false
     @State private var selectedBatchTags: [Tag] = []
     
@@ -148,7 +147,7 @@ struct LocationDetailView: View {
                 // Fallback editing‑mode delete (kept for macOS / iPadOS list editing)
                 .onDelete(perform: deleteChildren)
                 
-                // Add sub-location button
+                // Add location buttons
                 Button(action: { isAddingLocation = true }) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
@@ -158,69 +157,201 @@ struct LocationDetailView: View {
                     }
                 }
                 .disabled(location.depth >= 15)
+                
+                Button(action: { isAddingMultipleLocations = true }) {
+                    HStack {
+                        Image(systemName: "plus.rectangle.on.folder.fill")
+                            .foregroundColor(.blue)
+                        Text("Add Multiple Sub-Locations")
+                            .foregroundColor(.blue)
+                    }
+                }
+                .disabled(location.depth >= 15)
             }
 
             // ───────── Items ─────────
             Section("Items in this Location") {
-                // View options
-                VStack(spacing: 10) {
-                    // Scope toggle
-                    Picker("Scope", selection: $showRecursiveItems) {
-                        Text("This Location Only").tag(false)
-                        Text("Include Sub-locations").tag(true)
+                // Filters row
+                HStack(spacing: 12) {
+                    // Location filter
+                    Menu {
+                        Button(showRecursiveItems ? "✓ Include Sublocations" : "Include Sublocations") {
+                            showRecursiveItems = true
+                        }
+                        Button(!showRecursiveItems ? "✓ This Location Only" : "This Location Only") {
+                            showRecursiveItems = false
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "location")
+                                .font(.caption)
+                            Text(showRecursiveItems ? "Include Sublocations" : "This Location Only")
+                                .font(.caption)
+                                .lineLimit(1)
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                        }
+                        .foregroundColor(.primary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Color(.systemGray5))
+                        .cornerRadius(6)
                     }
-                    .pickerStyle(SegmentedPickerStyle())
                     
-                    // Filter options
-                    HStack {
-                        Menu {
-                            Button("No Filter") {
-                                filterTag = nil
-                                filterPlan = nil
+                    // Plan filter
+                    Menu {
+                        Button("No Filter") {
+                            filterPlan = nil
+                        }
+                        Divider()
+                        ForEach(ItemPlan.allCases, id: \.self) { plan in
+                            Button(filterPlan == plan ? "✓ \(plan.rawValue)" : plan.rawValue) {
+                                filterPlan = plan
                             }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checklist")
+                                .font(.caption)
+                            Text(filterPlan?.rawValue ?? "Plan")
+                                .font(.caption)
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                        }
+                        .foregroundColor(filterPlan != nil ? .blue : .primary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(filterPlan != nil ? .blue.opacity(0.1) : Color(.systemGray5)))
+                        .cornerRadius(6)
+                    }
+                    
+                    // Tag filter
+                    Menu {
+                        Button("No Filter") {
+                            filterTag = nil
+                        }
+                        Divider()
+                        ForEach(allTags.sorted { $0.name < $1.name }) { tag in
+                            Button(filterTag == tag ? "✓ \(tag.name)" : tag.name) {
+                                filterTag = tag
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "tag")
+                                .font(.caption)
+                            Text(filterTag?.name ?? "Tag")
+                                .font(.caption)
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                        }
+                        .foregroundColor(filterTag != nil ? .blue : .primary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(filterTag != nil ? .blue.opacity(0.1) : Color(.systemGray5)))
+                        .cornerRadius(6)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.vertical, 4)
+                
+                // Selection controls
+                VStack(spacing: 8) {
+                    if isInSelectionMode {
+                        HStack {
+                            Button("Done") {
+                                exitSelectionMode()
+                            }
+                            .fontWeight(.semibold)
                             
-                            Section("Filter by Plan") {
-                                ForEach(ItemPlan.allCases, id: \.self) { plan in
-                                    Button(plan.rawValue) {
-                                        filterPlan = plan
-                                        filterTag = nil
+                            Spacer()
+                            
+                            Text("\(selectedItems.count) selected")
+                                .foregroundColor(.secondary)
+                            
+                            Spacer()
+                            
+                            Menu {
+                                Button("Select All") {
+                                    selectAll()
+                                }
+                                
+                                if !selectedItems.isEmpty {
+                                    Button("Clear Selection") {
+                                        selectedItems.removeAll()
                                     }
                                 }
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
                             }
+                        }
+                        .padding(.vertical, 4)
+                        
+                        // Batch action buttons - always show but disable when nothing selected
+                        HStack(spacing: 16) {
+                            // Tags button
+                            Button {
+                                selectedBatchTags = []
+                                showBatchTagPicker = true
+                            } label: {
+                                Image(systemName: "tag.fill")
+                                    .font(.title3)
+                            }
+                            .buttonStyle(.bordered)
+                            .disabled(selectedItems.isEmpty)
                             
-                            Section("Filter by Tag") {
-                                ForEach(allTags.sorted { $0.name < $1.name }) { tag in
-                                    Button(tag.name) {
-                                        filterTag = tag
-                                        filterPlan = nil
-                                    }
-                                }
+                            // Plan menu
+                            Menu {
+                                Button("Keep") { batchApplyPlan(.keep) }
+                                Button("Throw Away") { batchApplyPlan(.throwAway) }
+                                Button("Sell") { batchApplyPlan(.sell) }
+                                Button("Charity") { batchApplyPlan(.charity) }
+                                Button("Move") { batchApplyPlan(.move) }
+                                Divider()
+                                Button("Clear Plan") { batchClearPlan() }
+                            } label: {
+                                Image(systemName: "checklist")
+                                    .font(.title3)
                             }
-                        } label: {
-                            HStack {
-                                Text(filterLabel)
-                                    .foregroundColor(.primary)
-                                Image(systemName: "chevron.down")
-                                    .foregroundColor(.secondary)
+                            .buttonStyle(.bordered)
+                            .disabled(selectedItems.isEmpty)
+                            
+                            // Move button
+                            Button {
+                                showMoveSheet = true
+                            } label: {
+                                Image(systemName: "folder.fill")
+                                    .font(.title3)
                             }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color(.systemGray5))
-                            .cornerRadius(8)
+                            .buttonStyle(.bordered)
+                            .disabled(selectedItems.isEmpty)
+                            
+                            Spacer()
+                            
+                            // Delete button
+                            Button(role: .destructive) {
+                                batchDelete()
+                            } label: {
+                                Image(systemName: "trash.fill")
+                                    .font(.title3)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.red)
+                            .disabled(selectedItems.isEmpty)
                         }
-                        
-                        Spacer()
-                        
-                        if filterTag != nil || filterPlan != nil {
-                            Button("Clear") {
-                                filterTag = nil
-                                filterPlan = nil
+                    } else {
+                        HStack {
+                            Button("Select") {
+                                isInSelectionMode = true
                             }
-                            .foregroundColor(.blue)
+                            .fontWeight(.medium)
+                            
+                            Spacer()
                         }
+                        .padding(.vertical, 4)
                     }
                 }
-                .padding(.vertical, 8)
                 
                 ForEach(itemsToDisplay) { item in
                     let isSelected = selectedItems.contains(item)
@@ -329,7 +460,7 @@ struct LocationDetailView: View {
                 }
                 .onDelete(perform: deleteItems)
                 
-                // Add item button
+                // Add item buttons
                 Button(action: { isAddingItem = true }) {
                     HStack {
                         Image(systemName: "plus.circle.fill")
@@ -338,65 +469,24 @@ struct LocationDetailView: View {
                             .foregroundColor(.blue)
                     }
                 }
+                
+                Button(action: { isAddingMultipleItems = true }) {
+                    HStack {
+                        Image(systemName: "square.stack.fill")
+                            .foregroundColor(.blue)
+                        Text("Add Multiple Items")
+                            .foregroundColor(.blue)
+                    }
+                }
             }
         }
         .navigationTitle(location.name)
         // ───────── Toolbar ─────────
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if isInSelectionMode {
-                    Menu {
-                        Button("Select All") {
-                            selectAll()
-                        }
-                        
-                        if !selectedItems.isEmpty {
-                            Button("Clear Selection") {
-                                selectedItems.removeAll()
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                    
-                    Button("Done") {
-                        exitSelectionMode()
-                    }
-                    .fontWeight(.semibold)
-                    
-                    if !selectedItems.isEmpty {
-                        Button("Actions") {
-                            showBatchActionSheet = true
-                        }
-                    }
-                } else {
-                    Button("Select") {
-                        isInSelectionMode = true
-                    }
-                    
-                    Button("Edit", systemImage: "pencil") { isEditingLocation = true }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Edit", systemImage: "pencil") { 
+                    isEditingLocation = true 
                 }
-                Menu {
-                    Button("Add Sub‑Location",
-                           systemImage: "plus.rectangle.on.folder") {
-                        isAddingLocation = true
-                    }
-                    .disabled(location.depth >= 15)   // keep depth cap
-                    Button("Add Multiple Sub-Locations",
-                           systemImage: "plus.rectangle.on.folder.fill") {
-                        isAddingMultipleLocations = true
-                    }
-                    .disabled(location.depth >= 15)   // keep depth cap
-                    Divider()
-                    Button("Add Item",
-                           systemImage: "plus.square.on.square") {
-                        isAddingItem = true
-                    }
-                    Button("Add Multiple Items",
-                           systemImage: "square.stack") {
-                        isAddingMultipleItems = true
-                    }
-                } label: { Label("Add", systemImage: "plus") }
             }
         }
         // ───────── Creation sheets ─────────
@@ -489,33 +579,6 @@ struct LocationDetailView: View {
                         }
                     }
             }
-        }
-        // Batch action sheet
-        .confirmationDialog("Batch Actions", isPresented: $showBatchActionSheet) {
-            Button("Apply Tags") {
-                selectedBatchTags = []
-                showBatchTagPicker = true
-            }
-            
-            // Plan options
-            Button("Set Plan: Keep") { batchApplyPlan(.keep) }
-            Button("Set Plan: Throw Away") { batchApplyPlan(.throwAway) }
-            Button("Set Plan: Sell") { batchApplyPlan(.sell) }
-            Button("Set Plan: Charity") { batchApplyPlan(.charity) }
-            Button("Set Plan: Move") { batchApplyPlan(.move) }
-            Button("Clear Plan") { batchClearPlan() }
-            
-            Button("Move to Location") {
-                showMoveSheet = true
-            }
-            
-            Button("Delete", role: .destructive) {
-                batchDelete()
-            }
-            
-            Button("Cancel", role: .cancel) { }
-        } message: {
-            Text("Choose an action for \(selectedItems.count) item\(selectedItems.count == 1 ? "" : "s")")
         }
     }
 

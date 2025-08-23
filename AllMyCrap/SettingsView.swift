@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var processingHyphens = false
     @State private var hyphenRemovalResult = ""
     @State private var showingBookDetection = false
+    @State private var showingStandardization = false
     
     var body: some View {
         NavigationStack {
@@ -128,10 +129,14 @@ struct SettingsView: View {
                     Button(action: { showingBookDetection = true }) {
                         Label("Detect Books", systemImage: "books.vertical")
                     }
+                    
+                    Button(action: { showingStandardization = true }) {
+                        Label("Standardize Item Names", systemImage: "sparkles")
+                    }
                 } header: {
                     Text("Maintenance")
                 } footer: {
-                    Text("Remove leading hyphens or detect and convert items to books.")
+                    Text("Remove leading hyphens, detect books, or standardize item names to a consistent format.")
                         .font(.caption)
                 }
             }
@@ -148,6 +153,9 @@ struct SettingsView: View {
             }
             .sheet(isPresented: $showingBookDetection) {
                 BookDetectionView()
+            }
+            .sheet(isPresented: $showingStandardization) {
+                ItemStandardizationView()
             }
         }
     }

@@ -6,7 +6,33 @@ struct BulkItemAddView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @AppStorage("openAIKey") private var openAIKey = ""
-    @AppStorage("bulkItemPrompt") private var bulkItemPrompt = "Parse this list and return a JSON array of item names. Each item should be on its own line or separated clearly. Remove any numbering, bullets, or unnecessary formatting. Return only the JSON array with no additional text."
+    @AppStorage("bulkItemPrompt") private var bulkItemPrompt = """
+Parse the text below and return a JSON array of standardised item name strings. Output ONLY the JSON array.
+FORMAT: Base Name - form, size, colour, material, variant (count)
+RULES
+* Base Name: Title Case; no articles; prefer the thing over brand. If brand = identity (e.g., "WD-40"), keep as Base Name; else put brand in variant.
+* Attributes: use this order exactly → form, size, colour, material, variant. Use singular nouns and lower case for attributes. Omit empty fields.
+* Count: add "(n)" ONLY if n>1 for identical items mentioned; else omit.
+* Packs vs sets: retail pack → form=pack with pack size in size (e.g., "24" or "24 pcs"); grouped tools → form=set or pair.
+* Normalisation: big/huge→large; tiny/little→small; metric units (ml/L, g/kg, cm/m); combine dimensions as "WxH cm"; cables in metres (e.g., "2m").
+* Synonyms: wire/lead→cable; bottle/jar/tub/tube/box/packet/sachet/bag/roll/sheet/cable/adapter/charger/bulb/battery/book/folder/keyring/case/tool/set/pair/can/spray/cloth/filter.
+* Disambiguators (optional): if present, append one tag at end in square brackets: [open] [sealed] [expired yyyy-mm] [spare] [fragile].
+* Punctuation: " - " between Base Name and attributes; attributes separated by ", "; no commas in Base Name.
+* Ignore: numbering/bullets; any location phrases (e.g., "in/on/at/under/inside/next to/by …"), room/container names, and directions like "left/right/top/bottom" when they describe placement not the item.
+* Books: Some items are books and may contain numbers, descriptors/colours which throw off the above system, please note that books will named in the format "Title by Author", ie. "Dubliners by James Joyce" or "Pygmy by Chuck Palahniuk". Please ignore these entries and return them in that format without making any changes. 
+
+EXAMPLE Input: "2 large bottles of sweet almond oil, 3 black 2m USB-C cables, 2 white USB-C to HDMI adapters, a pair of black sunglasses, a Silver Coil Webby Award, a dark brown ukulele, and 3 bottles of E45 moisturiser."
+ EXAMPLE Output: 
+[
+"Sweet Almond Oil - bottle, large (2)",
+"USB-C Cable - cable, 2m, black (3)",
+"USB-C to HDMI Adapter - adapter, white (2)",
+"Sunglasses - pair, black",
+"Webby Award - trophy, silver, coil",
+"Ukulele - instrument, dark brown",
+"Moisturiser - bottle, E45 (3)"
+]
+"""
     @Query private var allTags: [Tag]
     
     let location: Location
@@ -160,7 +186,25 @@ struct BulkItemAddView: View {
     private func addItems() {
         do {
             for parsedItem in parsedItems {
-                let item = Item(name: parsedItem.name, location: location)
+                // Check if this is a book (contains " by " pattern)
+                let item: Item
+                if let byRange = parsedItem.name.range(of: " by ", options: .caseInsensitive) {
+                    let title = String(parsedItem.name[..<byRange.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    let author = String(parsedItem.name[byRange.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+                    
+                    if !title.isEmpty && !author.isEmpty {
+                        // Create as book
+                        item = Item(title: title, author: author, location: location)
+                        print("📚 Detected book: \(title) by \(author)")
+                    } else {
+                        // Create as regular item if parsing failed
+                        item = Item(name: parsedItem.name, location: location)
+                    }
+                } else {
+                    // Create as regular item
+                    item = Item(name: parsedItem.name, location: location)
+                }
+                
                 item.plan = parsedItem.plan
                 
                 // Add tags
@@ -373,7 +417,45 @@ struct BulkItemAddView: View {
             
             if let content = response.choices.first?.message.content {
                 await MainActor.run {
-                    itemsText = content.trimmingCharacters(in: .whitespacesAndNewlines)
+                    // Try to parse as JSON array first
+                    let trimmedContent = content.trimmingCharacters(in: .whitespacesAndNewlines)
+                    
+                    print("🔵 BulkItemAdd - Received content from OpenAI:")
+                    print(trimmedContent)
+                    
+                    // Check if it looks like a JSON array
+                    if trimmedContent.hasPrefix("[") && trimmedContent.hasSuffix("]") {
+                        print("🔵 Detected JSON array format")
+                        
+                        // Clean up the response (remove markdown if present)
+                        let cleaned = trimmedContent
+                            .replacingOccurrences(of: "```json", with: "")
+                            .replacingOccurrences(of: "```", with: "")
+                            .trimmingCharacters(in: .whitespacesAndNewlines)
+                        
+                        // Try to parse as JSON array
+                        if let jsonData = cleaned.data(using: .utf8) {
+                            do {
+                                if let items = try JSONSerialization.jsonObject(with: jsonData) as? [String] {
+                                    print("✅ Successfully parsed \(items.count) items from JSON array")
+                                    // Convert array to line-separated text
+                                    itemsText = items.joined(separator: "\n")
+                                } else {
+                                    print("❌ JSON parsing succeeded but not a string array")
+                                    itemsText = trimmedContent
+                                }
+                            } catch {
+                                print("❌ JSON parsing failed: \(error)")
+                                // If JSON parsing fails, use as-is
+                                itemsText = trimmedContent
+                            }
+                        }
+                    } else {
+                        print("🔵 Using as plain text (not JSON array)")
+                        // Not JSON, use as plain text
+                        itemsText = trimmedContent
+                    }
+                    
                     parseItemsForPreview()
                     isProcessing = false
                 }
