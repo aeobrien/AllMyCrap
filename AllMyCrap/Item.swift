@@ -7,6 +7,7 @@ enum ItemPlan: String, CaseIterable, Codable {
     case sell = "Sell"
     case charity = "Charity"
     case move = "Move"
+    case fix = "Fix"
 }
 
 @Model
@@ -16,6 +17,7 @@ final class Item {
     var dateAdded: Date
     var tags: [Tag] = []
     var plan: ItemPlan?
+    var moveDestination: String?
     
     // Book-specific fields (nil for non-book items)
     var isBook: Bool = false

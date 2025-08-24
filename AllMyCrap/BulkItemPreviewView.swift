@@ -124,6 +124,8 @@ struct BulkItemPreviewView: View {
             Image(systemName: "heart.fill")
         case .move:
             Image(systemName: "house")
+        case .fix:
+            Image(systemName: "wrench")
         }
     }
     
@@ -137,6 +139,8 @@ struct BulkItemPreviewView: View {
             return .blue
         case .charity:
             return .yellow
+        case .fix:
+            return .teal
         case .move:
             return .purple
         }

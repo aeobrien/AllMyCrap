@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var showingTagSearch = false
     @State private var showingPlanSearch = false
     @State private var showingBookSearch = false
+    @State private var showingTinderMode = false
 
     var body: some View {
         NavigationStack {
@@ -44,7 +45,13 @@ struct ContentView: View {
                         Label("Search", systemImage: "magnifyingglass")
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: { showingTinderMode = true }) {
+                        Image(systemName: "rectangle.stack.fill")
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundColor(.orange)
+                    }
+                    
                     Menu {
                         Button("Add Room", systemImage: "plus") {
                             isAddingRoom = true
@@ -77,6 +84,9 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showingBookSearch) {
                 BookSearchView()
+            }
+            .fullScreenCover(isPresented: $showingTinderMode) {
+                TinderModeView(location: nil)
             }
         }
     }

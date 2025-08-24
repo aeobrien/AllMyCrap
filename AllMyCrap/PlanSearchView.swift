@@ -54,6 +54,8 @@ struct PlanSearchView: View {
             Image(systemName: "heart.fill")
         case .move:
             Image(systemName: "house")
+        case .fix:
+            Image(systemName: "wrench")
         }
     }
     
@@ -69,6 +71,8 @@ struct PlanSearchView: View {
             return .yellow
         case .move:
             return .purple
+        case .fix:
+            return .teal
         }
     }
 }

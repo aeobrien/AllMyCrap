@@ -21,22 +21,26 @@ struct LocationDetailView: View {
     @State private var itemForTags: Item?         // item to add tags to
     @State private var selectedTagsForItem: [Tag] = []
 
-    // MARK: - Move state (unchanged)
+    // MARK: - Move state
     private enum MoveTarget { case location(Location), item(Item) }
     @State private var moveTarget: MoveTarget?
     @State private var showMoveSheet = false
     @State private var showDepthAlert = false
+    @State private var selectedDestination = ""
     
     // MARK: - Batch selection state
     @State private var isInSelectionMode = false
     @State private var selectedItems: Set<Item> = []
     @State private var showBatchTagPicker = false
     @State private var selectedBatchTags: [Tag] = []
+    @State private var showBatchMoveSheet = false
+    @State private var batchMoveDestination = ""
     
     // MARK: - View options state
     @State private var showRecursiveItems = false
     @State private var filterTag: Tag? = nil
     @State private var filterPlan: ItemPlan? = nil
+    @State private var showingTinderMode = false
     
     private var filterLabel: String {
         if let plan = filterPlan {
@@ -97,497 +101,188 @@ struct LocationDetailView: View {
     }
 
     var body: some View {
+        mainListView
+            .navigationTitle(location.name)
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: { showingTinderMode = true }) {
+                        Image(systemName: "rectangle.stack.fill")
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundColor(.orange)
+                    }
+                    
+                    Button("Edit", systemImage: "pencil") { 
+                        isEditingLocation = true 
+                    }
+                }
+            }
+            .sheet(isPresented: $isAddingLocation) {
+                LocationEditView(location: nil, parentLocation: location)
+            }
+            .sheet(isPresented: $isAddingItem) {
+                ItemEditView(item: nil, location: location)
+            }
+            .sheet(isPresented: $isAddingMultipleItems) {
+                BulkItemAddView(location: location)
+            }
+            .sheet(isPresented: $isAddingMultipleLocations) {
+                BulkLocationAddView(parentLocation: location)
+            }
+            .sheet(isPresented: $isEditingLocation) {
+                LocationEditView(location: location, parentLocation: location.parent)
+            }
+            .sheet(item: $itemToEdit) { selected in
+                if let loc = selected.location {
+                    ItemEditView(item: selected, location: loc)
+                }
+            }
+            .sheet(item: $locationToEdit) { toEdit in
+                LocationEditView(location: toEdit, parentLocation: toEdit.parent)
+            }
+            .sheet(isPresented: $showMoveSheet) {
+                moveDestinationSheet
+            }
+            .alert("Hierarchy too deep",
+                   isPresented: $showDepthAlert,
+                   actions: { Button("OK", role: .cancel) {} },
+                   message:  { Text("Moving here would exceed the 15‑level limit.") })
+            .sheet(item: $itemForTags) { item in
+                itemTagPickerSheet(for: item)
+            }
+            .fullScreenCover(isPresented: $showingTinderMode) {
+                TinderModeView(location: location)
+            }
+            .sheet(isPresented: $showBatchTagPicker) {
+                batchTagPickerSheet
+            }
+            .sheet(isPresented: $showBatchMoveSheet) {
+                batchMoveSheet
+            }
+    }
+    
+    @ViewBuilder
+    private var mainListView: some View {
         List {
-            // ───────── Sub‑locations ─────────
-            Section("Sub‑Locations") {
-                ForEach(location.children.sorted { $0.name < $1.name }) { child in
-                    NavigationLink(value: child) {
-                        HStack(spacing: 0) {
-                            // Review indicator
-                            Rectangle()
-                                .fill(child.isReviewed ? Color.green : Color.clear)
-                                .frame(width: 3)
-                                .padding(.trailing, 8)
-                            
-                            Text(child.name)
-                            Spacer()
-                        }
-                    }
-                    .disabled(isInSelectionMode)
-                    .contextMenu {
-                        Button(action: {
-                            toggleReview(for: child)
-                        }) {
-                            Label(child.isReviewed ? "Mark as Unreviewed" : "Mark as Reviewed",
-                                  systemImage: child.isReviewed ? "checkmark.circle.badge.xmark" : "checkmark.circle")
-                        }
-                        
-                        Button(action: {
-                            locationToEdit = child
-                        }) {
-                            Label("Edit Location", systemImage: "pencil")
-                        }
-                    }
-                    // Extra swipe actions for move / edit / delete
-                    .swipeActions(allowsFullSwipe: false) {
-                        Button("Move") {
-                            moveTarget = .location(child)
-                            showMoveSheet = true
-                        }
-                        Button("Edit") {
-                            locationToEdit = child
-                        }
-                        Button(role: .destructive) {
-                            deleteChild(child)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
+            subLocationsSection
+            itemsSection
+        } 
+    }
+    
+    @ViewBuilder
+    private var moveDestinationSheet: some View {
+        if let moveTarget {
+            let item: Item? = {
+                switch moveTarget {
+                case .item(let item):
+                    return item
+                case .location:
+                    return nil
+                }
+            }()
+            
+            MoveDestinationPicker(
+                selectedDestination: $selectedDestination,
+                item: item,
+                onConfirm: { destination in
+                    if let location = findLocationByPath(destination) {
+                        performMove(to: location, target: moveTarget)
+                        showMoveSheet = false
+                        selectedDestination = ""
                     }
                 }
-                // Fallback editing‑mode delete (kept for macOS / iPadOS list editing)
-                .onDelete(perform: deleteChildren)
-                
-                // Add location buttons
-                Button(action: { isAddingLocation = true }) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundColor(.blue)
-                        Text("Add Sub-Location")
-                            .foregroundColor(.blue)
-                    }
-                }
-                .disabled(location.depth >= 15)
-                
-                Button(action: { isAddingMultipleLocations = true }) {
-                    HStack {
-                        Image(systemName: "plus.rectangle.on.folder.fill")
-                            .foregroundColor(.blue)
-                        Text("Add Multiple Sub-Locations")
-                            .foregroundColor(.blue)
-                    }
-                }
-                .disabled(location.depth >= 15)
-            }
-
-            // ───────── Items ─────────
-            Section("Items in this Location") {
-                // Filters row
-                HStack(spacing: 12) {
-                    // Location filter
-                    Menu {
-                        Button(showRecursiveItems ? "✓ Include Sublocations" : "Include Sublocations") {
-                            showRecursiveItems = true
-                        }
-                        Button(!showRecursiveItems ? "✓ This Location Only" : "This Location Only") {
-                            showRecursiveItems = false
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "location")
-                                .font(.caption)
-                            Text(showRecursiveItems ? "Include Sublocations" : "This Location Only")
-                                .font(.caption)
-                                .lineLimit(1)
-                            Image(systemName: "chevron.down")
-                                .font(.caption2)
-                        }
-                        .foregroundColor(.primary)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(Color(.systemGray5))
-                        .cornerRadius(6)
-                    }
-                    
-                    // Plan filter
-                    Menu {
-                        Button("No Filter") {
-                            filterPlan = nil
-                        }
-                        Divider()
-                        ForEach(ItemPlan.allCases, id: \.self) { plan in
-                            Button(filterPlan == plan ? "✓ \(plan.rawValue)" : plan.rawValue) {
-                                filterPlan = plan
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "checklist")
-                                .font(.caption)
-                            Text(filterPlan?.rawValue ?? "Plan")
-                                .font(.caption)
-                            Image(systemName: "chevron.down")
-                                .font(.caption2)
-                        }
-                        .foregroundColor(filterPlan != nil ? .blue : .primary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color(filterPlan != nil ? .blue.opacity(0.1) : Color(.systemGray5)))
-                        .cornerRadius(6)
-                    }
-                    
-                    // Tag filter
-                    Menu {
-                        Button("No Filter") {
-                            filterTag = nil
-                        }
-                        Divider()
-                        ForEach(allTags.sorted { $0.name < $1.name }) { tag in
-                            Button(filterTag == tag ? "✓ \(tag.name)" : tag.name) {
-                                filterTag = tag
-                            }
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "tag")
-                                .font(.caption)
-                            Text(filterTag?.name ?? "Tag")
-                                .font(.caption)
-                            Image(systemName: "chevron.down")
-                                .font(.caption2)
-                        }
-                        .foregroundColor(filterTag != nil ? .blue : .primary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color(filterTag != nil ? .blue.opacity(0.1) : Color(.systemGray5)))
-                        .cornerRadius(6)
-                    }
-                    
-                    Spacer()
-                }
-                .padding(.vertical, 4)
-                
-                // Selection controls
-                VStack(spacing: 8) {
-                    if isInSelectionMode {
-                        HStack {
-                            Button("Done") {
-                                exitSelectionMode()
-                            }
-                            .fontWeight(.semibold)
-                            
-                            Spacer()
-                            
-                            Text("\(selectedItems.count) selected")
-                                .foregroundColor(.secondary)
-                            
-                            Spacer()
-                            
-                            Menu {
-                                Button("Select All") {
-                                    selectAll()
-                                }
-                                
-                                if !selectedItems.isEmpty {
-                                    Button("Clear Selection") {
-                                        selectedItems.removeAll()
-                                    }
-                                }
-                            } label: {
-                                Image(systemName: "ellipsis.circle")
-                            }
-                        }
-                        .padding(.vertical, 4)
-                        
-                        // Batch action buttons - always show but disable when nothing selected
-                        HStack(spacing: 16) {
-                            // Tags button
-                            Button {
-                                selectedBatchTags = []
-                                showBatchTagPicker = true
-                            } label: {
-                                Image(systemName: "tag.fill")
-                                    .font(.title3)
-                            }
-                            .buttonStyle(.bordered)
-                            .disabled(selectedItems.isEmpty)
-                            
-                            // Plan menu
-                            Menu {
-                                Button("Keep") { batchApplyPlan(.keep) }
-                                Button("Throw Away") { batchApplyPlan(.throwAway) }
-                                Button("Sell") { batchApplyPlan(.sell) }
-                                Button("Charity") { batchApplyPlan(.charity) }
-                                Button("Move") { batchApplyPlan(.move) }
-                                Divider()
-                                Button("Clear Plan") { batchClearPlan() }
-                            } label: {
-                                Image(systemName: "checklist")
-                                    .font(.title3)
-                            }
-                            .buttonStyle(.bordered)
-                            .disabled(selectedItems.isEmpty)
-                            
-                            // Move button
-                            Button {
-                                showMoveSheet = true
-                            } label: {
-                                Image(systemName: "folder.fill")
-                                    .font(.title3)
-                            }
-                            .buttonStyle(.bordered)
-                            .disabled(selectedItems.isEmpty)
-                            
-                            Spacer()
-                            
-                            // Delete button
-                            Button(role: .destructive) {
-                                batchDelete()
-                            } label: {
-                                Image(systemName: "trash.fill")
-                                    .font(.title3)
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.red)
-                            .disabled(selectedItems.isEmpty)
-                        }
-                    } else {
-                        HStack {
-                            Button("Select") {
-                                isInSelectionMode = true
-                            }
-                            .fontWeight(.medium)
-                            
-                            Spacer()
-                        }
-                        .padding(.vertical, 4)
-                    }
-                }
-                
-                ForEach(itemsToDisplay) { item in
-                    let isSelected = selectedItems.contains(item)
-                    
-                    HStack {
-                        if isInSelectionMode {
-                            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(isSelected ? .accentColor : .gray)
-                                .onTapGesture {
-                                    if isSelected {
-                                        selectedItems.remove(item)
-                                    } else {
-                                        selectedItems.insert(item)
-                                    }
-                                }
-                        }
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(item.displayName)
-                                .foregroundColor(.primary)
-                            
-                            if showRecursiveItems, let relativePath = getRelativePath(for: item) {
-                                Text(relativePath)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        // Tapping the row = rename the item
-                        .contentShape(Rectangle())
-                        .onTapGesture { 
-                            if !isInSelectionMode {
-                                itemToEdit = item
-                            }
-                        }
-                        
-                        Spacer()
-                        
-                        // Plan indicator
-                        if let plan = item.plan {
-                            planIcon(for: plan)
-                                .foregroundColor(planColor(for: plan))
-                                .padding(.horizontal, 4)
-                        }
-                        
-                        // Tag button
-                        Button(action: {
-                            itemForTags = item
-                            selectedTagsForItem = item.tags
-                        }) {
-                            Image(systemName: item.tags.isEmpty ? "tag" : "tag.fill")
-                                .foregroundColor(item.tags.isEmpty ? .gray : .blue)
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
-                    }
-                    // Swipe left for move / edit / delete
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button("Move") {
-                            moveTarget = .item(item)
-                            showMoveSheet = true
-                        }
-                        Button("Edit") {
-                            itemToEdit = item
-                        }
-                        Button(role: .destructive) {
-                            deleteItem(item)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
-                    // Swipe right for plan assignment
-                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                        Button {
-                            assignPlan(.keep, to: item)
-                        } label: {
-                            Image(systemName: "checkmark")
-                        }
-                        .tint(.green)
-                        
-                        Button {
-                            assignPlan(.throwAway, to: item)
-                        } label: {
-                            Text("✕")
-                        }
-                        .tint(.red)
-                        
-                        Button {
-                            assignPlan(.sell, to: item)
-                        } label: {
-                            Text("£")
-                        }
-                        .tint(.blue)
-                        
-                        Button {
-                            assignPlan(.charity, to: item)
-                        } label: {
-                            Image(systemName: "heart.fill")
-                        }
-                        .tint(.yellow)
-                        
-                        Button {
-                            assignPlan(.move, to: item)
-                        } label: {
-                            Image(systemName: "house")
-                        }
-                        .tint(.purple)
-                    }
-                }
-                .onDelete(perform: deleteItems)
-                
-                // Add item buttons
-                Button(action: { isAddingItem = true }) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundColor(.blue)
-                        Text("Add Item")
-                            .foregroundColor(.blue)
-                    }
-                }
-                
-                Button(action: { isAddingMultipleItems = true }) {
-                    HStack {
-                        Image(systemName: "square.stack.fill")
-                            .foregroundColor(.blue)
-                        Text("Add Multiple Items")
-                            .foregroundColor(.blue)
-                    }
-                }
-            }
-        }
-        .navigationTitle(location.name)
-        // ───────── Toolbar ─────────
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Edit", systemImage: "pencil") { 
-                    isEditingLocation = true 
-                }
-            }
-        }
-        // ───────── Creation sheets ─────────
-        .sheet(isPresented: $isAddingLocation) {
-            LocationEditView(location: nil, parentLocation: location)
-        }
-        .sheet(isPresented: $isAddingItem) {
-            ItemEditView(item: nil, location: location)
-        }
-        .sheet(isPresented: $isAddingMultipleItems) {
-            BulkItemAddView(location: location)
-        }
-        .sheet(isPresented: $isAddingMultipleLocations) {
-            BulkLocationAddView(parentLocation: location)
-        }
-        // ───────── Edit sheets ─────────
-        .sheet(isPresented: $isEditingLocation) {
-            LocationEditView(location: location, parentLocation: location.parent)
-        }
-        .sheet(item: $itemToEdit) { selected in
-            // `ItemEditView` needs the current parent location as well
-            if let loc = selected.location {
-                ItemEditView(item: selected, location: loc)
-            }
-        }
-        .sheet(item: $locationToEdit) { toEdit in
-            LocationEditView(location: toEdit, parentLocation: toEdit.parent)
-        }
-        // ───────── Move picker ─────────
-        .sheet(isPresented: $showMoveSheet) {
-            if let moveTarget {
-                MoveDestinationPicker(forbiddenIDs: forbiddenSet(for: moveTarget)) { destination in
-                    performMove(to: destination, target: moveTarget)
-                }
-            }
-        }
-        // ───────── Depth alert ─────────
-        .alert("Hierarchy too deep",
-               isPresented: $showDepthAlert,
-               actions: { Button("OK", role: .cancel) {} },
-               message:  { Text("Moving here would exceed the 15‑level limit.") })
-        // Tag picker sheet
-        .sheet(item: $itemForTags) { item in
-            NavigationStack {
-                TagPicker(selectedTags: $selectedTagsForItem)
-                    .navigationTitle("Tags for \(item.name)")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Done") {
-                                // Remove item from old tags
-                                for tag in item.tags {
-                                    tag.items.removeAll { $0.id == item.id }
-                                }
-                                // Set new tags and update bidirectional relationship
-                                item.tags = selectedTagsForItem
-                                for tag in selectedTagsForItem {
-                                    if !tag.items.contains(where: { $0.id == item.id }) {
-                                        tag.items.append(item)
-                                    }
-                                }
-                                do {
-                                    try modelContext.save()
-                                } catch {
-                                    print("Failed to save tags: \(error)")
-                                }
-                                itemForTags = nil
-                            }
-                        }
-                    }
-            }
-        }
-        // Batch tag picker sheet
-        .sheet(isPresented: $showBatchTagPicker) {
-            NavigationStack {
-                TagPicker(selectedTags: $selectedBatchTags)
-                    .navigationTitle("Tags for \(selectedItems.count) items")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button("Cancel") {
-                                showBatchTagPicker = false
-                            }
-                        }
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Apply") {
-                                batchApplyTags(selectedBatchTags)
-                                showBatchTagPicker = false
-                            }
-                        }
-                    }
-            }
+            )
         }
     }
-
-    // MARK: - Move helpers (unchanged)
-    private func forbiddenSet(for target: MoveTarget) -> Set<UUID> {
-        switch target {
-        case .item:                    return []            // items can go anywhere
-        case .location(let loc):       return loc.collectIDs() // block self/descendants
+    
+    @ViewBuilder
+    private func itemTagPickerSheet(for item: Item) -> some View {
+        NavigationStack {
+            TagPicker(selectedTags: $selectedTagsForItem)
+                .navigationTitle("Tags for \(item.name)")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            for tag in item.tags {
+                                tag.items.removeAll { $0.id == item.id }
+                            }
+                            item.tags = selectedTagsForItem
+                            for tag in selectedTagsForItem {
+                                if !tag.items.contains(where: { $0.id == item.id }) {
+                                    tag.items.append(item)
+                                }
+                            }
+                            do {
+                                try modelContext.save()
+                            } catch {
+                                print("Failed to save tags: \(error)")
+                            }
+                            itemForTags = nil
+                        }
+                    }
+                }
         }
+    }
+    
+    @ViewBuilder
+    private var batchTagPickerSheet: some View {
+        NavigationStack {
+            TagPicker(selectedTags: $selectedBatchTags)
+                .navigationTitle("Tags for \(selectedItems.count) items")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Cancel") {
+                            showBatchTagPicker = false
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Apply") {
+                            batchApplyTags(selectedBatchTags)
+                            showBatchTagPicker = false
+                        }
+                    }
+                }
+        }
+    }
+    
+    @ViewBuilder
+    private var batchMoveSheet: some View {
+        MoveDestinationPicker(
+            selectedDestination: $batchMoveDestination,
+            item: nil,
+            onConfirm: { destination in
+                if let location = findLocationByPath(destination) {
+                    batchMove(to: location)
+                    showBatchMoveSheet = false
+                    batchMoveDestination = ""
+                }
+            }
+        )
+    }
+
+    // MARK: - Move helpers
+    private func findLocationByPath(_ path: String) -> Location? {
+        // Try to find a location matching the path
+        let allLocations = try? modelContext.fetch(FetchDescriptor<Location>())
+        guard let locations = allLocations else { return nil }
+        
+        for location in locations {
+            if fullPath(for: location) == path {
+                return location
+            }
+        }
+        return nil
+    }
+    
+    private func fullPath(for location: Location) -> String {
+        var parts = [location.name]
+        var current = location.parent
+        while let next = current {
+            parts.append(next.name)
+            current = next.parent
+        }
+        return parts.reversed().joined(separator: " › ")
     }
 
     private func performMove(to destination: Location, target: MoveTarget) {
@@ -672,6 +367,8 @@ struct LocationDetailView: View {
             Image(systemName: "heart.fill")
         case .move:
             Image(systemName: "house")
+        case .fix:
+            Image(systemName: "wrench")
         }
     }
     
@@ -687,6 +384,488 @@ struct LocationDetailView: View {
             return .yellow
         case .move:
             return .purple
+        case .fix:
+            return .teal
+        }
+    }
+    
+    // MARK: - View Components
+    
+    @ViewBuilder
+    private var subLocationsSection: some View {
+        Section("Sub‑Locations") {
+            ForEach(location.children.sorted { $0.name < $1.name }) { child in
+                subLocationRow(for: child)
+            }
+            .onDelete(perform: deleteChildren)
+            
+            addSubLocationButtons
+        }
+    }
+    
+    @ViewBuilder
+    private func subLocationRow(for child: Location) -> some View {
+        NavigationLink(value: child) {
+            HStack(spacing: 0) {
+                Rectangle()
+                    .fill(child.isReviewed ? Color.green : Color.clear)
+                    .frame(width: 3)
+                    .padding(.trailing, 8)
+                
+                Text(child.name)
+                Spacer()
+            }
+        }
+        .disabled(isInSelectionMode)
+        .contextMenu {
+            Button(action: {
+                toggleReview(for: child)
+            }) {
+                Label(child.isReviewed ? "Mark as Unreviewed" : "Mark as Reviewed",
+                      systemImage: child.isReviewed ? "checkmark.circle.badge.xmark" : "checkmark.circle")
+            }
+            
+            Button(action: {
+                locationToEdit = child
+            }) {
+                Label("Edit Location", systemImage: "pencil")
+            }
+        }
+        .swipeActions(allowsFullSwipe: false) {
+            Button("Move") {
+                moveTarget = .location(child)
+                showMoveSheet = true
+            }
+            Button("Edit") {
+                locationToEdit = child
+            }
+            Button(role: .destructive) {
+                deleteChild(child)
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var addSubLocationButtons: some View {
+        Group {
+            Button(action: { isAddingLocation = true }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(.blue)
+                    Text("Add Sub-Location")
+                        .foregroundColor(.blue)
+                }
+            }
+            .disabled(location.depth >= 15)
+            
+            Button(action: { isAddingMultipleLocations = true }) {
+                HStack {
+                    Image(systemName: "plus.rectangle.on.folder.fill")
+                        .foregroundColor(.blue)
+                    Text("Add Multiple Sub-Locations")
+                        .foregroundColor(.blue)
+                }
+            }
+            .disabled(location.depth >= 15)
+        }
+    }
+    
+    @ViewBuilder
+    private var itemsSection: some View {
+        Section("Items in this Location") {
+            filterRow
+            selectionControls
+            itemsList
+            addItemButtons
+        }
+    }
+    
+    @ViewBuilder
+    private var filterRow: some View {
+        HStack(spacing: 12) {
+            locationFilterMenu
+            planFilterMenu
+            tagFilterMenu
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+    
+    @ViewBuilder
+    private var locationFilterMenu: some View {
+        Menu {
+            Button(showRecursiveItems ? "✓ Include Sublocations" : "Include Sublocations") {
+                showRecursiveItems = true
+            }
+            Button(!showRecursiveItems ? "✓ This Location Only" : "This Location Only") {
+                showRecursiveItems = false
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "location")
+                    .font(.caption)
+                Text(showRecursiveItems ? "Include Sublocations" : "This Location Only")
+                    .font(.caption)
+                    .lineLimit(1)
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+            }
+            .foregroundColor(.primary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(Color(.systemGray5))
+            .cornerRadius(6)
+        }
+    }
+    
+    @ViewBuilder
+    private var planFilterMenu: some View {
+        Menu {
+            Button("No Filter") {
+                filterPlan = nil
+            }
+            Divider()
+            ForEach(ItemPlan.allCases, id: \.self) { plan in
+                Button(filterPlan == plan ? "✓ \(plan.rawValue)" : plan.rawValue) {
+                    filterPlan = plan
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "checklist")
+                    .font(.caption)
+                Text(filterPlan?.rawValue ?? "Plan")
+                    .font(.caption)
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+            }
+            .foregroundColor(filterPlan != nil ? .blue : .primary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color(filterPlan != nil ? .blue.opacity(0.1) : Color(.systemGray5)))
+            .cornerRadius(6)
+        }
+    }
+    
+    @ViewBuilder
+    private var tagFilterMenu: some View {
+        Menu {
+            Button("No Filter") {
+                filterTag = nil
+            }
+            Divider()
+            ForEach(allTags.sorted { $0.name < $1.name }) { tag in
+                Button(filterTag == tag ? "✓ \(tag.name)" : tag.name) {
+                    filterTag = tag
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: "tag")
+                    .font(.caption)
+                Text(filterTag?.name ?? "Tag")
+                    .font(.caption)
+                Image(systemName: "chevron.down")
+                    .font(.caption2)
+            }
+            .foregroundColor(filterTag != nil ? .blue : .primary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color(filterTag != nil ? .blue.opacity(0.1) : Color(.systemGray5)))
+            .cornerRadius(6)
+        }
+    }
+    
+    @ViewBuilder
+    private var selectionControls: some View {
+        VStack(spacing: 8) {
+            if isInSelectionMode {
+                selectionModeHeader
+                batchActionButtons
+            } else {
+                HStack {
+                    Button("Select") {
+                        isInSelectionMode = true
+                    }
+                    .fontWeight(.medium)
+                    
+                    Spacer()
+                }
+                .padding(.vertical, 4)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var selectionModeHeader: some View {
+        HStack {
+            Button("Done") {
+                exitSelectionMode()
+            }
+            .fontWeight(.semibold)
+            
+            Spacer()
+            
+            Text("\(selectedItems.count) selected")
+                .foregroundColor(.secondary)
+            
+            Spacer()
+            
+            Menu {
+                Button("Select All") {
+                    selectAll()
+                }
+                
+                if !selectedItems.isEmpty {
+                    Button("Clear Selection") {
+                        selectedItems.removeAll()
+                    }
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+        }
+        .padding(.vertical, 4)
+    }
+    
+    @ViewBuilder
+    private var batchActionButtons: some View {
+        HStack(spacing: 16) {
+            Button {
+                selectedBatchTags = []
+                showBatchTagPicker = true
+            } label: {
+                Image(systemName: "tag.fill")
+                    .font(.title3)
+            }
+            .buttonStyle(.bordered)
+            .disabled(selectedItems.isEmpty)
+            
+            Menu {
+                Button("Keep") { batchApplyPlan(.keep) }
+                Button("Throw Away") { batchApplyPlan(.throwAway) }
+                Button("Sell") { batchApplyPlan(.sell) }
+                Button("Charity") { batchApplyPlan(.charity) }
+                Button("Move") { batchApplyPlan(.move) }
+                Button("Fix") { batchApplyPlan(.fix) }
+                Divider()
+                Button("Clear Plan") { batchClearPlan() }
+            } label: {
+                Image(systemName: "checklist")
+                    .font(.title3)
+            }
+            .buttonStyle(.bordered)
+            .disabled(selectedItems.isEmpty)
+            
+            Button {
+                showBatchMoveSheet = true
+            } label: {
+                Image(systemName: "folder.fill")
+                    .font(.title3)
+            }
+            .buttonStyle(.bordered)
+            .disabled(selectedItems.isEmpty)
+            
+            Spacer()
+            
+            Button(role: .destructive) {
+                batchDelete()
+            } label: {
+                Image(systemName: "trash.fill")
+                    .font(.title3)
+            }
+            .buttonStyle(.bordered)
+            .tint(.red)
+            .disabled(selectedItems.isEmpty)
+        }
+    }
+    
+    @ViewBuilder
+    private var itemsList: some View {
+        ForEach(itemsToDisplay) { item in
+            itemRow(for: item)
+        }
+        .onDelete(perform: deleteItems)
+    }
+    
+    @ViewBuilder
+    private func itemRow(for item: Item) -> some View {
+        let isSelected = selectedItems.contains(item)
+        
+        HStack {
+            if isInSelectionMode {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(isSelected ? .accentColor : .gray)
+                    .onTapGesture {
+                        if isSelected {
+                            selectedItems.remove(item)
+                        } else {
+                            selectedItems.insert(item)
+                        }
+                    }
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.displayName)
+                    .foregroundColor(.primary)
+                
+                if showRecursiveItems, let relativePath = getRelativePath(for: item) {
+                    Text(relativePath)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture { 
+                if !isInSelectionMode {
+                    itemToEdit = item
+                }
+            }
+            
+            Spacer()
+            
+            if let plan = item.plan {
+                planIcon(for: plan)
+                    .foregroundColor(planColor(for: plan))
+                    .padding(.horizontal, 4)
+            }
+            
+            tagButton(for: item)
+        }
+        .contentShape(Rectangle())
+        .contextMenu {
+            contextMenuItems(for: item)
+        }
+        .swipeActions(allowsFullSwipe: false) {
+            swipeActionItems(for: item)
+        }
+    }
+    
+    @ViewBuilder
+    private func tagButton(for item: Item) -> some View {
+        if !item.tags.isEmpty {
+            Menu {
+                ForEach(item.tags) { tag in
+                    Label {
+                        Text(tag.name)
+                    } icon: {
+                        Circle()
+                            .fill(Color(hex: tag.color) ?? .blue)
+                            .frame(width: 10, height: 10)
+                    }
+                }
+            } label: {
+                HStack(spacing: 3) {
+                    ForEach(item.tags.prefix(3)) { tag in
+                        Circle()
+                            .fill(Color(hex: tag.color) ?? .blue)
+                            .frame(width: 8, height: 8)
+                    }
+                    if item.tags.count > 3 {
+                        Text("+\(item.tags.count - 3)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
+            }
+            .disabled(isInSelectionMode)
+        }
+    }
+    
+    @ViewBuilder
+    private func contextMenuItems(for item: Item) -> some View {
+        Group {
+            Button {
+                itemToEdit = item
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+            
+            Button {
+                moveTarget = .item(item)
+                showMoveSheet = true
+            } label: {
+                Label("Move", systemImage: "folder")
+            }
+            
+            Button {
+                itemForTags = item
+                selectedTagsForItem = item.tags
+            } label: {
+                Label("Edit Tags", systemImage: "tag")
+            }
+            
+            Divider()
+            
+            Menu {
+                Button("Keep") { assignPlan(.keep, to: item) }
+                Button("Throw Away") { assignPlan(.throwAway, to: item) }
+                Button("Sell") { assignPlan(.sell, to: item) }
+                Button("Charity") { assignPlan(.charity, to: item) }
+                Button("Move") { assignPlan(.move, to: item) }
+                Button("Fix") { assignPlan(.fix, to: item) }
+                Divider()
+                Button("Clear Plan") { item.plan = nil }
+            } label: {
+                Label("Set Plan", systemImage: "checklist")
+            }
+            
+            Divider()
+            
+            Button(role: .destructive) {
+                deleteItem(item)
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func swipeActionItems(for item: Item) -> some View {
+        Button("Tags") {
+            itemForTags = item
+            selectedTagsForItem = item.tags
+        }
+        Button("Move") {
+            moveTarget = .item(item)
+            showMoveSheet = true
+        }
+        Button("Edit") {
+            itemToEdit = item
+        }
+        Button(role: .destructive) {
+            deleteItem(item)
+        } label: {
+            Label("Delete", systemImage: "trash")
+        }
+    }
+    
+    @ViewBuilder
+    private var addItemButtons: some View {
+        Group {
+            Button(action: { isAddingItem = true }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                        .foregroundColor(.green)
+                    Text("Add Item")
+                        .foregroundColor(.green)
+                }
+            }
+            
+            Button(action: { isAddingMultipleItems = true }) {
+                HStack {
+                    Image(systemName: "plus.rectangle.on.rectangle.fill")
+                        .foregroundColor(.green)
+                    Text("Add Multiple Items")
+                        .foregroundColor(.green)
+                }
+            }
         }
     }
     
