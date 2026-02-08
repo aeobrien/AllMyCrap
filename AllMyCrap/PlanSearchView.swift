@@ -19,9 +19,26 @@ struct PlanSearchView: View {
         return result
     }
     
+    private var unplannedItems: [Item] {
+        items.filter { $0.plan == nil }.sorted { $0.name < $1.name }
+    }
+
     var body: some View {
         NavigationStack {
             List {
+                NavigationLink(destination: UnplannedItemsView(items: unplannedItems)) {
+                    HStack {
+                        Image(systemName: "questionmark.circle")
+                            .foregroundColor(.gray)
+                            .frame(width: 30)
+                        Text("No Plan")
+                        Spacer()
+                        Text("\(unplannedItems.count) items")
+                            .foregroundStyle(.secondary)
+                            .font(.caption)
+                    }
+                }
+
                 ForEach(itemsByPlan, id: \.0) { plan, planItems in
                     NavigationLink(destination: PlanItemsView(plan: plan, items: planItems)) {
                         HStack {
@@ -108,12 +125,52 @@ struct PlanItemsView: View {
     private func pathToLocation(_ location: Location) -> String {
         var path: [String] = []
         var current: Location? = location
-        
+
         while let loc = current {
             path.insert(loc.name, at: 0)
             current = loc.parent
         }
-        
+
+        return path.joined(separator: " → ")
+    }
+}
+
+struct UnplannedItemsView: View {
+    let items: [Item]
+
+    var body: some View {
+        List {
+            ForEach(items) { item in
+                NavigationLink(value: item.location) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(item.displayName)
+                            .font(.body)
+
+                        if let location = item.location {
+                            Text(pathToLocation(location))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+            }
+        }
+        .navigationTitle("No Plan")
+        .navigationDestination(for: Location.self) { location in
+            LocationDetailView(location: location)
+        }
+    }
+
+    private func pathToLocation(_ location: Location) -> String {
+        var path: [String] = []
+        var current: Location? = location
+
+        while let loc = current {
+            path.insert(loc.name, at: 0)
+            current = loc.parent
+        }
+
         return path.joined(separator: " → ")
     }
 }

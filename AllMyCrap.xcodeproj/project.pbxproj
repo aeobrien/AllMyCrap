@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2653DC2087D41888F4E18604 /* DuplicateMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */; };
 		DD3E27A72E58CCC700BE10DF /* BookSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */; };
 		DD3E27A92E58CDD900BE10DF /* ItemStandardizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */; };
 		DD3E27AB2E58CEE000BE10DF /* TinderModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27AA2E58CEE000BE10DF /* TinderModeView.swift */; };
@@ -53,6 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateMatcher.swift; sourceTree = "<group>"; };
 		DD3E27A52E57914C00BE10DF /* AllMyCrap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AllMyCrap.entitlements; sourceTree = "<group>"; };
 		DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSearchView.swift; sourceTree = "<group>"; };
 		DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemStandardizationView.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */,
 				DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */,
 				DDB89A1B2E08550700A24E47 /* ContentView.swift */,
+				A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */,
 				DDB89A412E08550900A24E47 /* Item.swift */,
 				DDB89A432E08550900A24E47 /* ItemEditView.swift */,
 				DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */,
@@ -314,6 +317,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDB89A1C2E08550700A24E47 /* ContentView.swift in Sources */,
+				2653DC2087D41888F4E18604 /* DuplicateMatcher.swift in Sources */,
 				DD70B6A02E22AD5800673D79 /* PlanSearchView.swift in Sources */,
 				DDB89A402E08550900A24E47 /* Item.swift in Sources */,
 				DD3E27A72E58CCC700BE10DF /* BookSearchView.swift in Sources */,

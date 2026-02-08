@@ -8,7 +8,8 @@ struct TinderModeView: View {
     let location: Location? // nil means all locations
     
     @Query private var allItems: [Item]
-    
+    @Query(sort: \Location.name) private var allLocations: [Location]
+
     @State private var eligibleItems: [Item] = []
     @State private var currentIndex = 0
     @State private var isRandomized = true
@@ -20,6 +21,8 @@ struct TinderModeView: View {
     @State private var showingMoveDestination = false
     @State private var selectedDestination: String = ""
     @State private var pendingMoveItem: Item?
+    @State private var selectedLocationFilter: Location?
+    @State private var showingLocationPicker = false
     
     private var currentItem: Item? {
         guard currentIndex < eligibleItems.count else { return nil }
@@ -30,6 +33,21 @@ struct TinderModeView: View {
         let remaining = eligibleItems.count - currentIndex
         return "\(remaining) item\(remaining == 1 ? "" : "s") remaining"
     }
+
+    private var allDoneMessage: String {
+        if let location = location {
+            return "All items in \(location.name) have plans assigned"
+        } else if let filter = selectedLocationFilter {
+            return "All items in \(filter.name) have plans assigned"
+        } else {
+            return "All items have plans assigned"
+        }
+    }
+
+    /// The effective location source for filtering items.
+    private var effectiveLocation: Location? {
+        location ?? selectedLocationFilter
+    }
     
     var body: some View {
         NavigationStack {
@@ -38,13 +56,29 @@ struct TinderModeView: View {
                 ContentUnavailableView(
                     "All Done!",
                     systemImage: "checkmark.circle.fill",
-                    description: Text(location == nil ? 
-                        "All items have plans assigned" : 
-                        "All items in \(location?.name ?? "") have plans assigned")
+                    description: Text(allDoneMessage)
                 )
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button("Done") { dismiss() }
+                    }
+                    if location == nil {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(action: { showingLocationPicker = true }) {
+                                Label(selectedLocationFilter?.name ?? "All",
+                                      systemImage: selectedLocationFilter == nil ? "map" : "mappin.circle.fill")
+                                    .font(.caption)
+                            }
+                        }
+                    }
+                }
+                .sheet(isPresented: $showingLocationPicker) {
+                    TinderLocationPickerView(
+                        selectedLocation: selectedLocationFilter,
+                        allLocations: allLocations,
+                        allItems: allItems
+                    ) { newFilter in
+                        applyLocationFilter(newFilter)
                     }
                 }
             } else if let item = currentItem {
@@ -60,13 +94,23 @@ struct TinderModeView: View {
                         .buttonStyle(.bordered)
                         
                         Button(action: { toggleIncludeBooks() }) {
-                            Label(includeBooks ? "Books On" : "Books Off", 
+                            Label(includeBooks ? "Books On" : "Books Off",
                                   systemImage: "books.vertical")
                                 .font(.caption)
                                 .foregroundColor(includeBooks ? .primary : .secondary)
                         }
                         .buttonStyle(.bordered)
-                        
+
+                        if location == nil {
+                            Button(action: { showingLocationPicker = true }) {
+                                Label(selectedLocationFilter?.name ?? "All",
+                                      systemImage: selectedLocationFilter == nil ? "map" : "mappin.circle.fill")
+                                    .font(.caption)
+                                    .foregroundColor(selectedLocationFilter == nil ? .secondary : .primary)
+                            }
+                            .buttonStyle(.bordered)
+                        }
+
                         Spacer()
                         
                         Text(progress)
@@ -78,42 +122,50 @@ struct TinderModeView: View {
                     Spacer()
                     
                     // Item display
-                    VStack(spacing: 24) {
+                    VStack(spacing: 16) {
                         // Item name (tappable to edit)
                         Button(action: {
                             editingItemName = item.displayName
                             showingItemEditor = true
                         }) {
-                            Text(item.displayName)
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .multilineTextAlignment(.center)
+                            if item.isBook, let title = item.bookTitle, let author = item.bookAuthor {
+                                VStack(spacing: 6) {
+                                    Text(title)
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .multilineTextAlignment(.center)
+                                        .lineLimit(3)
+                                        .minimumScaleFactor(0.6)
+                                    Text(author)
+                                        .font(.title3)
+                                        .foregroundColor(.secondary)
+                                        .italic()
+                                        .multilineTextAlignment(.center)
+                                        .lineLimit(2)
+                                        .minimumScaleFactor(0.7)
+                                }
                                 .padding(.horizontal)
                                 .foregroundColor(.primary)
+                            } else {
+                                Text(item.displayName)
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(4)
+                                    .minimumScaleFactor(0.6)
+                                    .padding(.horizontal)
+                                    .foregroundColor(.primary)
+                            }
                         }
-                        
+
                         // Location path
                         if let location = item.location {
                             Text(locationPath(for: location))
-                                .font(.title3)
+                                .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
+                                .lineLimit(2)
                                 .padding(.horizontal)
-                        }
-                        
-                        // Item type indicator
-                        if item.isBook {
-                            HStack {
-                                Image(systemName: "books.vertical.fill")
-                                    .foregroundColor(.purple)
-                                Text("Book")
-                                    .foregroundColor(.purple)
-                            }
-                            .font(.caption)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.purple.opacity(0.1))
-                            .cornerRadius(20)
                         }
                         
                         // Tags if any
@@ -142,103 +194,21 @@ struct TinderModeView: View {
                     Spacer()
                     
                     // Plan buttons with reordered layout
-                    VStack(spacing: 12) {
-                        // Keep button
-                        Button(action: { applyPlan(.keep) }) {
-                            HStack {
-                                planIcon(for: .keep)
-                                    .font(.title2)
-                                Text(ItemPlan.keep.rawValue)
-                                    .font(.title3)
-                                    .fontWeight(.medium)
-                                Spacer()
+                    VStack(spacing: 8) {
+                        ForEach([ItemPlan.keep, .sell, .charity, .fix], id: \.self) { plan in
+                            Button(action: { applyPlan(plan) }) {
+                                planButtonLabel(for: plan)
                             }
-                            .foregroundColor(planButtonColor(for: .keep))
-                            .padding()
-                            .background(planButtonBackground(for: .keep))
-                            .cornerRadius(12)
                         }
-                        
-                        // Sell button
-                        Button(action: { applyPlan(.sell) }) {
-                            HStack {
-                                planIcon(for: .sell)
-                                    .font(.title2)
-                                Text(ItemPlan.sell.rawValue)
-                                    .font(.title3)
-                                    .fontWeight(.medium)
-                                Spacer()
-                            }
-                            .foregroundColor(planButtonColor(for: .sell))
-                            .padding()
-                            .background(planButtonBackground(for: .sell))
-                            .cornerRadius(12)
-                        }
-                        
-                        // Charity button
-                        Button(action: { applyPlan(.charity) }) {
-                            HStack {
-                                planIcon(for: .charity)
-                                    .font(.title2)
-                                Text(ItemPlan.charity.rawValue)
-                                    .font(.title3)
-                                    .fontWeight(.medium)
-                                Spacer()
-                            }
-                            .foregroundColor(planButtonColor(for: .charity))
-                            .padding()
-                            .background(planButtonBackground(for: .charity))
-                            .cornerRadius(12)
-                        }
-                        
-                        // Fix button
-                        Button(action: { applyPlan(.fix) }) {
-                            HStack {
-                                planIcon(for: .fix)
-                                    .font(.title2)
-                                Text(ItemPlan.fix.rawValue)
-                                    .font(.title3)
-                                    .fontWeight(.medium)
-                                Spacer()
-                            }
-                            .foregroundColor(planButtonColor(for: .fix))
-                            .padding()
-                            .background(planButtonBackground(for: .fix))
-                            .cornerRadius(12)
-                        }
-                        
-                        // Move button (triggers destination selector)
+
                         Button(action: { handleMovePlan() }) {
-                            HStack {
-                                planIcon(for: .move)
-                                    .font(.title2)
-                                Text(ItemPlan.move.rawValue)
-                                    .font(.title3)
-                                    .fontWeight(.medium)
-                                Spacer()
-                            }
-                            .foregroundColor(planButtonColor(for: .move))
-                            .padding()
-                            .background(planButtonBackground(for: .move))
-                            .cornerRadius(12)
+                            planButtonLabel(for: .move)
                         }
-                        
-                        // Throw Away button (moved down)
+
                         Button(action: { applyPlan(.throwAway) }) {
-                            HStack {
-                                planIcon(for: .throwAway)
-                                    .font(.title2)
-                                Text(ItemPlan.throwAway.rawValue)
-                                    .font(.title3)
-                                    .fontWeight(.medium)
-                                Spacer()
-                            }
-                            .foregroundColor(planButtonColor(for: .throwAway))
-                            .padding()
-                            .background(planButtonBackground(for: .throwAway))
-                            .cornerRadius(12)
+                            planButtonLabel(for: .throwAway)
                         }
-                        
+
                         // Undo button
                         if !undoStack.isEmpty {
                             Button(action: undo) {
@@ -246,15 +216,17 @@ struct TinderModeView: View {
                                     Image(systemName: "arrow.uturn.backward")
                                     Text("Undo")
                                 }
+                                .font(.subheadline)
                                 .foregroundColor(.blue)
-                                .padding()
+                                .padding(.vertical, 8)
                                 .frame(maxWidth: .infinity)
                                 .background(Color(.systemGray6))
-                                .cornerRadius(12)
+                                .cornerRadius(10)
                             }
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom)
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -277,7 +249,21 @@ struct TinderModeView: View {
                     TextField("Item Name", text: $editingItemName)
                     Button("Save") {
                         if let item = currentItem, !editingItemName.isEmpty {
-                            item.name = editingItemName
+                            guard let contextItem = allItems.first(where: { $0.id == item.id }) else { return }
+                            let newName = editingItemName.trimmingCharacters(in: .whitespacesAndNewlines)
+
+                            if contextItem.isBook {
+                                // Try to parse "Title by Author"
+                                if let byRange = newName.range(of: " by ", options: .caseInsensitive) {
+                                    contextItem.bookTitle = String(newName[..<byRange.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+                                    contextItem.bookAuthor = String(newName[byRange.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+                                }
+                            }
+                            contextItem.name = newName
+
+                            if currentIndex < eligibleItems.count {
+                                eligibleItems[currentIndex] = contextItem
+                            }
                             saveChanges()
                         }
                     }
@@ -310,6 +296,15 @@ struct TinderModeView: View {
                             }
                         }
                         showingMoveDestination = false
+                    }
+                }
+                .sheet(isPresented: $showingLocationPicker) {
+                    TinderLocationPickerView(
+                        selectedLocation: selectedLocationFilter,
+                        allLocations: allLocations,
+                        allItems: allItems
+                    ) { newFilter in
+                        applyLocationFilter(newFilter)
                     }
                 }
             } else {
@@ -358,10 +353,10 @@ struct TinderModeView: View {
         print("🔄 Refreshing items list...")
         // Get items based on location context
         var items: [Item] = []
-        
-        if let location = location {
+
+        if let loc = effectiveLocation {
             // Get items from this location and all sublocations
-            items = getAllItemsRecursively(from: location)
+            items = getAllItemsRecursively(from: loc)
         } else {
             // Get all items directly from the query
             items = Array(allItems)
@@ -492,17 +487,35 @@ struct TinderModeView: View {
         print("   Current index: \(currentIndex) / \(eligibleItems.count)")
         print("   Items remaining: \(eligibleItems.count - currentIndex)")
     }
+
+    private func applyLocationFilter(_ newFilter: Location?) {
+        selectedLocationFilter = newFilter
+
+        // Maintain position using same logic as toggleIncludeBooks
+        let currentItemId = currentItem?.id
+
+        refreshItemsWithoutReset()
+
+        if let currentId = currentItemId,
+           let newIndex = eligibleItems.firstIndex(where: { $0.id == currentId }) {
+            currentIndex = newIndex
+        } else {
+            currentIndex = 0
+        }
+
+        print("📍 Location filter changed to: \(newFilter?.name ?? "All")")
+        print("   Eligible items: \(eligibleItems.count)")
+    }
     
     private func refreshItemsWithoutReset() {
-        // This function is only called when toggling book filter
-        // We should preserve the existing order rather than re-shuffling
-        
+        // Preserve the existing order rather than re-shuffling
+
         // Start with all items again
         var items: [Item] = []
-        
-        if let location = location {
+
+        if let loc = effectiveLocation {
             // Get items from this location and all sublocations
-            items = getAllItemsRecursively(from: location)
+            items = getAllItemsRecursively(from: loc)
         } else {
             // Get all items - make a copy of the array
             items = Array(allItems)
@@ -641,6 +654,22 @@ struct TinderModeView: View {
         }
     }
     
+    private func planButtonLabel(for plan: ItemPlan) -> some View {
+        HStack {
+            planIcon(for: plan)
+                .font(.body)
+            Text(plan.rawValue)
+                .font(.subheadline)
+                .fontWeight(.medium)
+            Spacer()
+        }
+        .foregroundColor(planButtonColor(for: plan))
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(planButtonBackground(for: plan))
+        .cornerRadius(10)
+    }
+
     private func planButtonBackground(for plan: ItemPlan) -> Color {
         switch plan {
         case .keep:
@@ -656,5 +685,150 @@ struct TinderModeView: View {
         case .fix:
             return Color.teal.opacity(0.2)
         }
+    }
+}
+
+// MARK: - Tinder Location Picker
+
+struct TinderLocationPickerView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let selectedLocation: Location?
+    let allLocations: [Location]
+    let allItems: [Item]
+    let onSelect: (Location?) -> Void
+
+    @State private var expandedLocations: Set<UUID> = []
+
+    private var topLevelLocations: [Location] {
+        allLocations.filter { $0.parent == nil }.sorted { $0.name < $1.name }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                // "All Locations" option
+                Button(action: {
+                    onSelect(nil)
+                    dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "map")
+                            .foregroundColor(.accentColor)
+                        Text("All Locations")
+                        Spacer()
+                        Text("\(unplannedCount(for: nil))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        if selectedLocation == nil {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                .foregroundColor(.primary)
+
+                // Location tree
+                ForEach(buildLocationList(), id: \.location.id) { entry in
+                    HStack {
+                        // Indentation
+                        ForEach(0..<entry.level, id: \.self) { _ in
+                            Spacer().frame(width: 20)
+                        }
+
+                        // Expand/collapse chevron
+                        if !entry.location.children.isEmpty {
+                            Button(action: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    if expandedLocations.contains(entry.location.id) {
+                                        expandedLocations.remove(entry.location.id)
+                                    } else {
+                                        expandedLocations.insert(entry.location.id)
+                                    }
+                                }
+                            }) {
+                                Image(systemName: expandedLocations.contains(entry.location.id)
+                                      ? "chevron.down" : "chevron.right")
+                                    .foregroundColor(.gray)
+                                    .frame(width: 20)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            Spacer().frame(width: 20)
+                        }
+
+                        // Location row
+                        Button(action: {
+                            onSelect(entry.location)
+                            dismiss()
+                        }) {
+                            HStack {
+                                Image(systemName: entry.level == 0 ? "house" : "tray")
+                                    .foregroundColor(.accentColor)
+                                Text(entry.location.name)
+                                Spacer()
+                                Text("\(unplannedCount(for: entry.location))")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                if selectedLocation?.id == entry.location.id {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(.accentColor)
+                                }
+                            }
+                        }
+                        .foregroundColor(.primary)
+                    }
+                }
+            }
+            .navigationTitle("Filter by Location")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+
+    private struct LocationListEntry {
+        let location: Location
+        let level: Int
+    }
+
+    private func buildLocationList() -> [LocationListEntry] {
+        var result: [LocationListEntry] = []
+
+        func addLocation(_ location: Location, level: Int) {
+            result.append(LocationListEntry(location: location, level: level))
+            if expandedLocations.contains(location.id) {
+                for child in location.children.sorted(by: { $0.name < $1.name }) {
+                    addLocation(child, level: level + 1)
+                }
+            }
+        }
+
+        for topLevel in topLevelLocations {
+            addLocation(topLevel, level: 0)
+        }
+
+        return result
+    }
+
+    private func unplannedCount(for location: Location?) -> Int {
+        let items: [Item]
+        if let location = location {
+            items = getAllItemsRecursively(from: location)
+        } else {
+            items = allItems
+        }
+        return items.filter { $0.plan == nil }.count
+    }
+
+    private func getAllItemsRecursively(from location: Location) -> [Item] {
+        var items = Array(location.items)
+        for child in location.children {
+            items.append(contentsOf: getAllItemsRecursively(from: child))
+        }
+        return items
     }
 }

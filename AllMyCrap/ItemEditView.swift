@@ -228,22 +228,32 @@ struct ItemEditView: View {
 
     // MARK: - Duplicate logic
     private func checkForDuplicates() {
-        let comparison = allItems.filter { other in
-            guard let item else { return true }
-            return other.id != item.id
-        }
+        let candidates = allItems
+            .filter { other in
+                guard let item else { return true }
+                return other.id != item.id
+            }
+            .map { DuplicateCandidate(
+                id: $0.id,
+                name: $0.name,
+                isBook: $0.isBook,
+                bookTitle: $0.bookTitle,
+                bookAuthor: $0.bookAuthor,
+                locationPath: locationPath(for: $0.location)
+            )}
 
         let checkName = isBook ? "\(bookTitle) by \(bookAuthor)" : name
-        let nameLower = checkName.lowercased()
-        let matches = comparison.filter {
-            similarity(between: nameLower, and: $0.name.lowercased()) >= 0.8
-        }
+        let matches = DuplicateMatcher.findDuplicates(
+            name: checkName,
+            isBook: isBook,
+            bookTitle: isBook ? bookTitle : nil,
+            bookAuthor: isBook ? bookAuthor : nil,
+            candidates: candidates
+        )
 
         if !matches.isEmpty {
             duplicatePayload = .init(stubs: matches.map {
-                ItemStub(id: $0.id,
-                         name: $0.name,
-                         locationPath: locationPath(for: $0.location))
+                ItemStub(id: $0.id, name: $0.name, locationPath: $0.locationPath)
             })
         } else {
             save()
@@ -322,36 +332,6 @@ struct ItemEditView: View {
             }
         }
     }
-    // Levenshtein similarity
-    private func similarity(between a: String, and b: String) -> Double {
-        let distance = levenshtein(a, b)
-        let maxLength = max(a.count, b.count)
-        return maxLength == 0 ? 1.0 : 1.0 - (Double(distance) / Double(maxLength))
-    }
-
-    private func levenshtein(_ a: String, _ b: String) -> Int {
-        let aChars = Array(a)
-        let bChars = Array(b)
-        var dp = Array(repeating: Array(repeating: 0, count: bChars.count + 1), count: aChars.count + 1)
-
-        for i in 0...aChars.count { dp[i][0] = i }
-        for j in 0...bChars.count { dp[0][j] = j }
-
-        for i in 1...aChars.count {
-            for j in 1...bChars.count {
-                if aChars[i-1] == bChars[j-1] {
-                    dp[i][j] = dp[i-1][j-1]
-                } else {
-                    dp[i][j] = min(
-                        dp[i-1][j] + 1,
-                        dp[i][j-1] + 1,
-                        dp[i-1][j-1] + 1
-                    )
-                }
-            }
-        }
-        return dp[aChars.count][bChars.count]
-    }
 }
 
 struct DuplicateListView: View {
@@ -411,4 +391,56 @@ struct ItemStub: Identifiable {
     var id: UUID
     var name: String
     var locationPath: String
+}
+
+// MARK: - Bulk Duplicate List View
+
+struct BulkDuplicateGroup: Identifiable {
+    let id = UUID()
+    let newItemName: String
+    let matches: [DuplicateMatch]
+}
+
+struct BulkDuplicateListView: View {
+    let groups: [BulkDuplicateGroup]
+    let onCancel: () -> Void
+    let onSaveAnyway: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Text("Some items you're adding look similar to existing items.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+                ForEach(groups) { group in
+                    Section(header: Text("New: \(group.newItemName)")) {
+                        ForEach(group.matches) { match in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(match.name)
+                                    .fontWeight(.medium)
+                                Text(match.locationPath)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.vertical, 2)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Possible Duplicates")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { onCancel() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save Anyway") { onSaveAnyway() }
+                        .foregroundColor(.red)
+                }
+            }
+        }
+    }
 }

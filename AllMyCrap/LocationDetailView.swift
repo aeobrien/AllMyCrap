@@ -39,17 +39,27 @@ struct LocationDetailView: View {
     // MARK: - View options state
     @State private var showRecursiveItems = false
     @State private var filterTag: Tag? = nil
-    @State private var filterPlan: ItemPlan? = nil
+    enum PlanFilter: Equatable {
+        case none       // no filter active - show all
+        case unplanned  // show items with no plan
+        case plan(ItemPlan)
+    }
+    @State private var filterPlan: PlanFilter = .none
     @State private var showingTinderMode = false
     
     private var filterLabel: String {
-        if let plan = filterPlan {
+        switch filterPlan {
+        case .plan(let plan):
             return "Plan: \(plan.rawValue)"
-        } else if let tag = filterTag {
-            return "Tag: \(tag.name)"
-        } else {
-            return "Filter"
+        case .unplanned:
+            return "Plan: No Plan"
+        case .none:
+            break
         }
+        if let tag = filterTag {
+            return "Tag: \(tag.name)"
+        }
+        return "Filter"
     }
     
     // Computed property for items to display
@@ -69,8 +79,13 @@ struct LocationDetailView: View {
             items = items.filter { $0.tags.contains(tag) }
         }
         
-        if let plan = filterPlan {
+        switch filterPlan {
+        case .plan(let plan):
             items = items.filter { $0.plan == plan }
+        case .unplanned:
+            items = items.filter { $0.plan == nil }
+        case .none:
+            break
         }
         
         return items.sorted { $0.displayName < $1.displayName }
@@ -520,31 +535,47 @@ struct LocationDetailView: View {
         }
     }
     
+    private var planFilterMenuLabel: String {
+        switch filterPlan {
+        case .plan(let p): return p.rawValue
+        case .unplanned: return "No Plan"
+        case .none: return "Plan"
+        }
+    }
+
+    private var planFilterActive: Bool {
+        filterPlan != .none
+    }
+
     @ViewBuilder
     private var planFilterMenu: some View {
         Menu {
-            Button("No Filter") {
-                filterPlan = nil
+            Button(filterPlan == .none ? "✓ No Filter" : "No Filter") {
+                filterPlan = .none
+            }
+            Divider()
+            Button(filterPlan == .unplanned ? "✓ No Plan" : "No Plan") {
+                filterPlan = .unplanned
             }
             Divider()
             ForEach(ItemPlan.allCases, id: \.self) { plan in
-                Button(filterPlan == plan ? "✓ \(plan.rawValue)" : plan.rawValue) {
-                    filterPlan = plan
+                Button(filterPlan == .plan(plan) ? "✓ \(plan.rawValue)" : plan.rawValue) {
+                    filterPlan = .plan(plan)
                 }
             }
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: "checklist")
                     .font(.caption)
-                Text(filterPlan?.rawValue ?? "Plan")
+                Text(planFilterMenuLabel)
                     .font(.caption)
                 Image(systemName: "chevron.down")
                     .font(.caption2)
             }
-            .foregroundColor(filterPlan != nil ? .blue : .primary)
+            .foregroundColor(planFilterActive ? .blue : .primary)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(Color(filterPlan != nil ? .blue.opacity(0.1) : Color(.systemGray5)))
+            .background(Color(planFilterActive ? .blue.opacity(0.1) : Color(.systemGray5)))
             .cornerRadius(6)
         }
     }
@@ -708,9 +739,16 @@ struct LocationDetailView: View {
             }
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(item.displayName)
-                    .foregroundColor(.primary)
-                
+                HStack(spacing: 4) {
+                    if item.isBook {
+                        Image(systemName: "book.fill")
+                            .font(.caption)
+                            .foregroundColor(.purple)
+                    }
+                    Text(item.displayName)
+                        .foregroundColor(.primary)
+                }
+
                 if showRecursiveItems, let relativePath = getRelativePath(for: item) {
                     Text(relativePath)
                         .font(.caption)
