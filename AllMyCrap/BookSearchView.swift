@@ -3,7 +3,7 @@ import SwiftData
 
 struct BookSearchView: View {
     @Environment(\.dismiss) private var dismiss
-    @Query(filter: #Predicate<Item> { $0.isBook == true }) private var books: [Item]
+    @Query(filter: #Predicate<Item> { $0.isBook == true && $0.isArchived == false }) private var books: [Item]
     
     @State private var searchText = ""
     @State private var sortBy: SortOption = .title

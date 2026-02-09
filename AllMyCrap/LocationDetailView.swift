@@ -88,6 +88,9 @@ struct LocationDetailView: View {
             break
         }
         
+        // Exclude archived items
+        items = items.filter { !$0.isArchived }
+
         return items.sorted { $0.displayName < $1.displayName }
     }
     

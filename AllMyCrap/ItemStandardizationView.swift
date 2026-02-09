@@ -37,7 +37,7 @@ EXAMPLE Output:
 }
 """
     
-    @Query(filter: #Predicate<Item> { $0.isBook == false }) private var items: [Item]
+    @Query(filter: #Predicate<Item> { $0.isBook == false && $0.isArchived == false }) private var items: [Item]
     
     @State private var itemsToStandardize: [ItemUpdate] = []
     @State private var selectedItems: Set<UUID> = []

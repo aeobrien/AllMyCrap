@@ -4,7 +4,7 @@ import SwiftData
 struct BookDetectionView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Query private var allItems: [Item]
+    @Query(filter: #Predicate<Item> { $0.isArchived == false }) private var allItems: [Item]
     @Query private var allTags: [Tag]
     
     @State private var potentialBooks: [PotentialBook] = []

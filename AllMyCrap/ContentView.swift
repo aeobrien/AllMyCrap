@@ -15,6 +15,9 @@ struct ContentView: View {
     @State private var showingPlanSearch = false
     @State private var showingBookSearch = false
     @State private var showingTinderMode = false
+    @State private var showingActionMode = false
+    @State private var showingArchive = false
+    @State private var showingDuplicateReview = false
 
     var body: some View {
         NavigationStack {
@@ -41,6 +44,10 @@ struct ContentView: View {
                         Button("Search Books", systemImage: "books.vertical") {
                             showingBookSearch = true
                         }
+                        Divider()
+                        Button("Find Duplicates", systemImage: "doc.on.doc") {
+                            showingDuplicateReview = true
+                        }
                     } label: {
                         Label("Search", systemImage: "magnifyingglass")
                     }
@@ -56,6 +63,14 @@ struct ContentView: View {
                         Button("Add Room", systemImage: "plus") {
                             isAddingRoom = true
                         }
+                        Divider()
+                        Button("Action Mode", systemImage: "bolt.fill") {
+                            showingActionMode = true
+                        }
+                        Button("Archive", systemImage: "archivebox") {
+                            showingArchive = true
+                        }
+                        Divider()
                         Button("Settings", systemImage: "gear") {
                             showingSettings = true
                         }
@@ -88,6 +103,15 @@ struct ContentView: View {
             .fullScreenCover(isPresented: $showingTinderMode) {
                 TinderModeView(location: nil)
             }
+            .sheet(isPresented: $showingActionMode) {
+                ActionModeView()
+            }
+            .sheet(isPresented: $showingArchive) {
+                ArchiveView()
+            }
+            .sheet(isPresented: $showingDuplicateReview) {
+                DuplicateReviewView()
+            }
         }
     }
 
@@ -101,7 +125,8 @@ struct ContentView: View {
         Location.self,
         Item.self,
         Tag.self,
-        ReviewHistory.self
+        ReviewHistory.self,
+        DuplicateExclusion.self
     ])
     let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: schema, configurations: [modelConfiguration])

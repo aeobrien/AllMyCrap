@@ -34,7 +34,7 @@ EXAMPLE Input: "2 large bottles of sweet almond oil, 3 black 2m USB-C cables, 2 
 ]
 """
     @Query private var allTags: [Tag]
-    @Query private var allItems: [Item]
+    @Query(filter: #Predicate<Item> { $0.isArchived == false }) private var allItems: [Item]
 
     let location: Location
 
@@ -200,10 +200,14 @@ EXAMPLE Input: "2 large bottles of sweet almond oil, 3 black 2m USB-C cables, 2 
             .sheet(isPresented: $showingBulkDuplicates) {
                 BulkDuplicateListView(
                     groups: bulkDuplicateGroups,
-                    onCancel: { showingBulkDuplicates = false },
-                    onSaveAnyway: {
+                    onCancel: {
+                        // "Add All" - add everything including duplicates
                         showingBulkDuplicates = false
                         addItems()
+                    },
+                    onConfirm: { reviewedGroups in
+                        showingBulkDuplicates = false
+                        applyDuplicateDecisions(reviewedGroups)
                     }
                 )
             }
@@ -407,6 +411,41 @@ EXAMPLE Input: "2 large bottles of sweet almond oil, 3 black 2m USB-C cables, 2 
 
             parsedItems.append(ParsedItem(name: itemName, tags: tags, plan: plan))
         }
+    }
+
+    // MARK: - Duplicate Decisions
+
+    private func applyDuplicateDecisions(_ reviewedGroups: [BulkDuplicateGroup]) {
+        // Build a set of item names that should be skipped
+        var namesToSkip: Set<String> = []
+        var nameRenames: [String: String] = [:]  // original -> new name
+
+        for group in reviewedGroups {
+            switch group.decision {
+            case .skip:
+                namesToSkip.insert(group.newItemName)
+            case .editedName(let newName):
+                nameRenames[group.newItemName] = newName
+            case .keep:
+                break  // Add as-is
+            }
+        }
+
+        // Apply renames to parsedItems
+        for i in parsedItems.indices {
+            if namesToSkip.contains(parsedItems[i].name) {
+                // Mark for removal (we'll filter after)
+                parsedItems[i].name = ""
+            } else if let newName = nameRenames[parsedItems[i].name] {
+                parsedItems[i].name = newName
+            }
+        }
+
+        // Remove skipped items
+        parsedItems.removeAll { $0.name.isEmpty }
+
+        // Add the remaining items
+        addItems()
     }
 
     // MARK: - Save Items

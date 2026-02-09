@@ -10,7 +10,8 @@ struct BackupData: Codable {
     let tags: [TagData]
     let reviewHistory: [ReviewHistoryData]
     let settings: SettingsData?
-    
+    let duplicateExclusions: [DuplicateExclusionData]?
+
     struct LocationData: Codable {
         let id: UUID
         let name: String
@@ -19,7 +20,7 @@ struct BackupData: Codable {
         let isReviewed: Bool
         let lastReviewedDate: Date?
     }
-    
+
     struct ItemData: Codable {
         let id: UUID
         let name: String
@@ -30,14 +31,18 @@ struct BackupData: Codable {
         let isBook: Bool?
         let bookTitle: String?
         let bookAuthor: String?
+        // Archive fields (v2)
+        let isArchived: Bool?
+        let archivedDate: Date?
+        let archivedPlan: String?
     }
-    
+
     struct TagData: Codable {
         let id: UUID
         let name: String
         let dateAdded: Date?
     }
-    
+
     struct ReviewHistoryData: Codable {
         let id: UUID
         let date: Date
@@ -45,12 +50,19 @@ struct BackupData: Codable {
         let isAutomatic: Bool
         let locationID: UUID?
     }
-    
+
     struct SettingsData: Codable {
         let openAIKey: String?
         let bulkItemPrompt: String?
         let reviewDaysThreshold: Int?
         let showReviewReminders: Bool?
+    }
+
+    struct DuplicateExclusionData: Codable {
+        let id: UUID
+        let itemID1: UUID
+        let itemID2: UUID
+        let dateCreated: Date
     }
 }
 
@@ -124,11 +136,12 @@ class BackupManager: ObservableObject {
         isBackingUp = true
         defer { isBackingUp = false }
         
-        // Fetch all data
+        // Fetch all data (including archived items - backup captures everything)
         let locations = try modelContext.fetch(FetchDescriptor<Location>())
         let items = try modelContext.fetch(FetchDescriptor<Item>())
         let tags = try modelContext.fetch(FetchDescriptor<Tag>())
         let reviewHistory = try modelContext.fetch(FetchDescriptor<ReviewHistory>())
+        let exclusions = try modelContext.fetch(FetchDescriptor<DuplicateExclusion>())
         
         // Get settings from UserDefaults
         let settings = BackupData.SettingsData(
@@ -140,7 +153,7 @@ class BackupManager: ObservableObject {
         
         // Convert to backup format
         let backupData = BackupData(
-            version: 1,
+            version: 2,
             date: Date(),
             locations: locations.map { location in
                 BackupData.LocationData(
@@ -162,7 +175,10 @@ class BackupManager: ObservableObject {
                     plan: item.plan?.rawValue,
                     isBook: item.isBook,
                     bookTitle: item.bookTitle,
-                    bookAuthor: item.bookAuthor
+                    bookAuthor: item.bookAuthor,
+                    isArchived: item.isArchived,
+                    archivedDate: item.archivedDate,
+                    archivedPlan: item.archivedPlan?.rawValue
                 )
             },
             tags: tags.map { tag in
@@ -181,7 +197,15 @@ class BackupManager: ObservableObject {
                     locationID: history.location?.id
                 )
             },
-            settings: settings
+            settings: settings,
+            duplicateExclusions: exclusions.map { exclusion in
+                BackupData.DuplicateExclusionData(
+                    id: exclusion.id,
+                    itemID1: exclusion.itemID1,
+                    itemID2: exclusion.itemID2,
+                    dateCreated: exclusion.dateCreated
+                )
+            }
         )
         
         // Save to iCloud
@@ -220,11 +244,13 @@ class BackupManager: ObservableObject {
         let existingItems = try modelContext.fetch(FetchDescriptor<Item>())
         let existingTags = try modelContext.fetch(FetchDescriptor<Tag>())
         let existingHistory = try modelContext.fetch(FetchDescriptor<ReviewHistory>())
-        
+        let existingExclusions = try modelContext.fetch(FetchDescriptor<DuplicateExclusion>())
+
         existingItems.forEach { modelContext.delete($0) }
         existingLocations.forEach { modelContext.delete($0) }
         existingTags.forEach { modelContext.delete($0) }
         existingHistory.forEach { modelContext.delete($0) }
+        existingExclusions.forEach { modelContext.delete($0) }
         
         try modelContext.save()
         
@@ -269,18 +295,23 @@ class BackupManager: ObservableObject {
             item.isBook = itemData.isBook ?? false
             item.bookTitle = itemData.bookTitle
             item.bookAuthor = itemData.bookAuthor
-            
+            item.isArchived = itemData.isArchived ?? false
+            item.archivedDate = itemData.archivedDate
+            if let archivedPlanString = itemData.archivedPlan {
+                item.archivedPlan = ItemPlan(rawValue: archivedPlanString)
+            }
+
             if let locationID = itemData.locationID,
                let location = locationMap[locationID] {
                 item.location = location
             }
-            
+
             item.tags = itemData.tagIDs.compactMap { tagMap[$0] }
-            
+
             if let planString = itemData.plan {
                 item.plan = ItemPlan(rawValue: planString)
             }
-            
+
             modelContext.insert(item)
         }
         
@@ -298,6 +329,16 @@ class BackupManager: ObservableObject {
             }
         }
         
+        // Restore duplicate exclusions
+        if let exclusionsData = backupData.duplicateExclusions {
+            for exclusionData in exclusionsData {
+                let exclusion = DuplicateExclusion(itemID1: exclusionData.itemID1, itemID2: exclusionData.itemID2)
+                exclusion.id = exclusionData.id
+                exclusion.dateCreated = exclusionData.dateCreated
+                modelContext.insert(exclusion)
+            }
+        }
+
         // Restore settings if available
         if let settings = backupData.settings {
             if let openAIKey = settings.openAIKey {

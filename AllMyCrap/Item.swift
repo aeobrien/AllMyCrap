@@ -24,6 +24,11 @@ final class Item {
     var bookTitle: String?
     var bookAuthor: String?
     
+    // Archive fields
+    var isArchived: Bool = false
+    var archivedDate: Date?
+    var archivedPlan: ItemPlan?
+
     // Relationship to the location it's stored in
     var location: Location?
     

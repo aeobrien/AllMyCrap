@@ -21,7 +21,7 @@ struct TagSearchView: View {
                                 .frame(width: 20, height: 20)
                             Text(tag.name)
                             Spacer()
-                            Text("\(tag.items.count) items")
+                            Text("\(tag.items.filter { !$0.isArchived }.count) items")
                                 .foregroundStyle(.secondary)
                                 .font(.caption)
                         }
@@ -100,7 +100,7 @@ struct TagItemsView: View {
     
     var body: some View {
         List {
-            ForEach(tag.items.sorted { $0.name < $1.name }) { item in
+            ForEach(tag.items.filter { !$0.isArchived }.sorted { $0.name < $1.name }) { item in
                 NavigationLink(value: item.location) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(item.name)

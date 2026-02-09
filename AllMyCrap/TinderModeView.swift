@@ -7,8 +7,9 @@ struct TinderModeView: View {
     
     let location: Location? // nil means all locations
     
-    @Query private var allItems: [Item]
+    @Query(filter: #Predicate<Item> { $0.isArchived == false }) private var allItems: [Item]
     @Query(sort: \Location.name) private var allLocations: [Location]
+    @Query private var allTags: [Tag]
 
     @State private var eligibleItems: [Item] = []
     @State private var currentIndex = 0
@@ -23,6 +24,9 @@ struct TinderModeView: View {
     @State private var pendingMoveItem: Item?
     @State private var selectedLocationFilter: Location?
     @State private var showingLocationPicker = false
+    @State private var filterPlan: TinderPlanFilter = .unplanned
+    @State private var filterTag: Tag?
+    @State private var showingFilterSheet = false
     
     private var currentItem: Item? {
         guard currentIndex < eligibleItems.count else { return nil }
@@ -47,6 +51,26 @@ struct TinderModeView: View {
     /// The effective location source for filtering items.
     private var effectiveLocation: Location? {
         location ?? selectedLocationFilter
+    }
+
+    private var hasActiveFilters: Bool {
+        filterPlan != .unplanned || filterTag != nil || !includeBooks
+    }
+
+    private var filterSummary: String {
+        var parts: [String] = []
+        switch filterPlan {
+        case .unplanned: parts.append("Unplanned")
+        case .all: parts.append("All Plans")
+        case .plan(let plan): parts.append(plan.rawValue)
+        }
+        if let tag = filterTag {
+            parts.append(tag.name)
+        }
+        if !includeBooks {
+            parts.append("No Books")
+        }
+        return parts.joined(separator: ", ")
     }
     
     var body: some View {
@@ -87,17 +111,9 @@ struct TinderModeView: View {
                     // Header with controls
                     HStack {
                         Button(action: { isRandomized.toggle(); reshuffle() }) {
-                            Label(isRandomized ? "Random" : "A-Z", 
+                            Label(isRandomized ? "Random" : "A-Z",
                                   systemImage: isRandomized ? "shuffle" : "textformat")
                                 .font(.caption)
-                        }
-                        .buttonStyle(.bordered)
-                        
-                        Button(action: { toggleIncludeBooks() }) {
-                            Label(includeBooks ? "Books On" : "Books Off",
-                                  systemImage: "books.vertical")
-                                .font(.caption)
-                                .foregroundColor(includeBooks ? .primary : .secondary)
                         }
                         .buttonStyle(.bordered)
 
@@ -111,8 +127,21 @@ struct TinderModeView: View {
                             .buttonStyle(.bordered)
                         }
 
+                        Button(action: { showingFilterSheet = true }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "line.3.horizontal.decrease.circle")
+                                    .font(.caption)
+                                Text(filterSummary)
+                                    .font(.caption)
+                                    .lineLimit(1)
+                            }
+                            .foregroundColor(hasActiveFilters ? .white : .primary)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(hasActiveFilters ? .blue : nil)
+
                         Spacer()
-                        
+
                         Text(progress)
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -307,6 +336,17 @@ struct TinderModeView: View {
                         applyLocationFilter(newFilter)
                     }
                 }
+                .sheet(isPresented: $showingFilterSheet) {
+                    TinderFilterView(
+                        filterPlan: $filterPlan,
+                        filterTag: $filterTag,
+                        includeBooks: $includeBooks,
+                        allTags: Array(allTags)
+                    )
+                    .onDisappear {
+                        applyFilters()
+                    }
+                }
             } else {
                 // Finished processing
                 VStack(spacing: 20) {
@@ -363,12 +403,24 @@ struct TinderModeView: View {
         }
         
         print("   Found \(items.count) total items")
-        
-        // Filter for items without plans
-        items = items.filter { $0.plan == nil }
-        
-        print("   \(items.count) items without plans")
-        
+
+        // Apply plan filter
+        switch filterPlan {
+        case .unplanned:
+            items = items.filter { $0.plan == nil }
+        case .all:
+            break
+        case .plan(let plan):
+            items = items.filter { $0.plan == plan }
+        }
+
+        print("   \(items.count) items after plan filter")
+
+        // Apply tag filter
+        if let tag = filterTag {
+            items = items.filter { $0.tags.contains(where: { $0.id == tag.id }) }
+        }
+
         // Filter books if needed
         if !includeBooks {
             items = items.filter { !$0.isBook }
@@ -460,32 +512,23 @@ struct TinderModeView: View {
     
     private func toggleIncludeBooks() {
         includeBooks.toggle()
-        
-        // Save current item to maintain position
+        applyFilters()
+    }
+
+    private func applyFilters() {
         let currentItemId = currentItem?.id
-        let wasAtIndex = currentIndex
-        
-        // Refresh the items list with new filter
+
         refreshItemsWithoutReset()
-        
-        // Try to maintain position intelligently
-        if let currentId = currentItemId {
-            // If current item still exists in the list, go to it
-            if let newIndex = eligibleItems.firstIndex(where: { $0.id == currentId }) {
-                currentIndex = newIndex
-            } else {
-                // Current item was filtered out (e.g., was a book and we're hiding books)
-                // Reset to beginning since the list has changed significantly
-                currentIndex = 0
-            }
+
+        if let currentId = currentItemId,
+           let newIndex = eligibleItems.firstIndex(where: { $0.id == currentId }) {
+            currentIndex = newIndex
         } else {
-            // No current item or we were at the end - reset to beginning
             currentIndex = 0
         }
-        
-        print("📚 Book filter toggled: \(includeBooks ? "including" : "excluding") books")
-        print("   Current index: \(currentIndex) / \(eligibleItems.count)")
-        print("   Items remaining: \(eligibleItems.count - currentIndex)")
+
+        print("🔧 Filters applied: plan=\(filterPlan), tag=\(filterTag?.name ?? "none"), books=\(includeBooks)")
+        print("   Eligible items: \(eligibleItems.count)")
     }
 
     private func applyLocationFilter(_ newFilter: Location?) {
@@ -522,10 +565,22 @@ struct TinderModeView: View {
         }
         
         print("📋 RefreshItemsWithoutReset: Starting with \(items.count) total items")
-        
-        // Filter for items without plans
-        items = items.filter { $0.plan == nil }
-        print("   After filtering items without plans: \(items.count) items")
+
+        // Apply plan filter
+        switch filterPlan {
+        case .unplanned:
+            items = items.filter { $0.plan == nil }
+        case .all:
+            break
+        case .plan(let plan):
+            items = items.filter { $0.plan == plan }
+        }
+        print("   After plan filter: \(items.count) items")
+
+        // Apply tag filter
+        if let tag = filterTag {
+            items = items.filter { $0.tags.contains(where: { $0.id == tag.id }) }
+        }
         
         // Store the current order of IDs if we have an existing list
         let existingOrder = eligibleItems.map { $0.id }

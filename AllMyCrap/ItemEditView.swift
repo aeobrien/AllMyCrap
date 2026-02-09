@@ -34,7 +34,7 @@ struct ItemEditView: View {
         let stubs: [ItemStub]
     }
 
-    @Query private var allItems: [Item]
+    @Query(filter: #Predicate<Item> { $0.isArchived == false }) private var allItems: [Item]
 
     // MARK: - Body
     var body: some View {
@@ -395,52 +395,157 @@ struct ItemStub: Identifiable {
 
 // MARK: - Bulk Duplicate List View
 
+enum BulkDuplicateDecision {
+    case keep       // Add anyway
+    case skip       // Don't add
+    case editedName(String)  // Add with a different name
+}
+
 struct BulkDuplicateGroup: Identifiable {
     let id = UUID()
     let newItemName: String
     let matches: [DuplicateMatch]
+    var decision: BulkDuplicateDecision = .keep
 }
 
 struct BulkDuplicateListView: View {
-    let groups: [BulkDuplicateGroup]
-    let onCancel: () -> Void
-    let onSaveAnyway: () -> Void
+    @State var groups: [BulkDuplicateGroup]
+    let onCancel: () -> Void   // "Add All Anyway" - adds everything, duplicates included
+    let onConfirm: ([BulkDuplicateGroup]) -> Void  // Confirm with per-item decisions
+
+    @State private var editingGroupIndex: Int?
+    @State private var editingName = ""
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    Text("Some items you're adding look similar to existing items.")
+                    Text("Some items you're adding look similar to existing items. Review each one below, or tap \"Add All\" to add everything.")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
 
-                ForEach(groups) { group in
-                    Section(header: Text("New: \(group.newItemName)")) {
-                        ForEach(group.matches) { match in
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(match.name)
-                                    .fontWeight(.medium)
-                                Text(match.locationPath)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                ForEach(Array(groups.enumerated()), id: \.element.id) { index, group in
+                    Section {
+                        // New item name
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack {
+                                Image(systemName: "plus.circle.fill")
+                                    .foregroundColor(.blue)
+                                Text(displayName(for: group))
+                                    .fontWeight(.semibold)
                             }
-                            .padding(.vertical, 2)
+
+                            // Decision badge
+                            decisionBadge(for: group.decision)
                         }
+
+                        // Existing matches
+                        ForEach(group.matches) { match in
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(match.name)
+                                        .font(.subheadline)
+                                    Text(match.locationPath)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text("\(Int(match.score * 100))%")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.orange.opacity(0.1))
+                                    .cornerRadius(4)
+                            }
+                        }
+
+                        // Action buttons
+                        HStack(spacing: 12) {
+                            Button {
+                                groups[index].decision = .keep
+                            } label: {
+                                Label("Add", systemImage: "plus.circle")
+                                    .font(.caption)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.green)
+
+                            Button {
+                                groups[index].decision = .skip
+                            } label: {
+                                Label("Skip", systemImage: "xmark.circle")
+                                    .font(.caption)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.red)
+
+                            Button {
+                                editingGroupIndex = index
+                                editingName = group.newItemName
+                            } label: {
+                                Label("Edit", systemImage: "pencil.circle")
+                                    .font(.caption)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.blue)
+                        }
+                    } header: {
+                        Text("Item \(index + 1) of \(groups.count)")
                     }
                 }
             }
-            .navigationTitle("Possible Duplicates")
+            .navigationTitle("Review Duplicates")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { onCancel() }
+                    Button("Add All") { onCancel() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save Anyway") { onSaveAnyway() }
-                        .foregroundColor(.red)
+                    Button("Confirm") { onConfirm(groups) }
                 }
             }
+            .alert("Edit Item Name", isPresented: Binding(
+                get: { editingGroupIndex != nil },
+                set: { if !$0 { editingGroupIndex = nil } }
+            )) {
+                TextField("Item Name", text: $editingName)
+                Button("Save") {
+                    if let index = editingGroupIndex, !editingName.isEmpty {
+                        groups[index].decision = .editedName(editingName)
+                        editingGroupIndex = nil
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    editingGroupIndex = nil
+                }
+            }
+        }
+    }
+
+    private func displayName(for group: BulkDuplicateGroup) -> String {
+        switch group.decision {
+        case .editedName(let name): return name
+        default: return group.newItemName
+        }
+    }
+
+    @ViewBuilder
+    private func decisionBadge(for decision: BulkDuplicateDecision) -> some View {
+        switch decision {
+        case .keep:
+            Label("Will add", systemImage: "checkmark.circle.fill")
+                .font(.caption2)
+                .foregroundColor(.green)
+        case .skip:
+            Label("Will skip", systemImage: "xmark.circle.fill")
+                .font(.caption2)
+                .foregroundColor(.red)
+        case .editedName(let name):
+            Label("Will add as: \(name)", systemImage: "pencil.circle.fill")
+                .font(.caption2)
+                .foregroundColor(.blue)
         }
     }
 }

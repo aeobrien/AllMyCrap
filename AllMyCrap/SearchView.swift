@@ -6,7 +6,7 @@ struct SearchView: View {
 
     // Grab every item once; tiny personal inventories won’t hurt memory,
     // and it keeps the query logic simple for now.
-    @Query(sort: \Item.name) private var allItems: [Item]
+    @Query(filter: #Predicate<Item> { $0.isArchived == false }, sort: \Item.name) private var allItems: [Item]
 
     @State private var searchText = ""
 

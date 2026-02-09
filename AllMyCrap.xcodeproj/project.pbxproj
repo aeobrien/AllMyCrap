@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA000001AAAA000100000001 /* ActionModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001AAAA000100000002 /* ActionModeView.swift */; };
+		AA000002AAAA000200000001 /* ArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002AAAA000200000002 /* ArchiveView.swift */; };
+		AA000003AAAA000300000001 /* DuplicateExclusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000003AAAA000300000002 /* DuplicateExclusion.swift */; };
+		AA000004AAAA000400000001 /* DuplicateReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000004AAAA000400000002 /* DuplicateReviewView.swift */; };
+		AA000005AAAA000500000001 /* TinderFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000005AAAA000500000002 /* TinderFilterView.swift */; };
 		2653DC2087D41888F4E18604 /* DuplicateMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */; };
 		DD3E27A72E58CCC700BE10DF /* BookSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */; };
 		DD3E27A92E58CDD900BE10DF /* ItemStandardizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */; };
@@ -54,6 +59,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AA000001AAAA000100000002 /* ActionModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionModeView.swift; sourceTree = "<group>"; };
+		AA000002AAAA000200000002 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
+		AA000003AAAA000300000002 /* DuplicateExclusion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateExclusion.swift; sourceTree = "<group>"; };
+		AA000004AAAA000400000002 /* DuplicateReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateReviewView.swift; sourceTree = "<group>"; };
+		AA000005AAAA000500000002 /* TinderFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinderFilterView.swift; sourceTree = "<group>"; };
 		A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateMatcher.swift; sourceTree = "<group>"; };
 		DD3E27A52E57914C00BE10DF /* AllMyCrap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AllMyCrap.entitlements; sourceTree = "<group>"; };
 		DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSearchView.swift; sourceTree = "<group>"; };
@@ -135,8 +145,10 @@
 		DDB89A182E08550700A24E47 /* AllMyCrap */ = {
 			isa = PBXGroup;
 			children = (
+				AA000001AAAA000100000002 /* ActionModeView.swift */,
 				DD3E27A52E57914C00BE10DF /* AllMyCrap.entitlements */,
 				DDB89A192E08550700A24E47 /* AllMyCrapApp.swift */,
+				AA000002AAAA000200000002 /* ArchiveView.swift */,
 				DDB89A1D2E08550900A24E47 /* Assets.xcassets */,
 				DD70B6A32E22AD8100673D79 /* BackupManager.swift */,
 				DD70B6A52E22AD8200673D79 /* BackupRestoreView.swift */,
@@ -146,7 +158,9 @@
 				DD70B6A12E22AD7900673D79 /* BulkItemPreviewView.swift */,
 				DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */,
 				DDB89A1B2E08550700A24E47 /* ContentView.swift */,
+				AA000003AAAA000300000002 /* DuplicateExclusion.swift */,
 				A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */,
+				AA000004AAAA000400000002 /* DuplicateReviewView.swift */,
 				DDB89A412E08550900A24E47 /* Item.swift */,
 				DDB89A432E08550900A24E47 /* ItemEditView.swift */,
 				DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */,
@@ -162,6 +176,7 @@
 				DDB89A552E08550900A24E47 /* TagPicker.swift */,
 				DDB89A572E08550900A24E47 /* TagSearchView.swift */,
 				DDB89A592E08550900A24E47 /* TagView.swift */,
+				AA000005AAAA000500000002 /* TinderFilterView.swift */,
 				DD3E27AA2E58CEE000BE10DF /* TinderModeView.swift */,
 			);
 			path = AllMyCrap;
@@ -316,6 +331,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA000001AAAA000100000001 /* ActionModeView.swift in Sources */,
+				AA000002AAAA000200000001 /* ArchiveView.swift in Sources */,
+				AA000003AAAA000300000001 /* DuplicateExclusion.swift in Sources */,
+				AA000004AAAA000400000001 /* DuplicateReviewView.swift in Sources */,
+				AA000005AAAA000500000001 /* TinderFilterView.swift in Sources */,
 				DDB89A1C2E08550700A24E47 /* ContentView.swift in Sources */,
 				2653DC2087D41888F4E18604 /* DuplicateMatcher.swift in Sources */,
 				DD70B6A02E22AD5800673D79 /* PlanSearchView.swift in Sources */,

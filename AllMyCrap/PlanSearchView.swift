@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct PlanSearchView: View {
-    @Query private var items: [Item]
+    @Query(filter: #Predicate<Item> { $0.isArchived == false }) private var items: [Item]
     
     private var itemsByPlan: [(ItemPlan, [Item])] {
         var result: [(ItemPlan, [Item])] = []

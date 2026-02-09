@@ -11,7 +11,8 @@ struct AllMyCrapApp: App {
             Location.self,
             Item.self,
             Tag.self,
-            ReviewHistory.self
+            ReviewHistory.self,
+            DuplicateExclusion.self
         ])
         
         // Create configuration without CloudKit sync
