@@ -1,0 +1,266 @@
+project_shape:
+  scale: multi-subsystem
+  has_subsystem_layer: true
+  expected_modules: "18-24"
+  kind: product
+
+modules:
+  - id: allmycrap.data-model-persistence.swiftdata-store-and-models
+    project: AllMyCrap
+    subsystem: Data model & persistence
+    name: SwiftData store and models
+    capability: Defines the app's persisted entities and relationships for locations, items, tags, review history, and duplicate exclusions.
+    status: mature
+    approach: Uses SwiftData `@Model` types with a local `ModelContainer`, unique UUID identifiers, cascade relationships, and CloudKit explicitly disabled.
+    tech: [SwiftData, SwiftUI, Foundation]
+    io: { in: "user edits and app fetches", out: "persisted SwiftData records and relationship graphs" }
+    code_refs: [AllMyCrap/AllMyCrapApp.swift, AllMyCrap/Location.swift, AllMyCrap/Item.swift, AllMyCrap/Tag.swift, AllMyCrap/ReviewHistory.swift, AllMyCrap/DuplicateExclusion.swift]
+    known_gaps: ["CloudKit sync is disabled, so multi-device sync is handled only through backups."]
+    match_keywords: [swiftdata, ios persistence, entity relationships, local datastore, item catalog]
+
+  - id: allmycrap.location-hierarchy.hierarchy-browse-and-move
+    project: AllMyCrap
+    subsystem: Location hierarchy
+    name: Hierarchy browse and move
+    capability: Browses nested locations, shows recursive item contents, and moves items or sub-locations while preserving tree constraints.
+    status: mature
+    approach: Uses recursive tree traversal, computed location paths, and a destination picker that blocks illegal or over-deep moves.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "location selections, move actions, filter toggles", out: "updated location tree, item placement, and location-scoped views" }
+    code_refs: [AllMyCrap/ContentView.swift, AllMyCrap/LocationDetailView.swift, AllMyCrap/LocationEditView.swift, AllMyCrap/MoveDestinationPicker.swift, AllMyCrap/Location.swift]
+    known_gaps: ["Moving locations is capped to a 15-level hierarchy depth."]
+    match_keywords: [hierarchical storage, tree navigation, nested locations, move picker, inventory containers]
+
+  - id: allmycrap.item-crud.manual-item-editing
+    project: AllMyCrap
+    subsystem: Item CRUD
+    name: Manual item editing
+    capability: Creates and edits individual items, including plans, tags, move destinations, and book-specific fields.
+    status: mature
+    approach: Uses SwiftUI forms backed by SwiftData models, with duplicate suggestions and tag selection embedded in the edit workflow.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "item form fields, tag choices, plan choices", out: "created or updated item records" }
+    code_refs: [AllMyCrap/ItemEditView.swift, AllMyCrap/TagPicker.swift, AllMyCrap/TagView.swift, AllMyCrap/Item.swift]
+    known_gaps: []
+    match_keywords: [item editor, inventory CRUD, tagging, plan assignment, book metadata]
+
+  - id: allmycrap.item-crud.location-editing-and-batch-ops
+    project: AllMyCrap
+    subsystem: Item CRUD
+    name: Location editing and batch ops
+    capability: Creates and renames locations and applies batch tag or move operations to multiple items within a location.
+    status: mature
+    approach: Uses location-scoped SwiftUI sheets and selection mode in the detail view to batch-apply tags or destination changes.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "location edits, item selections, batch actions", out: "updated locations and bulk-updated item metadata" }
+    code_refs: [AllMyCrap/LocationDetailView.swift, AllMyCrap/LocationEditView.swift, AllMyCrap/TagPicker.swift, AllMyCrap/MoveDestinationPicker.swift]
+    known_gaps: []
+    match_keywords: [batch edit, location management, bulk tagging, bulk move, inventory maintenance]
+
+  - id: allmycrap.item-crud.ai-item-standardization
+    project: AllMyCrap
+    subsystem: Item CRUD
+    name: AI item standardization
+    capability: Scans existing non-book items and standardizes inconsistent names in reviewable batches.
+    status: working
+    approach: Detects names that do not match the house style, sends indexed batches to OpenAI chat completions, and writes accepted replacements back through SwiftData.
+    tech: [SwiftUI, SwiftData, URLSession, OpenAI API, gpt-4o-mini]
+    io: { in: "existing item names, standardization prompt, OpenAI API key", out: "renamed item records and per-batch processing state" }
+    code_refs: [AllMyCrap/ItemStandardizationView.swift, AllMyCrap/SettingsView.swift]
+    known_gaps: ["Requires a user-supplied OpenAI API key.", "Only processes non-book, non-archived items."]
+    match_keywords: [name normalization, ai enrichment, bulk rename, catalog cleanup, llm standardization]
+
+  - id: allmycrap.tinder-mode.quick-sort-queue
+    project: AllMyCrap
+    subsystem: Tinder Mode
+    name: Quick sort queue
+    capability: Presents one eligible item at a time for rapid plan assignment with undo and optional randomization.
+    status: mature
+    approach: Builds an in-memory queue from unarchived items, advances through card-style decisions, and stores previous plans for undo.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "eligible items, plan taps, undo actions", out: "updated item plans and queue progress" }
+    code_refs: [AllMyCrap/TinderModeView.swift, AllMyCrap/Item.swift]
+    known_gaps: []
+    match_keywords: [quick sort, swipe workflow, decision queue, rapid triage, plan assignment]
+
+  - id: allmycrap.tinder-mode.filtering-and-move-routing
+    project: AllMyCrap
+    subsystem: Tinder Mode
+    name: Filtering and move routing
+    capability: Narrows the Tinder queue by location, tag, plan state, or book inclusion and handles move-plan destination capture.
+    status: mature
+    approach: Combines a dedicated filter sheet with location picking and a move destination picker before writing the final plan state.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "filter selections, location filters, move destinations", out: "filtered Tinder queue and move metadata on items" }
+    code_refs: [AllMyCrap/TinderModeView.swift, AllMyCrap/TinderFilterView.swift, AllMyCrap/MoveDestinationPicker.swift]
+    known_gaps: []
+    match_keywords: [workflow filters, move planning, queue scoping, inventory sorting filters]
+
+  - id: allmycrap.action-mode.plan-checklists-and-archiving
+    project: AllMyCrap
+    subsystem: Action Mode
+    name: Plan checklists and archiving
+    capability: Groups actionable items by plan and location, lets the user check them off, and archives completed items.
+    status: mature
+    approach: Builds per-plan checklists from SwiftData queries, tracks checked UUIDs in-memory, and converts completed items into archived records.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "planned items, checklist selections, archive confirmation", out: "archived items with preserved plan metadata" }
+    code_refs: [AllMyCrap/ActionModeView.swift, AllMyCrap/ArchiveView.swift, AllMyCrap/Item.swift]
+    known_gaps: ["Only non-Keep plans are treated as actionable in Action Mode."]
+    match_keywords: [checklist workflow, action queue, archive handoff, plan execution, completion tracking]
+
+  - id: allmycrap.bulk-input.bulk-item-capture
+    project: AllMyCrap
+    subsystem: Bulk input
+    name: Bulk item capture
+    capability: Turns typed or recorded multi-item input into parsed items, previews them, and saves approved results to a location.
+    status: working
+    approach: Records audio with AVFoundation, transcribes it with `whisper-1`, parses item lists with OpenAI chat completions, and runs duplicate checks before insert.
+    tech: [SwiftUI, SwiftData, AVFoundation, URLSession, OpenAI API, whisper-1, gpt-4]
+    io: { in: "typed item text or recorded audio, OpenAI API key, target location", out: "parsed item drafts, duplicate review groups, and saved items" }
+    code_refs: [AllMyCrap/BulkItemAddView.swift, AllMyCrap/BulkItemPreviewView.swift, AllMyCrap/SettingsView.swift]
+    known_gaps: ["Requires a user-supplied OpenAI API key for voice capture.", "Uses remote OpenAI APIs rather than on-device speech recognition."]
+    match_keywords: [bulk import, voice transcription, item parsing, ai extraction, inventory intake]
+
+  - id: allmycrap.bulk-input.bulk-location-capture
+    project: AllMyCrap
+    subsystem: Bulk input
+    name: Bulk location capture
+    capability: Creates many child locations from typed or recorded free text under a selected parent location.
+    status: working
+    approach: Reuses the audio transcription and OpenAI parsing pipeline to convert speech or text into normalized location names before inserting them through SwiftData.
+    tech: [SwiftUI, SwiftData, AVFoundation, URLSession, OpenAI API, whisper-1, gpt-4]
+    io: { in: "typed location text or recorded audio, OpenAI API key, parent location", out: "new child location records" }
+    code_refs: [AllMyCrap/BulkLocationAddView.swift, AllMyCrap/SettingsView.swift]
+    known_gaps: ["Requires a user-supplied OpenAI API key for voice capture.", "Uses remote OpenAI APIs rather than on-device speech recognition."]
+    match_keywords: [bulk location import, voice transcription, hierarchy seeding, batch container creation]
+
+  - id: allmycrap.book-detection.book-conversion-detection
+    project: AllMyCrap
+    subsystem: Book detection
+    name: Book conversion detection
+    capability: Finds likely books among existing items and converts selected records into the app's book representation.
+    status: working
+    approach: Uses simple heuristics based on `by` in the item name and book-like tags, then writes title and author fields back onto the item model.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "existing non-book items and tags", out: "candidate book list and converted book records" }
+    code_refs: [AllMyCrap/BookDetectionView.swift, AllMyCrap/Item.swift, AllMyCrap/Tag.swift]
+    known_gaps: ["Detection is heuristic and may fall back to author 'Unknown' when only a book tag is present."]
+    match_keywords: [book detection, metadata extraction, title author parsing, record conversion]
+
+  - id: allmycrap.duplicate-detection.fuzzy-match-engine
+    project: AllMyCrap
+    subsystem: Duplicate detection
+    name: Fuzzy match engine
+    capability: Scores whether two items or books are likely duplicates based on normalized string similarity.
+    status: mature
+    approach: Normalizes names, compares them with Levenshtein and Jaccard similarity, and applies a stricter title-author strategy for books.
+    tech: [Foundation]
+    io: { in: "item names, book metadata, candidate lists, similarity threshold", out: "scored duplicate candidates" }
+    code_refs: [AllMyCrap/DuplicateMatcher.swift]
+    known_gaps: ["Relies on heuristic string similarity rather than a learned matcher.", "Threshold tuning is manual."]
+    match_keywords: [duplicate detection, fuzzy matching, levenshtein, jaccard, deduplication]
+
+  - id: allmycrap.duplicate-detection.duplicate-review-workflow
+    project: AllMyCrap
+    subsystem: Duplicate detection
+    name: Duplicate review workflow
+    capability: Scans the catalog for likely duplicate pairs, lets the user review them, and records exclusion pairs or deletions.
+    status: mature
+    approach: Builds lightweight scan items for background comparison, surfaces pairs in a review UI, and persists order-independent exclusions in SwiftData.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "unarchived items, saved exclusions, user review decisions", out: "duplicate pair queue, exclusion records, or deleted items" }
+    code_refs: [AllMyCrap/DuplicateReviewView.swift, AllMyCrap/DuplicateExclusion.swift, AllMyCrap/DuplicateMatcher.swift, AllMyCrap/ItemEditView.swift]
+    known_gaps: ["False positives and false negatives are expected enough that manual review and exclusions are part of the normal workflow."]
+    match_keywords: [dedupe review, false positive suppression, exclusion list, duplicate triage]
+
+  - id: allmycrap.search.name-search
+    project: AllMyCrap
+    subsystem: Search
+    name: Name search
+    capability: Finds unarchived items by item name and links the result back to the containing location.
+    status: mature
+    approach: Loads unarchived items once with SwiftData and filters them in memory with case-insensitive string matching.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "name query text", out: "matching items and location paths" }
+    code_refs: [AllMyCrap/SearchView.swift]
+    known_gaps: ["Search is in-memory and only matches item names, not tags or book metadata."]
+    match_keywords: [name search, local filtering, inventory lookup, item finder]
+
+  - id: allmycrap.search.tag-browse
+    project: AllMyCrap
+    subsystem: Search
+    name: Tag browse
+    capability: Lists tags, lets the user edit or delete them, and shows the active items attached to each tag.
+    status: mature
+    approach: Uses a tag list view with SwiftData-backed counts, swipe actions, and navigation into a tag-scoped item list.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "tag selections and tag edit/delete actions", out: "tag-scoped item lists and updated tag records" }
+    code_refs: [AllMyCrap/TagSearchView.swift, AllMyCrap/TagView.swift, AllMyCrap/Tag.swift]
+    known_gaps: []
+    match_keywords: [tag browser, facet browse, tag editor, labeled items]
+
+  - id: allmycrap.search.plan-browse
+    project: AllMyCrap
+    subsystem: Search
+    name: Plan browse
+    capability: Groups unarchived items by assigned plan or missing plan and drills into each group.
+    status: mature
+    approach: Uses SwiftData queries plus in-memory grouping across the `ItemPlan` enum to build plan summary screens.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "plan selections", out: "plan-scoped item lists and location links" }
+    code_refs: [AllMyCrap/PlanSearchView.swift, AllMyCrap/Item.swift]
+    known_gaps: []
+    match_keywords: [plan browse, status buckets, workflow browse, unplanned items]
+
+  - id: allmycrap.search.book-catalog-search
+    project: AllMyCrap
+    subsystem: Search
+    name: Book catalog search
+    capability: Searches, sorts, and optionally groups the book subset of the catalog by title, author, or location.
+    status: mature
+    approach: Filters `isBook` items in memory and provides UI-level sort and grouping controls over title, author, date, and location.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "book query text, sort option, group option", out: "filtered book listings with metadata" }
+    code_refs: [AllMyCrap/BookSearchView.swift, AllMyCrap/Item.swift]
+    known_gaps: []
+    match_keywords: [book catalog, author search, title search, grouped browse]
+
+  - id: allmycrap.review-tracking.review-state-and-history
+    project: AllMyCrap
+    subsystem: Review tracking
+    name: Review state and history
+    capability: Marks locations as reviewed or unreviewed, records the history, and auto-expires stale reviews after a global threshold.
+    status: mature
+    approach: Stores review flags and timestamps on locations, appends `ReviewHistory` entries for state changes, and runs periodic expiry checks from app launch.
+    tech: [SwiftUI, SwiftData, NotificationCenter, Timer, AppStorage]
+    io: { in: "review toggles and review-expiration settings", out: "updated review flags, timestamps, and history records" }
+    code_refs: [AllMyCrap/AllMyCrapApp.swift, AllMyCrap/LocationDetailView.swift, AllMyCrap/LocationEditView.swift, AllMyCrap/ReviewHistory.swift, AllMyCrap/SettingsView.swift]
+    known_gaps: ["Auto-expiry is driven by a single global day threshold."]
+    match_keywords: [review reminders, audit trail, stale review expiry, location review status]
+
+  - id: allmycrap.backup-restore.versioned-json-backups
+    project: AllMyCrap
+    subsystem: Backup/restore
+    name: Versioned JSON backups
+    capability: Exports the full catalog and selected settings to iCloud Drive JSON files and restores from those snapshots.
+    status: mature
+    approach: Serializes all SwiftData records plus selected `UserDefaults` values into a versioned JSON schema, stores files in the ubiquity container, and fully replaces local data on restore.
+    tech: [SwiftData, Foundation, FileManager, JSONEncoder, JSONDecoder, iCloud Drive, UserDefaults]
+    io: { in: "current model state, settings, manual or automatic backup triggers, chosen backup file", out: "backup files, backup metadata, or restored local state" }
+    code_refs: [AllMyCrap/BackupManager.swift, AllMyCrap/BackupRestoreView.swift, AllMyCrap/AllMyCrapApp.swift]
+    known_gaps: ["Backups use iCloud Drive files rather than live sync.", "Restore replaces all current data in one destructive operation."]
+    match_keywords: [json backup, snapshot restore, icloud drive export, disaster recovery]
+
+  - id: allmycrap.archive.archive-browser-and-restore
+    project: AllMyCrap
+    subsystem: Archive
+    name: Archive browser and restore
+    capability: Shows archived items, filters them by original plan or search text, and restores or permanently deletes them.
+    status: mature
+    approach: Queries archived items through SwiftData, filters them in memory, and uses stored `archivedPlan` metadata to rebuild live plan state on restore.
+    tech: [SwiftUI, SwiftData]
+    io: { in: "archive search text, archived plan filter, restore/delete actions", out: "filtered archive list and restored or deleted items" }
+    code_refs: [AllMyCrap/ArchiveView.swift, AllMyCrap/Item.swift]
+    known_gaps: []
+    match_keywords: [archive browser, restore deleted workflow, historical inventory, archived records]
