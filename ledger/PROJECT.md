@@ -4,6 +4,7 @@
 
 ## Status
 
+**Lane:** personal
 **Phase:** Maintenance / Refinement — app is functional and in active use
 **Last updated:** 2026-04-04
 
