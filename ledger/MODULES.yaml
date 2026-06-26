@@ -28,7 +28,7 @@ modules:
     tech: [SwiftUI, SwiftData]
     io: { in: "location selections, move actions, filter toggles", out: "updated location tree, item placement, and location-scoped views" }
     code_refs: [AllMyCrap/ContentView.swift, AllMyCrap/LocationDetailView.swift, AllMyCrap/LocationEditView.swift, AllMyCrap/MoveDestinationPicker.swift, AllMyCrap/Location.swift]
-    known_gaps: ["Moving locations is capped to a 15-level hierarchy depth."]
+    known_gaps: ["Moving a location subtree is blocked if it would exceed the 15-level hierarchy depth limit."]
     match_keywords: [hierarchical storage, tree navigation, nested locations, move picker, inventory containers]
 
   - id: allmycrap.item-crud.manual-item-editing
