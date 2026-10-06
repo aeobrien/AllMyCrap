@@ -1,9 +1,9 @@
 {
-  "capture_finished_at_utc": "2026-10-06T06:41:38Z",
-  "capture_started_at_utc": "2026-10-06T06:41:34Z",
-  "captured_at_utc": "2026-10-06T06:41:34Z",
-  "captured_byte_estimate": 1111615,
-  "captured_path_count": 96,
+  "capture_finished_at_utc": "2026-10-06T17:48:21Z",
+  "capture_started_at_utc": "2026-10-06T17:48:19Z",
+  "captured_at_utc": "2026-10-06T17:48:19Z",
+  "captured_byte_estimate": 1218245,
+  "captured_path_count": 107,
   "consistency_retry_count": 0,
   "excluded": [],
   "github_hard_limit_bytes": 100000000,
@@ -16,8 +16,8 @@
   "snapshot_blob_threshold_bytes": 94371840,
   "snapshot_consistency": "stable",
   "source_branch": "main",
-  "source_head_oid": "4aadcd398751a7ebe3cb914e867201e6194b1947",
-  "source_index_sha256": "b30e661d9882531b385ce55ba97eb16174266b8d657f4419f0fce54c84873311",
+  "source_head_oid": "3337ecaeba0c6a0bec733201f190443d21e56b42",
+  "source_index_sha256": "efabcd387d6f8b24da6ee40678426a130000c825b87a60f8ec6721b9c25db0ab",
   "source_path": "/Users/aidan/Dev/AllMyCrap",
   "upstream_observed": "origin/main"
 }

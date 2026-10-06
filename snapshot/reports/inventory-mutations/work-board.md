@@ -11,8 +11,8 @@ Reuse: retained SwiftData models and relationships, adapted existing move picker
 | Failures do not claim success | Read-only-store save refusal and pending edits tests; fresh-context readback |
 | Existing real-move caller uses selected identity | Source review plus generic simulator compile; no screen interaction claim |
 | Approved removal boundary | Preview plus explicit caller assertion; consent capture/authentication intentionally absent until transport exists |
-| Independent review | Astra PASS; Fable02 PASS after retained incomplete01; alert-placement delta reviews pending |
-| Final checks | UI build02 PASS23.907s; owned commit and committed/canonical checks pending |
+| Independent review | Astra PASS; Fable02 PASS after retained incomplete01; alert-placement Astra/Fable delta reviews PASS |
+| Final checks | UI build02 PASS23.907s; source d657b7a, committed judge and canonical completion PASS |
 
 Optional review follow-up: moved the error alert onto the active move sheet so refusal can be shown there. Existing batch-move persistence handling, other deletion UI callers, automatic-save behavior and debug logging remain documented follow-on work. No scheme/signing/settings changes beyond registering one source file. macOS14 or newer SDK/runtime is required by the synthetic SwiftData runner.
 
