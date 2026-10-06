@@ -26,6 +26,7 @@ struct LocationDetailView: View {
     @State private var moveTarget: MoveTarget?
     @State private var showMoveSheet = false
     @State private var showDepthAlert = false
+    @State private var moveError = ""
     @State private var selectedDestination = ""
     
     // MARK: - Batch selection state
@@ -160,10 +161,6 @@ struct LocationDetailView: View {
             .sheet(isPresented: $showMoveSheet) {
                 moveDestinationSheet
             }
-            .alert("Hierarchy too deep",
-                   isPresented: $showDepthAlert,
-                   actions: { Button("OK", role: .cancel) {} },
-                   message:  { Text("Moving here would exceed the 15‑level limit.") })
             .sheet(item: $itemForTags) { item in
                 itemTagPickerSheet(for: item)
             }
@@ -201,14 +198,18 @@ struct LocationDetailView: View {
             MoveDestinationPicker(
                 selectedDestination: $selectedDestination,
                 item: item,
-                onConfirm: { destination in
-                    if let location = findLocationByPath(destination) {
-                        performMove(to: location, target: moveTarget)
+                onLocationConfirm: { destination in
+                    if performMove(to: destination, target: moveTarget) {
                         showMoveSheet = false
                         selectedDestination = ""
                     }
-                }
+                },
+                onConfirm: { _ in }
             )
+            .alert("Could not move record",
+                   isPresented: $showDepthAlert,
+                   actions: { Button("OK", role: .cancel) {} },
+                   message: { Text(moveError) })
         }
     }
     
@@ -269,52 +270,30 @@ struct LocationDetailView: View {
         MoveDestinationPicker(
             selectedDestination: $batchMoveDestination,
             item: nil,
-            onConfirm: { destination in
-                if let location = findLocationByPath(destination) {
-                    batchMove(to: location)
-                    showBatchMoveSheet = false
-                    batchMoveDestination = ""
-                }
-            }
+            onLocationConfirm: { destination in
+                batchMove(to: destination)
+                showBatchMoveSheet = false
+                batchMoveDestination = ""
+            },
+            onConfirm: { _ in }
         )
     }
 
     // MARK: - Move helpers
-    private func findLocationByPath(_ path: String) -> Location? {
-        // Try to find a location matching the path
-        let allLocations = try? modelContext.fetch(FetchDescriptor<Location>())
-        guard let locations = allLocations else { return nil }
-        
-        for location in locations {
-            if fullPath(for: location) == path {
-                return location
+    private func performMove(to destination: Location, target: MoveTarget) -> Bool {
+        do {
+            let mutations = InventoryMutations(context: modelContext)
+            switch target {
+            case .item(let item):
+                try mutations.moveItem(id: item.id, destinationID: destination.id)
+            case .location(let loc):
+                try mutations.moveLocation(id: loc.id, destinationID: destination.id)
             }
-        }
-        return nil
-    }
-    
-    private func fullPath(for location: Location) -> String {
-        var parts = [location.name]
-        var current = location.parent
-        while let next = current {
-            parts.append(next.name)
-            current = next.parent
-        }
-        return parts.reversed().joined(separator: " › ")
-    }
-
-    private func performMove(to destination: Location, target: MoveTarget) {
-        switch target {
-        case .item(let item):
-            item.location = destination
-
-        case .location(let loc):
-            let extraDepth = loc.deepestSubtreeDistance()
-            if destination.depth + 1 + extraDepth > 15 {
-                showDepthAlert = true
-                return
-            }
-            loc.parent = destination
+            return true
+        } catch {
+            moveError = error.localizedDescription
+            showDepthAlert = true
+            return false
         }
     }
 

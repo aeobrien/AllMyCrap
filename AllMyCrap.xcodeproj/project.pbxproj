@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A10C60010000000000000001 /* InventoryMutations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10C60010000000000000002 /* InventoryMutations.swift */; };
 		AA000001AAAA000100000001 /* ActionModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001AAAA000100000002 /* ActionModeView.swift */; };
 		AA000002AAAA000200000001 /* ArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002AAAA000200000002 /* ArchiveView.swift */; };
 		AA000003AAAA000300000001 /* DuplicateExclusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000003AAAA000300000002 /* DuplicateExclusion.swift */; };
@@ -59,6 +60,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A10C60010000000000000002 /* InventoryMutations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryMutations.swift; sourceTree = "<group>"; };
 		AA000001AAAA000100000002 /* ActionModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionModeView.swift; sourceTree = "<group>"; };
 		AA000002AAAA000200000002 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
 		AA000003AAAA000300000002 /* DuplicateExclusion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateExclusion.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				DDB89A432E08550900A24E47 /* ItemEditView.swift */,
 				DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */,
 				DDB89A452E08550900A24E47 /* Location.swift */,
+				A10C60010000000000000002 /* InventoryMutations.swift */,
 				DDB89A472E08550900A24E47 /* LocationDetailView.swift */,
 				DDB89A492E08550900A24E47 /* LocationEditView.swift */,
 				DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */,
@@ -346,6 +349,7 @@
 				DDB89A1A2E08550700A24E47 /* AllMyCrapApp.swift in Sources */,
 				DDB89A422E08550900A24E47 /* ItemEditView.swift in Sources */,
 				DDB89A442E08550900A24E47 /* Location.swift in Sources */,
+				A10C60010000000000000001 /* InventoryMutations.swift in Sources */,
 				DDB89A462E08550900A24E47 /* LocationDetailView.swift in Sources */,
 				DDB89A482E08550900A24E47 /* LocationEditView.swift in Sources */,
 				DDB89A4A2E08550900A24E47 /* BulkItemAddView.swift in Sources */,

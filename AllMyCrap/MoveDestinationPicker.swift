@@ -8,30 +8,33 @@ struct MoveDestinationPicker: View {
     @Binding var selectedDestination: String
     let item: Item?
     let onConfirm: (String) -> Void
+    let onLocationConfirm: ((Location) -> Void)?
     
     @State private var customDestination = ""
     @State private var selectedLocation: Location?
     @State private var useCustomDestination = false
     @State private var expandedLocations: Set<UUID> = []
     
-    init(selectedDestination: Binding<String>, item: Item?, onConfirm: @escaping (String) -> Void) {
+    init(selectedDestination: Binding<String>, item: Item?, onLocationConfirm: ((Location) -> Void)? = nil, onConfirm: @escaping (String) -> Void) {
         self._selectedDestination = selectedDestination
         self.item = item
         self.onConfirm = onConfirm
+        self.onLocationConfirm = onLocationConfirm
         print("🔵 MoveDestinationPicker init with item: \(item?.name ?? "nil")")
     }
     
     var body: some View {
         NavigationStack {
             Form {
-                Section("Destination Type") {
-                    Picker("Destination", selection: $useCustomDestination) {
-                        Text("Select Location").tag(false)
-                        Text("Custom Destination").tag(true)
+                if onLocationConfirm == nil {
+                    Section("Destination Type") {
+                        Picker("Destination", selection: $useCustomDestination) {
+                            Text("Select Location").tag(false)
+                            Text("Custom Destination").tag(true)
+                        }
+                        .pickerStyle(.segmented)
                     }
-                    .pickerStyle(.segmented)
                 }
-                
                 if useCustomDestination {
                     Section("Custom Destination") {
                         TextField("e.g., 'Give to John', 'Storage unit'", text: $customDestination)
@@ -73,6 +76,10 @@ struct MoveDestinationPicker: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Confirm") {
+                        if let confirm = onLocationConfirm, let selected = selectedLocation {
+                            confirm(selected)
+                            return
+                        }
                         let destination: String
                         if useCustomDestination {
                             destination = customDestination
@@ -92,7 +99,7 @@ struct MoveDestinationPicker: View {
         }
         .onAppear {
             // Try to parse existing destination
-            if !selectedDestination.isEmpty {
+            if onLocationConfirm == nil && !selectedDestination.isEmpty {
                 // Check if it matches a location path
                 if let location = findLocationByPath(selectedDestination) {
                     selectedLocation = location
