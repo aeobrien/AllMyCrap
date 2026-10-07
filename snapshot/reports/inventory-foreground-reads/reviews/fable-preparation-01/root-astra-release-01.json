@@ -1,0 +1,7 @@
+{
+  "verdict": "PASS",
+  "payload_sha256": "29e9777f8fca2405926c56567201bd844138d6e48699d25ce6119a40322dadee",
+  "astra_review_path": "/Users/aidan/Dev/AllMyCrap-foreground-reads/reports/inventory-foreground-reads/reviews/astra-01/DELTA-02.md",
+  "astra_review_sha256": "673270a7233ffe74c9b500332ec1f61f05a1f535355966200b4637f1bad6c957",
+  "scope": "Root inspected independent full review and repaired-delta PASS. Local preparation release only; normal host disclosure permission still applies. No specific human approval asserted by this file."
+}

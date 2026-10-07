@@ -1,0 +1,1803 @@
+Review the actual candidate02 automatic foreground inventory-read implementation below independently for concrete blocking defects. You have only these inlined sources, plan and reported receipts; you cannot execute tests, open files or inspect a live app. Cite supplied file:line locations for each finding. Do not claim execution or adopt the author's conclusions.
+
+The approved deliverable is a LOCAL automatic foreground prototype: synthetic session client -> authenticated disposable loopback mailbox -> actual URLSession Swift worker -> app-owned retained reader/explicit context -> request-bound reply. The app target must register and compose the reader and worker correctly, but remains unconfigured until future production pairing is implemented. The unchanged reader/model sources are context, not new schema/mutation work. Physical iOS runtime, production hosting/deployment/pairing, real possessions, backup reads, session discovery and mutations are explicitly outside this slice. Do not block just because an excluded future feature is absent.
+
+Review the entire included implementation, in particular:
+1. App source membership, same-container injection, main-actor/store ownership, retained reader and paging, lifecycle cancellation/owner release, late-response scope binding.
+2. Typed read operations, canonical request/digest agreement across languages, exact identity/auth roles, unsupported keys/operations, errors versus empty results, pending edits/no read mutations.
+3. Actual URLSession and Python HTTP clients: target/redirect/proxy behavior, body and time bounds, authentication disclosure, request/reply binding, cancellation and retry semantics.
+4. Mailbox finite capacity/retention, incomplete request lines/headers and trickling bodies, handler-slot recovery, deadline timer lifetime and shutdown; examine the actual new deadline code and tests rather than assuming the repair works.
+5. Evidence quality: real success path versus mocks, scope of the compiled Swift fixtures versus actual unsigned app build, actual remaining unproved delivery. Results shown are local receipts, not something you executed.
+
+Return a concise PASS or BLOCK for the stated source scope, followed by any blocking findings with severity, exact file:line citations, trigger, user-visible effect and smallest correction. Separate optional improvements from blockers. Do not require gold-plating or invent environmental facts. A source-review PASS does not assert deployment, user acceptance, test execution by you or completion of the original build gates.
+
+## docs/BUILD-INVENTORY-FOREGROUND-READS.md
+1: # Let a session request an app-owned inventory read
+2: 
+3: Proposal for root review, not a new build authorization. Baseline primary AllMyCrap57d255ce04a0ac0734753dc80ff0e6f0540467c0; exact inspected inputs in SOURCE-EVIDENCE.json and source-hashes.json. This reconciles the retained PLAN-author-first.md and PLAN-astra-proposal.md after a harmless report-write collision; no application source was involved. No source, app, remote, provider, account or inventory changes were made for this plan. Integrated51fixture checks were not repeated.
+4: 
+5: ## Decision and outcome
+6: 
+7: Registering and constructing the reader alone does not deliver useful access: nothing submits a request or receives an answer. It can prove compilation and context injection, but must not be called session access. Do not add a paste/copy UI: root rejected that as a new manual burden rather than the intended automatic capability.
+8: 
+9: Recommend the smallest complete local channel: an explicit session client submits one typed read request to a disposable authenticated mailbox; an app-owned foreground worker claims it, calls the integrated reader against its supplied ModelContext and publishes a bounded response; the originating client receives that exact response. Exercise real HTTP on loopback with synthetic temporary SwiftData and register/wire the same worker into the actual iOS target. This is an executable prototype of the foreground mailbox architecture, not a selected production host, pairing flow or deployed phone connection.
+10: 
+11: Success at this slice means an actual client→mailbox→app-owned worker→existing reader→mailbox→client round trip, plus truthful inactive/stale/error behavior. It does not mean Claude or Codex can already reach the user’s phone or read live possessions.
+12: 
+13: ## Existing boundary to preserve
+14: 
+15: AllMyCrapApp.swift:9–27 owns the five-model on-disk container and disables CloudKit; :45 injects it into the scene. ContentView.swift:5 uses that environment context. App startup/resign-active triggers backup work at AllMyCrapApp.swift:36–42, so ordinary app bootstrap must not be used in synthetic tests against its default store. Entitlements contain CloudDocuments only (AllMyCrap.entitlements:5–16); those document backups are not a request transport.
+16: 
+17: The project explicitly lists Sources, including InventoryMutations at project.pbxproj:352; InventoryReadAdapter is not registered yet. Its initializer at InventoryReadAdapter.swift:84 accepts an existing context; projection at :120 refuses pending changes and creates a fresh context only from the same container. Preserve that reader source and its field/row/output limits. Its scope/cursor key belong to one adapter lifetime; rebuilding it per request would break pagination. Source-only absence of a current command transport is established by the earlier source-grounded access plan; no new library search or provider call is needed.
+18: 
+19: ## Owned implementation proposed
+20: 
+21: 1. Register the existing adapter plus new protocol/coordinator/mailbox-client/session-owner files in the actual app target. Use a small injected app composition boundary that receives the existing container/main context. Keep one adapter for an enabled foreground session. The ordinary app path receives its current app-owned context; it must never open another store or read backups.
+22: 2. Add a strict typed protocol limited to status, list and show for items/locations/tags, including archive scope/page size/cursor/exact UUID. Reject unknown versions, operations and fields rather than ignoring write-like input. No arbitrary URLs, filesystem paths, model names, predicates or executable commands in requests.
+23: 3. Add a foreground worker using outgoing URLSession only. Construction requires explicit endpoint and an opaque credential from injected configuration; no default host, environment scan, provider key or automatic live activation. No host/pairing settings UI in this slice. Scene activation/deactivation controls the owner; inactive cancels polling and marks its current session unavailable. Do not promise background execution.
+24: 4. Add a minimal disposable loopback mailbox and local client under dedicated experiment/test tools. Use a generated per-run credential and explicit session/worker identities; no production endpoint or persistent inventory replica. Use distinct synthetic bearer credentials for client submission/readback and worker claim/result roles; reject cross-role access before parsing retained records. Authenticate submit/claim/result operations and bind each response to request UUID, canonical request digest, session generation and worker scope. CLI requires explicit endpoint and token input; there is no fallback to phone/default/backup data.
+25: 
+26: The production integration can compile but remains inactive while no supported configuration/pairing source exists. The real loopback acceptance uses the same coordinator, protocol and URLSession implementation, not fake successful responses. A separate test host/composition entry supplies only a temporary container and explicit fixture configuration; it must not instantiate BackupManager or the ordinary lifecycle’s backup/review-expiry behavior. Actual app-target registration and composition callsites are separately compiled/inspected. Do not represent that separate fixture-host execution as a live installed app session.
+27: 
+28: ## Concrete ownership and app composition
+29: 
+30: Use a new isolated AllMyCrap checkout, preserving completed reader/mutation manifests and primary .DS_Store. Proposed files: AllMyCrap/InventoryReadProtocol.swift (typed strict read envelopes), InventorySessionReads.swift (retained reader and main-actor dispatch), InventoryForegroundReadWorker.swift (serialized lifecycle pump), InventoryMailboxTransport.swift (injected protocol plus actual URLSession implementation), narrow AllMyCrapApp.swift wiring, AllMyCrap.xcodeproj/project.pbxproj registration, tools/inventory_session/mailbox.py and client.py (local prototype, no installed wrapper), tests/inventory_session_protocol.swift/.py, tests/inventory_session_roundtrip.py plus shared synthetic contract fixtures, docs/BUILD-INVENTORY-FOREGROUND-READS.md and reports/inventory-foreground-reads/. No reader/model/schema/mutation/backup/UI/entitlement edits unless a concrete prerequisite is separately approved.
+31: 
+32: Registration needs unique PBXFileReference/PBXBuildFile/app-group/source-phase entries, not merely files on disk. Sources phase DDB89A122E08550700A24E47, app group DDB89A182E08550700A24E47, app target DDB89A152E08550700A24E47. Existing source membership remains intact. App composition retains one owner from the same container injected into ContentView and existing lifecycle callbacks. ScenePhase active/inactive changes are sent to the worker; backup/review expiry behavior and current container configuration stay unchanged. A retained instance preserves reader scope/key between requests. Construction performs no fetch or network operation.
+33: 
+34: The injected configuration is absent in the ordinary app until a later approved pairing/configuration source exists: absent means explicitly disabled/unconfigured, not a fallback endpoint. The local harness supplies an ephemeral loopback configuration to the actual worker/URLSession implementation and activates/deactivates it programmatically. This proves automatic worker behavior while the compiled app consumer remains inert when unconfigured. No runtime feature flag should open the production/default store for fixture use.
+35: 
+36: A typed transport seam permits deterministic failure tests, but the acceptance run must also cross actual HTTP with the maintained Swift implementation and the Python prototype client/mailbox. One callback processes one claimed request on the main actor. Completion publishes only while its generation/request remains active; foreground loss cancels owned URLSession tasks and cannot publish stale completion under a new generation. Do not start a second poller on duplicate active events.
+37: 
+38: The current AllMyCrapTests source phase is empty and its TEST_HOST launches the real app; do not use it for this fixture or count zero tests as success. Use an isolated executable compiling actual protocol/owner/worker/transport + reviewed models/reader, configured only with a temporary SwiftData store. Separately compile the actual app target without launch, installation, simulator boot or device interaction. No source stub may replace the actual reader/transport on the success path.
+39: 
+40: ## Small protocol contract
+41: 
+42: Use a generated worker-session scope, not a fabricated durable store UUID. Scope represents one explicitly configured app-owned container/session; additionally inject independent synthetic device/store IDs into each local fixture configuration and bind requests to that tuple. They are test identities, not claims of a durable production identity. Two fixture stores must use separate IDs/scopes; restart or different pairing invalidates old cursors. Durable device/store identity and pairing persistence remain a later production prerequisite.
+43: 
+44: Requests contain version, request UUID, request digest, originating session ID, expected device/store IDs and worker scope and typed read arguments. Define one canonical UTF-8 JSON digest format, shared vectors and rejection for duplicate keys, nonfinite numbers or differing digests; the server recomputes the digest, not trusts a caller claim. Exact allowed fields/size are checked before enqueue/dispatch, and the Swift worker validates the binding before any reader call. A bounded authenticated metadata handshake returns the selected configured device/store/session scope without querying inventory. status/list/show then require that exact binding; there is no public inventory-discovery endpoint. Responses bind all those fields and include observed timestamp, app/build identity, reader revision, result or specific error and completeness. Preserve transactionalSnapshot=false. A response to a different request/client/scope is refused, never opportunistically consumed.
+45: 
+46: Keep bounded in-memory request/result custody in the disposable mailbox, with explicit expiry and count/byte limits. Same UUID plus same digest returns the retained result; same UUID with different input fails. Do not claim durable exactly-once execution or crash recovery. If worker/result state is lost, report expired/unknown/unavailable and require a fresh request ID; never silently recompute under an already completed request ID. Reads do not mutate records, but a newly observed result can differ, so distinguish it from the original request.
+47: 
+48: Suggested initial experiment limits: request16KiB, at most32 retained requests per fixture session,30-second overall wait, one in-flight read per worker, one-second foreground polling, five-minute result retention. Enforce a reply-envelope cap that explicitly includes wrapper overhead around the reader’s1MiB result; set the encoded envelope cap to2MiB including metadata; enforce it before custody/send and test overflow rather than assuming the reader’s inner cap covers the envelope. Reject overflow without truncated success. Logs contain request IDs/error classes/counts only, no inventory payload/token.
+49: 
+50: Transport follows only the explicitly supplied endpoint; reject redirects, origin changes and credentials in URLs. The experiment permits plaintext only for literal loopback endpoints in its test configuration. Do not add an app-wide arbitrary-HTTP exception to make tests pass. Production requires a separately selected authenticated HTTPS endpoint and token custody. Normal iOS networking permissions/ATS and device lifecycle behavior must be verified for that later destination.
+51: 
+52: ## Meaningful isolated acceptance
+53: 
+54: Use red-green tests for the new round trip and missing target registration, without rerunning the accepted51field/graph fixtures as a substitute for transport tests.
+55: 
+56: - A real local client submits status, paginated item list, location/tag list and exact item show. Actual URLSession worker reads a seeded temporary ModelContext and returns source-backed IDs/values through the mailbox. Inspect request/delivery trace, not merely a fabricated result object.
+57: - Two independently seeded stores/workers with different identities cannot answer each other’s request. Unknown/wrong credential, scope, request digest or client session is refused. Duplicate names do not change exact-ID routing.
+58: - Stable adapter lifetime permits page2. Commit a synthetic change between pages and receive staleCursor. Restart the worker/session and reject old tokens instead of restarting silently at page1.
+59: - Leave an unsaved edit in the supplied caller context; return pendingEdits and preserve that edit. Reader errors propagate as bounded typed failures, never empty success. One representative unavailable-store/error case exercises the envelope mapping; do not repeat every reader implementation check.
+60: - Same ID/same request retries return retained result; same ID/different request fails. A late reply cannot satisfy a newer request. Expired/lost state gives an explicit unavailable/expired result, not success or an unannounced reread.
+61: - Pause foreground processing, disconnect the fixture server and cancel the client. Pending/deadline/cancel states remain distinct; no reply is published by a cancelled old generation. No automatic polling survives session closure.
+62: - Malformed/oversized/unknown/write requests fail before the reader; output overflow fails without partial success. Requests cannot select arbitrary files, URLs, code or model queries. Redirect attempts are rejected with a second disposable listener proving no credential/body delivery there.
+63: - Build the actual iOS target for a generic simulator SDK destination without booting or launching a simulator with the registered files and composition wiring. Execute transport acceptance in the isolated injected test host without production boot side effects. No physical phone, real default store, iCloud documents or private backups are needed.
+64: 
+65: Run through Understudy under ordinary permissions. Do not take the screen without its existing user-approved lease. This slice has no new user interface; a physical foreground/lifecycle walkthrough belongs to later installed-device acceptance. Preserve actual red failures, independent source/protocol reviews, post-review tests and original canonical completion if root approves a build. Root should review this plan before arming anything.
+66: 
+67: ## Bounded execution and evidence
+68: 
+69: Before implementation root must approve this complete plan, then arm its own new build/procedure. Red must show absent target membership and unavailable automatic round trip. Do not reseal or reopen completed read/mutation builds. Synthetic tests assert exact IDs/response bindings and traces rather than only exit codes. Record actual models/reader/transport/protocol/client/mailbox hashes, toolchain, request counts and effect boundaries.
+70: 
+71: Run protocol/coordinator fixture under Understudy160s and the actual multi-process loopback round trip under Understudy180s, with unique temporary directories, generated fixture credentials (never printed), OS-assigned ports, bounded stdout, explicit ready messages and process-group cleanup. Enforce actual assertion count so no-test success fails. Run only one live local fixture group at a time. Failures preserve results and perform exact owned cleanup; never kill unrelated processes. Failure/expiry tests may use injected clock/transport, but the successful status/list/show round trip and redirect non-delivery check use real loopback HTTP. No screen use and no public endpoint calls.
+72: 
+73: Unsigned app compile under Understudy600s, -jobs2, unique DerivedData, CODE_SIGNING_ALLOWED=NO, generic iOS Simulator destination, build only. Inspect scheme availability via read-only xcodebuild-list and use app scheme or explicit target/SDK with exact provenance. Current target deployment18.4/Swift5.0 and iPhone+iPad must remain supported. Do not run current hosted test target, install/open an app, change provisioning, fetch/update dependencies or delete shared caches. Host-load and owned-process check precedes the build; preserve existing unrelated compile failures and ask root about any prerequisite scope rather than weakening the build proof. Mac fixture runtime plus iOS compile is not an iOS-runtime or physical-lifecycle claim.
+74: 
+75: Freeze candidate after local checks; independent Astra/Fable review must cover both binding/transport and native owner/reader lifecycle. Retain normal permission review for any private-source transfer. Fix concrete blockers, rerun affected checks through Understudy, commit exact owned files, committed review and original new-build gates, then hand back for root integration. No production catalogue publication claiming installed access.
+76: 
+77: ## Later user/device work and non-goals
+78: 
+79: Before live phone/session availability: select/deploy the host, design explicit authenticated pairing and credential custody/revocation, identify the installed app build and intended actual container, enable the foreground session on the device, and verify reachability/suspension/resume/expiry with user presence. Then prove separate fresh Claude and Codex discovery and real requested read against the paired device. Both clients need to distinguish waiting for the app from an empty inventory. User acceptance is not inferred from fixture success.
+80: 
+81: Read access adds no new approval ritual beyond ordinary authorization. Additions/removals still require their existing exact approval; ordinary edits retain existing rules. This proposal implements no mutation transport, creation, deletion/cascade, consent token, backup restore, CloudKit migration, push wake, background service, remote deployment, app onboarding UI or provider feature. Completed mutation/read library builds remain complete. Legacy UI mutation gaps are separate.
+82: 
+83: If root requires live automatic phone access as the next delivery rather than a local transport prototype, the host/pairing/device decisions must be included explicitly before building; app registration alone cannot satisfy that requirement.
+84: 
+85: ## Step 1: Register and retain the app-owned reader
+86: 
+87: Compile the unchanged reader plus new typed owner/protocol into the actual application; initialize them from the app's same existing container, preserving behavior and context safety. The owner retains cursor scope across requests. No default data is opened by fixtures.
+88: 
+89: - The file `AllMyCrap/InventorySessionReads.swift` exists.
+90: - The file `AllMyCrap/InventoryReadProtocol.swift` exists.
+91: - The command `python3 tests/inventory_session_protocol.py` exits 0.
+92: 
+93: ## Step 2: Automatically process bounded foreground read requests
+94: 
+95: Implement the actual URLSession worker, cancellation/generation behavior, read-only protocol and prototype authenticated mailbox/client. Preserve exact device/store/client/request/digest ownership and finite custody/waits. Make real synthetic client-to-worker-to-reader-to-client HTTP prove success and the named failure boundaries above.
+96: 
+97: - The file `AllMyCrap/InventoryForegroundReadWorker.swift` exists.
+98: - The file `AllMyCrap/InventoryMailboxTransport.swift` exists.
+99: - The file `tools/inventory_session/mailbox.py` exists.
+100: - The file `tools/inventory_session/client.py` exists.
+101: - The command `python3 tests/inventory_session_roundtrip.py` exits 0.
+102: 
+103: ## Step 3: Prove actual iOS integration without launch or deployment
+104: 
+105: Compile the registered actual app target unsigned with the specified bounded build. Preserve actual build logs and byte-bound inputs. Record runtime testing on disposable SwiftData/loopback separately from app compile; claim no real app/device access.
+106: 
+107: - The file `reports/inventory-foreground-reads/IOS-BUILD.md` exists.
+108: - The file `reports/inventory-foreground-reads/VALIDATION.md` exists.
+109: 
+110: ## Step 4: Independently review and complete this exact source slice
+111: 
+112: Independent Astra/Fable source reviews, affected post-review Understudy tests, exact owned commit, committed review, original checkpoint/canonical completion, and truthful deployment limits are required. Preserve failed/held evidence. Parent owns primary integration and catalogue publication.
+113: 
+114: - The file `reports/inventory-foreground-reads/REVIEWS.md` exists.
+115: - The file `reports/inventory-foreground-reads/HANDOFF.md` exists.
+
+## docs/INVENTORY-FOREGROUND-READS.md
+1: # Automatic inventory reads — local prototype
+2: 
+3: A synthetic client can submit a read, the foreground Swift worker receives it over HTTP, the existing reader reads its explicitly supplied SwiftData store, and the reply returns to the same client. No manual copying is involved. This source slice does not install a live phone connection.
+4: 
+5: The actual app target includes the reader, typed protocol, retained owner, URLSession transport and foreground worker. The app constructs the worker from its existing mainContext and forwards scene activation changes. No production pairing/configuration source is supplied, so the installed app path remains unconfigured and makes no inventory-session network calls. Store creation, backup and review-expiry behavior are unchanged. The fixture host never initializes that ordinary App or BackupManager.
+6: 
+7: ## Ownership and read operations
+8: 
+9: Configuration must explicitly supply device/store/client identities and a transport factory. These IDs in tests are generated synthetic identities, not durable production store identity. Each activation generates a new worker scope and reader instance; one instance is retained across that active session so pagination works. There is one polling task. Duplicate activation cannot start another, inactivity cancels/invalidates its transport, and owner release cancels the task. Late completion from an inactive generation cannot initiate a result publication. Already transmitted network bytes cannot be recalled; replies remain bound to the old request/scope and cannot satisfy a different one.
+10: 
+11: Only status, list(items/locations/tags with archive/page/cursor) and show(kind/exact UUID) are supported. Unknown keys/versions/operations fail before reading. No request contains a model query, executable, file/store path or arbitrary target URL. Pending UI edits remain pending and produce pendingEdits. Read failures stay explicit; they never become an empty successful inventory. Underlying store error details are replaced with readUnavailable to avoid disclosing paths. Every response preserves transactionalSnapshot=false.
+12: 
+13: All requests bind version, request UUID, canonical-body SHA256, client, device, store and current scope. Canonical request JSON is UTF-8 sorted keys with compact separators and literal slashes, no duplicate keys/nonfinite numbers; shared Swift/Python checks recompute its digest. Dates in response data need not have byte-identical floating-point serialization between Swift and Python; response parsing still rejects duplicate keys, invalid JSON and over-limit bodies. Request canonicalization is unchanged by that distinction.
+14: 
+15: ## Local mailbox and client
+16: 
+17: `tools/inventory_session/mailbox.py` is an in-memory, loopback-only prototype with distinct generated client and worker bearer credentials. It authenticates roles, selects only the configured binding and preserves first completed replies. Same request ID/body returns its retained state/result; changed body conflicts. Readback can recover a retained completion while the worker is offline. Expired IDs become tombstones until worker-scope reset; they are not silently rerun. This is not durable exactly-once execution or restart recovery.
+18: 
+19: Limits:16KiB requests,2MiB encoded reply envelopes (reader result limit remains1MiB),32 retained request IDs per scope,300-second retention, one claimed request at a time from the sequential Swift worker,1-second polling,4-second worker liveness grace and eight concurrent HTTP request handlers. Each accepted handler has an absolute three-second deadline starting before request-line/header parsing; its owned socket is shut down on expiry even if headers or body bytes keep arriving. The handler then releases its capacity slot. This prototype does not promise uninterrupted service under a sustained connection flood. Inactivity immediately stops local polling; mailbox unavailable status follows its finite liveness grace. Metadata/error counts are bounded; no credential or inventory body is logged. A new activation invalidates old queued requests/cursors by scope.
+20: 
+21: The prototype client requires an explicit literal-loopback endpoint, token file and read-argument file; there is no host/account/backup discovery or installed global command. Its overall wait is at most30 seconds, each HTTP request has a wall-clock body budget up to3 seconds, and redirects/proxies are not followed. Explicit cancellation marks a request cancelled; a deadline stops waiting and may leave its bounded mailbox request pending, which can later be inspected/retried with its original ID. Deadline is not proof the worker never read. The mailbox refuses a response to a cancelled/expired request. Transport loss is unavailable, not success.
+22: 
+23: The Swift transport uses ephemeral URLSession, no cookies/cache, explicit endpoint, no redirect following and incremental bounded body reads. Plain HTTP requires explicitly allowed literal127.0.0.1; production would require a separately approved HTTPS endpoint/authentication/pairing implementation. No ATS relaxation was added.
+24: 
+25: ## Verification and remaining delivery
+26: 
+27: `tests/inventory_session_protocol.py` compiles the actual models, reader, owner, worker and transport with isolated temporary stores; it does not run the App. `tests/inventory_session_roundtrip.py` uses a real local mailbox/client and separately compiled Swift fixture process running the actual URLSession worker. Synthetic control files alter only that fixture's store/lifecycle. Separate HTTP listeners prove redirects do not deliver a body or credential to another origin. The actual unsigned iOS app target is built separately without simulator boot or app launch.
+28: 
+29: The existing hosted Xcode unit-test target has no registered tests and starts the real App, so this slice does not run it or count it as evidence. Mac fixture execution plus iOS product compilation is not physical device/iOS lifecycle acceptance. Before sessions can access possessions: select/deploy the real mailbox, add durable device/store pairing and credential custody/revocation, configure the app, verify the installed build/foreground behavior with the user, and prove fresh Claude/Codex discovery. There are no mutation endpoints, added approval rituals for reads, changed add/remove approval rules, remote deployment or personal data operations in this slice.
+
+## AllMyCrap/AllMyCrapApp.swift
+1: import SwiftUI
+2: import SwiftData
+3: 
+4: @main
+5: struct AllMyCrapApp: App {
+6:     @AppStorage("reviewExpirationDays") private var reviewExpirationDays = 30
+7:     @StateObject private var backupManager = BackupManager()
+8:     
+9:     @Environment(\.scenePhase) private var scenePhase
+10:     let container: ModelContainer
+11:     private let inventoryReads: InventoryForegroundReadWorker
+12: 
+13:     init() {
+14:       let selected: ModelContainer = {
+15:         let schema = Schema([
+16:             Location.self,
+17:             Item.self,
+18:             Tag.self,
+19:             ReviewHistory.self,
+20:             DuplicateExclusion.self
+21:         ])
+22:         
+23:         // Create configuration without CloudKit sync
+24:         let modelConfiguration = ModelConfiguration(
+25:             schema: schema,
+26:             isStoredInMemoryOnly: false,
+27:             cloudKitDatabase: .none  // Disable CloudKit sync
+28:         )
+29:         
+30:         do {
+31:             return try ModelContainer(for: schema, configurations: [modelConfiguration])
+32:         } catch {
+33:             fatalError("Could not create ModelContainer: \(error)")
+34:         }
+35:       }()
+36:       container = selected
+37:       // No pairing/configuration source is installed: transport remains unconfigured.
+38:       inventoryReads = InventoryForegroundReadWorker(context:selected.mainContext)
+39:     }
+40:     
+41:     var body: some Scene {
+42:         WindowGroup {
+43:             ContentView()
+44:                 .environmentObject(backupManager)
+45:                 .onAppear {
+46:                     inventoryReads.setActive(scenePhase == .active)
+47:                     scheduleReviewExpirationCheck()
+48:                     performAutoBackup()
+49:                 }
+50:                 .onChange(of: scenePhase) { _, phase in
+51:                     inventoryReads.setActive(phase == .active)
+52:                 }
+53:                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+54:                     performAutoBackup()
+55:                 }
+56:         }
+57:         // This makes the data models available to the entire app.
+58:         .modelContainer(container)
+59:     }
+60:     
+61:     private func scheduleReviewExpirationCheck() {
+62:         // Check for expired reviews on app launch and every hour
+63:         Task {
+64:             await checkExpiredReviews()
+65:             
+66:             // Schedule periodic checks
+67:             Timer.scheduledTimer(withTimeInterval: 3600, repeats: true) { _ in
+68:                 Task {
+69:                     await checkExpiredReviews()
+70:                 }
+71:             }
+72:         }
+73:     }
+74:     
+75:     @MainActor
+76:     private func checkExpiredReviews() async {
+77:         guard reviewExpirationDays > 0 else { return }
+78:         
+79:         let context = container.mainContext
+80:         
+81:         let descriptor = FetchDescriptor<Location>(
+82:             predicate: #Predicate<Location> { location in
+83:                 location.isReviewed == true
+84:             }
+85:         )
+86:         
+87:         do {
+88:             let reviewedLocations = try context.fetch(descriptor)
+89:             let now = Date()
+90:             let expirationInterval = TimeInterval(reviewExpirationDays * 24 * 60 * 60)
+91:             
+92:             for location in reviewedLocations {
+93:                 if let lastReviewedDate = location.lastReviewedDate,
+94:                    now.timeIntervalSince(lastReviewedDate) > expirationInterval {
+95:                     // Mark as unreviewed
+96:                     location.isReviewed = false
+97:                     location.lastReviewedDate = nil
+98:                     
+99:                     // Add history entry
+100:                     let historyEntry = ReviewHistory(
+101:                         action: .markedUnreviewed,
+102:                         isAutomatic: true,
+103:                         location: location
+104:                     )
+105:                     context.insert(historyEntry)
+106:                 }
+107:             }
+108:             
+109:             try context.save()
+110:         } catch {
+111:             print("Failed to check expired reviews: \(error)")
+112:         }
+113:     }
+114:     
+115:     private func performAutoBackup() {
+116:         guard backupManager.shouldAutoBackup() else { return }
+117:         
+118:         Task {
+119:             let context = container.mainContext
+120:             
+121:             do {
+122:                 try await backupManager.createBackup(modelContext: context)
+123:             } catch {
+124:                 print("Auto backup failed: \(error)")
+125:             }
+126:         }
+127:     }
+128: }
+
+## AllMyCrap.xcodeproj/project.pbxproj — exact baseline-to-candidate project-registration diff
+diff --git a/AllMyCrap.xcodeproj/project.pbxproj b/AllMyCrap.xcodeproj/project.pbxproj
+index b28f0f2..d56dfcc 100644
+--- a/AllMyCrap.xcodeproj/project.pbxproj
++++ b/AllMyCrap.xcodeproj/project.pbxproj
+@@ -1,19 +1,24 @@
+ // !$*UTF8*$!
+ {
+ 	archiveVersion = 1;
+ 	classes = {
+ 	};
+ 	objectVersion = 56;
+ 	objects = {
+ 
+ /* Begin PBXBuildFile section */
++		F06000000000000000000401 /* InventoryForegroundReadWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000402 /* InventoryForegroundReadWorker.swift */; };
++		F06000000000000000000301 /* InventoryMailboxTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000302 /* InventoryMailboxTransport.swift */; };
++		F06000000000000000000201 /* InventorySessionReads.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000202 /* InventorySessionReads.swift */; };
++		F06000000000000000000101 /* InventoryReadProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000102 /* InventoryReadProtocol.swift */; };
++		F06000000000000000000001 /* InventoryReadAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000002 /* InventoryReadAdapter.swift */; };
+ 		A10C60010000000000000001 /* InventoryMutations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10C60010000000000000002 /* InventoryMutations.swift */; };
+ 		AA000001AAAA000100000001 /* ActionModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001AAAA000100000002 /* ActionModeView.swift */; };
+ 		AA000002AAAA000200000001 /* ArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002AAAA000200000002 /* ArchiveView.swift */; };
+ 		AA000003AAAA000300000001 /* DuplicateExclusion.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000003AAAA000300000002 /* DuplicateExclusion.swift */; };
+ 		AA000004AAAA000400000001 /* DuplicateReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000004AAAA000400000002 /* DuplicateReviewView.swift */; };
+ 		AA000005AAAA000500000001 /* TinderFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000005AAAA000500000002 /* TinderFilterView.swift */; };
+ 		2653DC2087D41888F4E18604 /* DuplicateMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */; };
+ 		DD3E27A72E58CCC700BE10DF /* BookSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */; };
+ 		DD3E27A92E58CDD900BE10DF /* ItemStandardizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */; };
+ 		DD3E27AB2E58CEE000BE10DF /* TinderModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E27AA2E58CEE000BE10DF /* TinderModeView.swift */; };
+@@ -53,20 +58,25 @@
+ 		DDB89A2E2E08550900A24E47 /* PBXContainerItemProxy */ = {
+ 			isa = PBXContainerItemProxy;
+ 			containerPortal = DDB89A0E2E08550700A24E47 /* Project object */;
+ 			proxyType = 1;
+ 			remoteGlobalIDString = DDB89A152E08550700A24E47;
+ 			remoteInfo = AllMyCrap;
+ 		};
+ /* End PBXContainerItemProxy section */
+ 
+ /* Begin PBXFileReference section */
++		F06000000000000000000402 /* InventoryForegroundReadWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryForegroundReadWorker.swift; sourceTree = "<group>"; };
++		F06000000000000000000302 /* InventoryMailboxTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryMailboxTransport.swift; sourceTree = "<group>"; };
++		F06000000000000000000202 /* InventorySessionReads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventorySessionReads.swift; sourceTree = "<group>"; };
++		F06000000000000000000102 /* InventoryReadProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryReadProtocol.swift; sourceTree = "<group>"; };
++		F06000000000000000000002 /* InventoryReadAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryReadAdapter.swift; sourceTree = "<group>"; };
+ 		A10C60010000000000000002 /* InventoryMutations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryMutations.swift; sourceTree = "<group>"; };
+ 		AA000001AAAA000100000002 /* ActionModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionModeView.swift; sourceTree = "<group>"; };
+ 		AA000002AAAA000200000002 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
+ 		AA000003AAAA000300000002 /* DuplicateExclusion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateExclusion.swift; sourceTree = "<group>"; };
+ 		AA000004AAAA000400000002 /* DuplicateReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateReviewView.swift; sourceTree = "<group>"; };
+ 		AA000005AAAA000500000002 /* TinderFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinderFilterView.swift; sourceTree = "<group>"; };
+ 		A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateMatcher.swift; sourceTree = "<group>"; };
+ 		DD3E27A52E57914C00BE10DF /* AllMyCrap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AllMyCrap.entitlements; sourceTree = "<group>"; };
+ 		DD3E27A62E58CCC700BE10DF /* BookSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookSearchView.swift; sourceTree = "<group>"; };
+ 		DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemStandardizationView.swift; sourceTree = "<group>"; };
+@@ -161,20 +171,25 @@
+ 				DDB89A4D2E08550900A24E47 /* BulkLocationAddView.swift */,
+ 				DDB89A1B2E08550700A24E47 /* ContentView.swift */,
+ 				AA000003AAAA000300000002 /* DuplicateExclusion.swift */,
+ 				A3EBCC851254EE85F92B3F26 /* DuplicateMatcher.swift */,
+ 				AA000004AAAA000400000002 /* DuplicateReviewView.swift */,
+ 				DDB89A412E08550900A24E47 /* Item.swift */,
+ 				DDB89A432E08550900A24E47 /* ItemEditView.swift */,
+ 				DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */,
+ 				DDB89A452E08550900A24E47 /* Location.swift */,
+ 				A10C60010000000000000002 /* InventoryMutations.swift */,
++				F06000000000000000000402 /* InventoryForegroundReadWorker.swift */,
++				F06000000000000000000302 /* InventoryMailboxTransport.swift */,
++				F06000000000000000000202 /* InventorySessionReads.swift */,
++				F06000000000000000000102 /* InventoryReadProtocol.swift */,
++				F06000000000000000000002 /* InventoryReadAdapter.swift */,
+ 				DDB89A472E08550900A24E47 /* LocationDetailView.swift */,
+ 				DDB89A492E08550900A24E47 /* LocationEditView.swift */,
+ 				DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */,
+ 				DD70B69F2E22AD5800673D79 /* PlanSearchView.swift */,
+ 				DDB89A4F2E08550900A24E47 /* ReviewHistory.swift */,
+ 				DDB89A5B2E08550900A24E47 /* SearchView.swift */,
+ 				DDB89A512E08550900A24E47 /* SettingsView.swift */,
+ 				DDB89A532E08550900A24E47 /* Tag.swift */,
+ 				DDB89A552E08550900A24E47 /* TagPicker.swift */,
+ 				DDB89A572E08550900A24E47 /* TagSearchView.swift */,
+@@ -343,20 +358,25 @@
+ 				2653DC2087D41888F4E18604 /* DuplicateMatcher.swift in Sources */,
+ 				DD70B6A02E22AD5800673D79 /* PlanSearchView.swift in Sources */,
+ 				DDB89A402E08550900A24E47 /* Item.swift in Sources */,
+ 				DD3E27A72E58CCC700BE10DF /* BookSearchView.swift in Sources */,
+ 				DD3E27A92E58CDD900BE10DF /* ItemStandardizationView.swift in Sources */,
+ 				DD3E27AB2E58CEE000BE10DF /* TinderModeView.swift in Sources */,
+ 				DDB89A1A2E08550700A24E47 /* AllMyCrapApp.swift in Sources */,
+ 				DDB89A422E08550900A24E47 /* ItemEditView.swift in Sources */,
+ 				DDB89A442E08550900A24E47 /* Location.swift in Sources */,
+ 				A10C60010000000000000001 /* InventoryMutations.swift in Sources */,
++				F06000000000000000000401 /* InventoryForegroundReadWorker.swift in Sources */,
++				F06000000000000000000301 /* InventoryMailboxTransport.swift in Sources */,
++				F06000000000000000000201 /* InventorySessionReads.swift in Sources */,
++				F06000000000000000000101 /* InventoryReadProtocol.swift in Sources */,
++				F06000000000000000000001 /* InventoryReadAdapter.swift in Sources */,
+ 				DDB89A462E08550900A24E47 /* LocationDetailView.swift in Sources */,
+ 				DDB89A482E08550900A24E47 /* LocationEditView.swift in Sources */,
+ 				DDB89A4A2E08550900A24E47 /* BulkItemAddView.swift in Sources */,
+ 				DDB89A4C2E08550900A24E47 /* BulkLocationAddView.swift in Sources */,
+ 				DDB89A4E2E08550900A24E47 /* ReviewHistory.swift in Sources */,
+ 				DD70B6A22E22AD7900673D79 /* BulkItemPreviewView.swift in Sources */,
+ 				DDB89A502E08550900A24E47 /* SettingsView.swift in Sources */,
+ 				DDB89A522E08550900A24E47 /* Tag.swift in Sources */,
+ 				DDB89A542E08550900A24E47 /* TagPicker.swift in Sources */,
+ 				DDB89A562E08550900A24E47 /* TagSearchView.swift in Sources */,
+
+
+## AllMyCrap/InventoryReadProtocol.swift
+1: import Foundation
+2: import CryptoKit
+3: import CoreFoundation
+4: 
+5: /// In-process prototype protocol: explicit injected identities, never store discovery.
+6: enum InventoryWire {
+7:     static let requestLimit = 16 * 1024
+8:     static let responseLimit = 2 * 1024 * 1024
+9:     enum Failure: String, Error { case invalid, binding, oversized, unavailable, cancelled, transport }
+10:     static func canonical(_ object: Any) throws -> Data {
+11:         guard JSONSerialization.isValidJSONObject(object) else { throw Failure.invalid }
+12:         return try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys, .withoutEscapingSlashes])
+13:     }
+14:     static func object(_ data: Data, limit: Int) throws -> [String: Any] {
+15:         guard data.count <= limit else { throw Failure.oversized }
+16:         guard let value = try JSONSerialization.jsonObject(with: data) as? [String: Any], try canonical(value) == data else { throw Failure.invalid }
+17:         return value // Canonical equality also rejects duplicate JSON keys/ambiguous encodings.
+18:     }
+19:     static func digest(_ object: [String: Any]) throws -> String {
+20:         SHA256.hash(data: try canonical(object)).map { String(format: "%02x", $0) }.joined()
+21:     }
+22:     static func isBoolean(_ value: Any?) -> Bool {
+23:         guard let n = value as? NSNumber else { return false }; return CFGetTypeID(n) == CFBooleanGetTypeID()
+24:     }
+25:     static func uuid(_ value: Any?) throws -> String {
+26:         guard let text = value as? String, let id = UUID(uuidString: text), id.uuidString.lowercased() == text else { throw Failure.invalid }
+27:         return text
+28:     }
+29:     struct Binding: Equatable {
+30:         let device: String, store: String, client: String, scope: String
+31:         init(device: String, store: String, client: String, scope: String) throws {
+32:             self.device = try uuid(device); self.store = try uuid(store)
+33:             self.client = try uuid(client); self.scope = try uuid(scope)
+34:         }
+35:         var fields: [String: Any] { ["device":device,"store":store,"client":client,"scope":scope] }
+36:     }
+37:     enum Operation {
+38:         case status
+39:         case list(InventoryReadAdapter.Kind, InventoryReadAdapter.ArchiveScope, Int, String?)
+40:         case show(InventoryReadAdapter.Kind, UUID)
+41:     }
+42:     struct Request {
+43:         let id: String, digest: String, binding: Binding, operation: Operation
+44:         init(_ data: Data, expected: Binding) throws {
+45:             var o = try object(data, limit: requestLimit)
+46:             guard Set(o.keys) == Set(["version","request","digest","device","store","client","scope","arguments"]), o["version"] as? Int == 1,
+47:                   !isBoolean(o["version"]), let hash = o.removeValue(forKey: "digest") as? String, try InventoryWire.digest(o) == hash else { throw Failure.invalid }
+48:             id = try uuid(o["request"]); digest = hash
+49:             binding = try Binding(device:uuid(o["device"]),store:uuid(o["store"]),client:uuid(o["client"]),scope:uuid(o["scope"]))
+50:             guard binding == expected else { throw Failure.binding }
+51:             guard let a = o["arguments"] as? [String:Any], let op = a["op"] as? String else { throw Failure.invalid }
+52:             switch op {
+53:             case "status": guard Set(a.keys)==["op"] else { throw Failure.invalid }; operation = .status
+54:             case "list":
+55:                 guard Set(a.keys)==["op","kind","archive","size","cursor"], let k = a["kind"] as? String, let kind = InventoryReadAdapter.Kind(rawValue:k), let v = a["archive"] as? String, let archive = InventoryReadAdapter.ArchiveScope(rawValue:v), let size = a["size"] as? Int, !isBoolean(a["size"]), (1...100).contains(size), kind == .items || archive == .all else { throw Failure.invalid }
+56:                 let cursor: String?
+57:                 if a["cursor"] is NSNull { cursor = nil } else { guard let text = a["cursor"] as? String, text.utf8.count <= 2048 else { throw Failure.invalid }; cursor = text }
+58:                 operation = .list(kind,archive,size,cursor)
+59:             case "show":
+60:                 guard Set(a.keys)==["op","kind","id"], let k = a["kind"] as? String, let kind = InventoryReadAdapter.Kind(rawValue:k), let id = UUID(uuidString:try uuid(a["id"])) else { throw Failure.invalid }
+61:                 operation = .show(kind,id)
+62:             default: throw Failure.invalid
+63:             }
+64:         }
+65:         var fields: [String:Any] { binding.fields.merging(["version":1,"request":id,"digest":digest],uniquingKeysWith: { _,new in new }) }
+66:     }
+67: }
+
+## AllMyCrap/InventorySessionReads.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: @MainActor
+5: final class InventorySessionReads {
+6:     private let reader: InventoryReadAdapter
+7:     let binding: InventoryWire.Binding
+8:     init(context: ModelContext, binding: InventoryWire.Binding) {
+9:         self.reader = InventoryReadAdapter(context:context); self.binding = binding
+10:     }
+11:     func respond(_ data: Data) throws -> Data {
+12:         let request = try InventoryWire.Request(data,expected:binding)
+13:         var reply = request.fields
+14:         reply["observed_at"] = ISO8601DateFormatter().string(from:Date())
+15:         reply["build"] = "inventory-foreground-prototype-v1"
+16:         reply["transactionalSnapshot"] = false
+17:         do {
+18:             let encoded: Data
+19:             let encoder = JSONEncoder(); encoder.dateEncodingStrategy = .secondsSince1970
+20:             switch request.operation {
+21:             case .status: encoded = try encoder.encode(reader.status())
+22:             case .list(let kind,let archive,let size,let cursor): encoded = try encoder.encode(reader.list(kind:kind,archive:archive,pageSize:size,cursor:cursor))
+23:             case .show(let kind,let id): encoded = try encoder.encode(reader.show(kind:kind,id:id))
+24:             }
+25:             reply["result"] = try JSONSerialization.jsonObject(with:encoded); reply["error"] = NSNull()
+26:         } catch let error as InventoryReadAdapter.Failure {
+27:             reply["result"] = NSNull(); reply["error"] = String(describing:error)
+28:         } catch {
+29:             // Do not leak model paths or underlying store details.
+30:             reply["result"] = NSNull(); reply["error"] = "readUnavailable"
+31:         }
+32:         let result = try InventoryWire.canonical(reply)
+33:         guard result.count <= InventoryWire.responseLimit else { throw InventoryWire.Failure.oversized }
+34:         return result
+35:     }
+36: }
+
+## AllMyCrap/InventoryMailboxTransport.swift
+1: import Foundation
+2: 
+3: protocol InventoryMailboxTransport: AnyObject {
+4:     func post(_ path: String, _ body: Data) async throws -> Data
+5:     func close()
+6: }
+7: 
+8: final class InventoryURLSessionTransport: NSObject, InventoryMailboxTransport, URLSessionTaskDelegate, @unchecked Sendable {
+9:     private let endpoint: URL
+10:     private let credential: String
+11:     private var session: URLSession!
+12:     init(endpoint: URL, credential: String, allowLoopbackHTTP: Bool = false) throws {
+13:         guard let c = URLComponents(url:endpoint,resolvingAgainstBaseURL:false), c.user == nil, c.password == nil, c.query == nil, c.fragment == nil,
+14:               c.path.isEmpty || c.path == "/", let host = c.host, !host.isEmpty,
+15:               c.scheme == "https" || (allowLoopbackHTTP && c.scheme == "http" && host == "127.0.0.1"),
+16:               !credential.isEmpty, credential.utf8.count <= 512, credential.allSatisfy({ $0.isASCII && !$0.isWhitespace }) else { throw InventoryWire.Failure.invalid }
+17:         self.endpoint = endpoint; self.credential = credential
+18:         super.init()
+19:         let config = URLSessionConfiguration.ephemeral
+20:         config.httpCookieStorage = nil; config.urlCache = nil; config.httpShouldSetCookies = false
+21:         config.requestCachePolicy = .reloadIgnoringLocalCacheData
+22:         config.timeoutIntervalForRequest = 3; config.timeoutIntervalForResource = 5
+23:         config.connectionProxyDictionary = [:]
+24:         session = URLSession(configuration:config,delegate:self,delegateQueue:nil)
+25:     }
+26:     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) { completionHandler(nil) }
+27:     func post(_ path: String, _ body: Data) async throws -> Data {
+28:         guard ["worker/hello","worker/next","worker/result","worker/offline"].contains(path), body.count <= InventoryWire.responseLimit else { throw InventoryWire.Failure.invalid }
+29:         var request = URLRequest(url:endpoint.appendingPathComponent(path))
+30:         request.httpMethod = "POST"; request.httpBody = body
+31:         request.setValue("Bearer " + credential,forHTTPHeaderField:"Authorization")
+32:         request.setValue("application/json",forHTTPHeaderField:"Content-Type")
+33:         let (stream,response) = try await session.bytes(for:request)
+34:         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { throw InventoryWire.Failure.transport }
+35:         if response.expectedContentLength > InventoryWire.responseLimit { throw InventoryWire.Failure.oversized }
+36:         var data = Data()
+37:         for try await byte in stream {
+38:             try Task.checkCancellation()
+39:             guard data.count < InventoryWire.responseLimit else { throw InventoryWire.Failure.oversized }
+40:             data.append(byte)
+41:         }
+42:         return data
+43:     }
+44:     func close() { session.invalidateAndCancel() }
+45: }
+
+## AllMyCrap/InventoryForegroundReadWorker.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: /// Configured externally; never discovers a store, host or credential itself.
+5: @MainActor
+6: final class InventoryForegroundReadWorker {
+7:     struct Configuration {
+8:         let device: String, store: String, client: String
+9:         let makeTransport: () throws -> InventoryMailboxTransport
+10:     }
+11:     private let context: ModelContext
+12:     private let configuration: Configuration?
+13:     private var generation = UUID()
+14:     private var task: Task<Void,Never>?
+15:     private var transport: InventoryMailboxTransport?
+16:     private(set) var state = "unconfigured"
+17:     init(context: ModelContext, configuration: Configuration? = nil) {
+18:         self.context = context; self.configuration = configuration
+19:         if configuration != nil { state = "inactive" }
+20:     }
+21:     func setActive(_ active: Bool) {
+22:         if !active {
+23:             generation = UUID(); task?.cancel(); task = nil
+24:             transport?.close(); transport = nil
+25:             state = configuration == nil ? "unconfigured" : "inactive"
+26:             // Mailbox liveness expires independently; shutdown never needs network.
+27:             return
+28:         }
+29:         guard task == nil, let config = configuration else { return }
+30:         let token = UUID(); generation = token
+31:         do {
+32:             let binding = try InventoryWire.Binding(device:config.device,store:config.store,client:config.client,scope:token.uuidString.lowercased())
+33:             let service = InventorySessionReads(context:context,binding:binding)
+34:             let wire = try config.makeTransport(); transport = wire; state = "starting"
+35:             task = Task { [weak self] in
+36:                 do {
+37:                     _ = try await wire.post("worker/hello",InventoryWire.canonical(binding.fields))
+38:                     while !Task.isCancelled, self?.generation == token {
+39:                         self?.state = "active"
+40:                         let packet = try await wire.post("worker/next",InventoryWire.canonical(binding.fields))
+41:                         try Task.checkCancellation()
+42:                         guard self?.generation == token else { break }
+43:                         let body = try InventoryWire.object(packet,limit:InventoryWire.requestLimit)
+44:                         if !body.isEmpty {
+45:                             let reply = try service.respond(packet)
+46:                             try Task.checkCancellation()
+47:                             guard self?.generation == token else { break }
+48:                             _ = try await wire.post("worker/result",reply)
+49:                         }
+50:                         try await Task.sleep(nanoseconds:1_000_000_000)
+51:                     }
+52:                 } catch { if let owner = self, owner.generation == token { owner.state = Task.isCancelled ? "inactive" : "unavailable" } }
+53:                 wire.close()
+54:                 if let owner = self, owner.generation == token { owner.task = nil; owner.transport = nil }
+55:             }
+56:         } catch { state = "unavailable" }
+57:     }
+58:     deinit { task?.cancel(); transport?.close() }
+59: }
+
+## tools/inventory_session/mailbox.py
+1: """Bounded in-memory loopback prototype. No production listener or data store."""
+2: import hashlib,hmac,json,socket,threading,time,uuid
+3: from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+4: REQUEST_LIMIT=16*1024
+5: RESPONSE_LIMIT=2*1024*1024
+6: 
+7: def canonical(value):return json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False).encode()
+8: def decode(raw,limit,require_canonical=True):
+9:  if len(raw)>limit:raise Fault(413,'oversized')
+10:  def pairs(items):
+11:   result={}
+12:   for key,value in items:
+13:    if key in result:raise Fault(400,'duplicate_key')
+14:    result[key]=value
+15:   return result
+16:  try:
+17:   result=json.loads(raw,object_pairs_hook=pairs,parse_constant=lambda _:(_ for _ in ()).throw(ValueError()))
+18:   if not isinstance(result,dict) or (require_canonical and canonical(result)!=raw):raise ValueError()
+19:   return result
+20:  except (ValueError,TypeError):raise Fault(400,'invalid')
+21: def identity(value):
+22:  try:
+23:   if not isinstance(value,str) or str(uuid.UUID(value))!=value:raise ValueError()
+24:   return value
+25:  except (ValueError,TypeError,AttributeError):raise Fault(400,'identity')
+26: class Fault(Exception):
+27:  def __init__(self,status,code):self.status=status;self.code=code
+28: 
+29: def validate_request(value,binding):
+30:  if set(value)!={'version','request','digest','device','store','client','scope','arguments'} or type(value['version']) is not int or value['version']!=1:raise Fault(400,'invalid')
+31:  identity(value['request'])
+32:  for key in ('device','store','client','scope'):
+33:   identity(value[key])
+34:   if value[key]!=binding[key]:raise Fault(409,'binding')
+35:  core={k:v for k,v in value.items() if k!='digest'}
+36:  if value['digest']!=hashlib.sha256(canonical(core)).hexdigest():raise Fault(400,'digest')
+37:  a=value['arguments']
+38:  if not isinstance(a,dict):raise Fault(400,'arguments')
+39:  if a.get('op')=='status':valid=set(a)=={'op'}
+40:  elif a.get('op')=='list':
+41:   valid=set(a)=={'op','kind','archive','size','cursor'} and a['kind'] in ('items','locations','tags') and a['archive'] in ('active','archived','all') and (a['kind']=='items' or a['archive']=='all') and type(a['size']) is int and 1<=a['size']<=100 and (a['cursor'] is None or isinstance(a['cursor'],str) and len(a['cursor'].encode())<=2048)
+42:  elif a.get('op')=='show':
+43:   valid=set(a)=={'op','kind','id'} and a['kind'] in ('items','locations','tags');identity(a.get('id'))
+44:  else:valid=False
+45:  if not valid:raise Fault(400,'arguments')
+46: 
+47: class Mailbox:
+48:  def __init__(self,device,store,client,client_token,worker_token,clock=time.monotonic):
+49:   self.base={k:identity(v) for k,v in dict(device=device,store=store,client=client).items()}
+50:   if not client_token or not worker_token or client_token==worker_token:raise ValueError('Separate fixture credentials required')
+51:   self.tokens={'client':client_token,'worker':worker_token};self.clock=clock;self.lock=threading.RLock();self.binding=None;self.last_seen=0.;self.rows={};self.events=[];self.counts={}
+52:  def event(self,path,code):
+53:   with self.lock:
+54:    known={'/worker/hello','/worker/next','/worker/result','/worker/offline','/client/hello','/client/submit','/client/result','/client/cancel'}
+55:    key=path if path in known else 'unknown'
+56:    self.events.append({'path':key,'code':code});self.events=self.events[-256:]
+57:    self.counts[key]=self.counts.get(key,0)+1
+58:  def active(self):return self.binding is not None and self.clock()-self.last_seen<4
+59:  def prune(self):
+60:   # Tombstones retain ID ownership until session reset: never reexecute an expired ID.
+61:   for row in self.rows.values():
+62:    if self.clock()>=row['expires']:row['state']='expired';row['result']=None
+63:  def dispatch(self,path,value,token):
+64:   with self.lock:
+65:    parts=path.split('/')
+66:    if len(parts)!=3 or parts[0]!='' or parts[1] not in self.tokens:raise Fault(404,'endpoint')
+67:    role,op=parts[1:]
+68:    if not hmac.compare_digest(token,'Bearer '+self.tokens[role]):raise Fault(401,'unauthorized')
+69:    self.prune()
+70:    if role=='worker':
+71:     if op=='hello':
+72:      if set(value)!=set(self.base)|{'scope'} or any(value.get(k)!=v for k,v in self.base.items()):raise Fault(409,'binding')
+73:      identity(value['scope'])
+74:      if self.binding!=value:
+75:       self.rows={};self.binding=dict(value)
+76:      self.last_seen=self.clock();return {}
+77:     if op in ('next','offline'):
+78:      if value!=self.binding:raise Fault(409,'binding')
+79:      if op=='offline':self.last_seen=float('-inf');return {}
+80:      self.last_seen=self.clock()
+81:      for row in self.rows.values():
+82:       if row['state']=='queued':row['state']='claimed';return row['request']
+83:      return {}
+84:     if op=='result':
+85:      required={'version','request','digest','device','store','client','scope','result','error','build','observed_at','transactionalSnapshot'}
+86:      if set(value)!=required or value.get('version')!=1 or type(value.get('version')) is not int or value.get('transactionalSnapshot') is not False or not isinstance(value.get('build'),str) or not isinstance(value.get('observed_at'),str):raise Fault(400,'invalid_result')
+87:      if not self.active() or any(value.get(k)!=v for k,v in self.binding.items()):raise Fault(409,'binding')
+88:      identity(value.get('request'))
+89:      row=self.rows.get(value.get('request'))
+90:      if not row or value.get('digest')!=row['request']['digest']:raise Fault(409,'request')
+91:      if row['state']=='complete':
+92:       if row['result']!=value:raise Fault(409,'result_conflict')
+93:       return {}
+94:      if row['state']!='claimed':raise Fault(409,row['state'])
+95:      if (value['error'] is None)==(value['result'] is None) or (value['result'] is not None and not isinstance(value['result'],dict)):raise Fault(400,'invalid_result')
+96:      if value['error'] is not None and value['error'] not in ('pendingEdits','invalidQuery','notFound','invalidCursor','staleCursor','rowLimit','fieldLimit','projectionLimit','responseLimit','invalidData','unsupportedSchema','readUnavailable'):raise Fault(400,'invalid_error')
+97:      if len(canonical(value))>RESPONSE_LIMIT:raise Fault(413,'oversized')
+98:      row['state']='complete';row['result']=value;return {}
+99:    else:
+100:     if op=='hello':
+101:      if value!={}:raise Fault(400,'invalid')
+102:      if not self.active():raise Fault(503,'unavailable')
+103:      return self.binding
+104:     if op=='submit':
+105:      if self.binding is None:raise Fault(503,'unavailable')
+106:      validate_request(value,self.binding)
+107:      if len(canonical(value))>REQUEST_LIMIT:raise Fault(413,'oversized')
+108:      key=value['request'];row=self.rows.get(key)
+109:      if row:
+110:       if row['request']!=value:raise Fault(409,'request_conflict')
+111:       return {'state':row['state']}
+112:      if not self.active():raise Fault(503,'unavailable')
+113:      if len(self.rows)>=32:raise Fault(429,'capacity')
+114:      self.rows[key]={'request':value,'state':'queued','result':None,'expires':self.clock()+300}
+115:      return {'state':'queued'}
+116:     if op in ('result','cancel'):
+117:      if set(value)!={'request','digest','device','store','client','scope'} or self.binding is None or any(value.get(k)!=v for k,v in self.binding.items()):raise Fault(409,'binding')
+118:      identity(value.get('request'))
+119:      row=self.rows.get(value.get('request'))
+120:      if not row:raise Fault(404,'unknown')
+121:      if row['request']['digest']!=value['digest']:raise Fault(409,'digest')
+122:      if op=='cancel' and row['state'] in ('queued','claimed'):row['state']='cancelled'
+123:      return {'state':row['state'],'response':row['result']}
+124:    raise Fault(404,'endpoint')
+125: 
+126: class Server:
+127:  def __init__(self,mailbox):
+128:   self.mailbox=mailbox;outer=self
+129:   class Handler(BaseHTTPRequestHandler):
+130:    def log_message(self,*args):pass
+131:    def do_POST(self):
+132:     status=200
+133:     try:
+134:      if self.headers.get('Transfer-Encoding') or self.headers.get('Content-Type')!='application/json':raise Fault(400,'headers')
+135:      limit=RESPONSE_LIMIT if self.path=='/worker/result' else REQUEST_LIMIT
+136:      try:size=int(self.headers.get('Content-Length','-1'))
+137:      except ValueError:raise Fault(400,'length')
+138:      if not 0<=size<=limit:raise Fault(413,'oversized')
+139:      self.connection.settimeout(3)
+140:      body=self.rfile.read(size)
+141:      if len(body)!=size:raise Fault(400,'length')
+142:      value=decode(body,limit,require_canonical=self.path!='/worker/result');result=outer.mailbox.dispatch(self.path,value,self.headers.get('Authorization',''))
+143:     except Fault as e:status=e.status;result={'error':e.code}
+144:     except (OSError,ValueError):status=400;result={'error':'invalid'}
+145:     outer.mailbox.event(self.path,str(status));raw=canonical(result)
+146:     try:
+147:      self.send_response(status);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw)
+148:     except OSError:pass
+149:   class BoundedServer(ThreadingHTTPServer):
+150:    slots=threading.BoundedSemaphore(8)
+151:    def process_request(self,request,address):
+152:     if not self.slots.acquire(blocking=False):self.shutdown_request(request);return
+153:     try:super().process_request(request,address)
+154:     except BaseException:self.slots.release();raise
+155:    def process_request_thread(self,request,address):
+156:     # Start before BaseHTTPRequestHandler reads even the request line. An absolute
+157:     # timer, unlike socket inactivity timeouts, cannot be extended by trickling.
+158:     # Shutdown this owned socket without closing/reusing its descriptor; the
+159:     # handler's normal finally path closes it and releases its capacity slot.
+160:     def expire():
+161:      try:request.shutdown(socket.SHUT_RDWR)
+162:      except OSError:pass
+163:     deadline=threading.Timer(3,expire);deadline.daemon=True;deadline.start()
+164:     try:super().process_request_thread(request,address)
+165:     finally:
+166:      deadline.cancel();self.slots.release()
+167:   self.http=BoundedServer(('127.0.0.1',0),Handler);self.http.daemon_threads=True
+168:   self.thread=threading.Thread(target=self.http.serve_forever,daemon=True);self.thread.start();self.url='http://127.0.0.1:'+str(self.http.server_port)
+169:  def close(self):self.http.shutdown();self.thread.join(timeout=3);self.http.server_close()
+
+## tools/inventory_session/client.py
+1: """Explicit-config local prototype session client; never discovers real inventory."""
+2: import argparse,hashlib,json,time,uuid,urllib.parse,http.client,socket
+3: from pathlib import Path
+4: try:from .mailbox import canonical,decode,validate_request,RESPONSE_LIMIT,Fault
+5: except ImportError:from mailbox import canonical,decode,validate_request,RESPONSE_LIMIT,Fault
+6: class Client:
+7:  def __init__(self,endpoint,token):
+8:   u=urllib.parse.urlsplit(endpoint)
+9:   if u.scheme!='http' or u.hostname!='127.0.0.1' or u.username or u.password or u.path not in ('','/') or u.query or u.fragment or not u.port:raise ValueError('Explicit loopback prototype endpoint required')
+10:   if not isinstance(token,str) or not 0<len(token)<=512 or any(not c.isascii() or c.isspace() for c in token):raise ValueError('Opaque credential required')
+11:   self.endpoint=endpoint.rstrip('/');self.token=token;self.port=u.port
+12:  def post(self,path,value,timeout=3):
+13:   if path not in ('hello','submit','result','cancel'):raise ValueError('Unknown client operation')
+14:   raw=canonical(value)
+15:   if len(raw)>16*1024:raise Fault(413,'oversized')
+16:   deadline=time.monotonic()+min(3,timeout)
+17:   conn=http.client.HTTPConnection('127.0.0.1',self.port,timeout=max(.001,min(3,timeout)))
+18:   try:
+19:    conn.request('POST','/client/'+path,body=raw,headers={'Authorization':'Bearer '+self.token,'Content-Type':'application/json'})
+20:    if conn.sock is not None:conn.sock.settimeout(max(.001,deadline-time.monotonic()))
+21:    response=conn.getresponse();data=bytearray();limit=RESPONSE_LIMIT if response.status==200 else 1024
+22:    # HTTPConnection does not follow redirects or inherit proxy configuration.
+23:    while True:
+24:     remaining=deadline-time.monotonic()
+25:     if remaining<=0:raise Fault(408,'deadline')
+26:     # Keep a wall-clock budget even when a peer trickles body bytes.
+27:     if response.fp is not None:
+28:      response.fp.raw._sock.settimeout(remaining)
+29:     chunk=response.read1(min(65536,limit+1-len(data)))
+30:     if not chunk:break
+31:     data.extend(chunk)
+32:     if len(data)>limit:raise Fault(413,'oversized')
+33:    if response.status!=200:
+34:     try:code=json.loads(data)['error']
+35:     except (ValueError,KeyError,TypeError):code='transport'
+36:     raise Fault(response.status,code)
+37:    return decode(bytes(data),RESPONSE_LIMIT,require_canonical=False)
+38:   except (socket.timeout,TimeoutError):raise Fault(408,'deadline') from None
+39:   except (OSError,http.client.HTTPException):raise Fault(503,'transport') from None
+40:   finally:conn.close()
+41:  def prepare(self,arguments,request_id=None):
+42:   binding=self.post('hello',{});value=dict(binding,version=1,request=request_id or str(uuid.uuid4()),arguments=arguments)
+43:   value['digest']=hashlib.sha256(canonical(value)).hexdigest();validate_request(value,binding);return value
+44:  def read(self,request,timeout=30,cancel=None):
+45:   if not 0<timeout<=30:raise ValueError('Bounded wait required')
+46:   deadline=time.monotonic()+timeout
+47:   self.post('submit',request,timeout=timeout);selector={k:v for k,v in request.items() if k not in ('version','arguments')}
+48:   while True:
+49:    remaining=deadline-time.monotonic()
+50:    if remaining<=0:raise Fault(408,'deadline')
+51:    if cancel is not None and cancel.is_set():self.post('cancel',selector,timeout=remaining);raise Fault(409,'cancelled')
+52:    value=self.post('result',selector,timeout=remaining)
+53:    if value['state']=='complete':
+54:     result=value['response']
+55:     if any(result.get(k)!=v for k,v in selector.items()):raise Fault(409,'response_binding')
+56:     return result
+57:    if value['state'] not in ('queued','claimed'):raise Fault(409,value['state'])
+58:    if time.monotonic()>=deadline:raise Fault(408,'deadline')
+59:    time.sleep(.05)
+60: def main():
+61:  p=argparse.ArgumentParser();p.add_argument('--endpoint',required=True);p.add_argument('--token-file',required=True);p.add_argument('--request-file',required=True);a=p.parse_args()
+62:  c=Client(a.endpoint,Path(a.token_file).read_text().strip());print(json.dumps(c.read(c.prepare(json.loads(Path(a.request_file).read_text())))))
+63: if __name__=='__main__':main()
+
+## tests/inventory_session_protocol.py
+1: """Bounded synthetic protocol/owner compiler proof; never boot the app."""
+2: import pathlib,subprocess,tempfile,os,platform,json
+3: ROOT=pathlib.Path(__file__).resolve().parents[1]
+4: FILES=['InventoryReadProtocol.swift','InventorySessionReads.swift','InventoryMailboxTransport.swift','InventoryForegroundReadWorker.swift']
+5: def registration():
+6:  text=(ROOT/'AllMyCrap.xcodeproj/project.pbxproj').read_text()
+7:  for name in ['InventoryReadAdapter.swift',*FILES]:
+8:   assert text.count('/* '+name+' in Sources */')==2, 'Missing/duplicate app target registration: '+name
+9: if __name__=='__main__':
+10:  registration()
+11:  with tempfile.TemporaryDirectory(prefix='inventory-protocol-') as td:
+12:   p=pathlib.Path(td);names=['Location.swift','Item.swift','Tag.swift','ReviewHistory.swift','DuplicateExclusion.swift','InventoryReadAdapter.swift',*FILES]
+13:   cmd=['xcrun','swiftc','-swift-version','5','-target',platform.machine()+'-apple-macos14.0','-module-cache-path',str(p/'cache'),*[str(ROOT/'AllMyCrap'/n) for n in names],str(ROOT/'tests/inventory_session_protocol.swift'),'-o',str(p/'tests')]
+14:   subprocess.run(cmd,check=True,timeout=100)
+15:   subprocess.run([str(p/'tests')],env=dict(os.environ,INVENTORY_FIXTURE_ROOT=td),check=True,timeout=25)
+
+## tests/inventory_session_protocol.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: final class DelayedFixtureTransport: InventoryMailboxTransport {
+5:  var calls:[String]=[]; var pending:CheckedContinuation<Data,Error>?; var hello:[String:Any]=[:]; var closes=0
+6:  func post(_ path:String,_ body:Data) async throws -> Data {
+7:   calls.append(path)
+8:   if path=="worker/hello" {hello=try InventoryWire.object(body,limit:InventoryWire.requestLimit)}
+9:   if path=="worker/next" {return try await withCheckedThrowingContinuation { pending=$0 }}
+10:   return Data("{}".utf8)
+11:  }
+12:  func close() {closes+=1}
+13: }
+14: @main struct ProtocolTests {
+15:  @MainActor static func main() async throws {
+16:   let base=URL(fileURLWithPath:ProcessInfo.processInfo.environment["INVENTORY_FIXTURE_ROOT"]!)
+17:   let schema=Schema([Location.self,Item.self,Tag.self,ReviewHistory.self,DuplicateExclusion.self])
+18:   let container=try ModelContainer(for:schema,configurations:[ModelConfiguration("Fixture",schema:schema,url:base.appendingPathComponent("fixture.store"),cloudKitDatabase:.none)])
+19:   let context=ModelContext(container);context.autosaveEnabled=false
+20:   let binding=try InventoryWire.Binding(device:UUID().uuidString.lowercased(),store:UUID().uuidString.lowercased(),client:UUID().uuidString.lowercased(),scope:UUID().uuidString.lowercased())
+21:   let service=InventorySessionReads(context:context,binding:binding)
+22:   var passed=0
+23:   func check(_ value:Bool) { precondition(value);passed+=1 }
+24:   func packet(_ a:[String:Any],_ b:InventoryWire.Binding?=nil) throws -> Data {
+25:    var o=(b ?? binding).fields;o["version"]=1;o["request"]=UUID().uuidString.lowercased();o["arguments"]=a;o["digest"]=try InventoryWire.digest(o);return try InventoryWire.canonical(o)
+26:   }
+27:   func response(_ a:[String:Any]) throws -> [String:Any] { try InventoryWire.object(service.respond(packet(a)),limit:InventoryWire.responseLimit) }
+28:   let one=Item(name:"Synthetic"),two=Item(name:"Synthetic");context.insert(one);context.insert(two)
+29:   check(context.hasChanges);check(try response(["op":"status"])["error"] as? String == "pendingEdits");check(context.hasChanges)
+30:   try context.save()
+31:   let status=try response(["op":"status"]);check(status["transactionalSnapshot"] as? Bool == false)
+32:   check(((status["result"] as! [String:Any])["counts"] as! [String:Any])["items"] as? Int == 2)
+33:   var list:[String:Any] = ["op":"list","kind":"items","archive":"all","size":1,"cursor":NSNull()]
+34:   let first=try response(list)["result"] as! [String:Any];let cursor=first["next"] as! String;list["cursor"]=cursor
+35:   let second=try response(list)["result"] as! [String:Any];check(first["scope"] as? String == second["scope"] as? String);check(second["complete"] as? Bool == true)
+36:   let another=InventorySessionReads(context:context,binding:binding)
+37:   check(try InventoryWire.object(another.respond(packet(list)),limit:InventoryWire.responseLimit)["error"] as? String == "invalidCursor")
+38:   one.name="Saved";try context.save();check(try response(list)["error"] as? String == "staleCursor")
+39:   check(try response(["op":"show","kind":"items","id":UUID().uuidString.lowercased()])["error"] as? String == "notFound")
+40:   for arguments in [["op":"remove"],["op":"status","path":"/SYNTHETIC"]] {
+41:    do {_ = try service.respond(packet(arguments));fatalError("accepted unsupported") }catch is InventoryWire.Failure {passed+=1}
+42:   }
+43:   var wrong=binding.fields;wrong["store"]=UUID().uuidString.lowercased()
+44:   let wrongBinding=try InventoryWire.Binding(device:wrong["device"] as! String,store:wrong["store"] as! String,client:wrong["client"] as! String,scope:wrong["scope"] as! String)
+45:   do {_ = try service.respond(packet(["op":"status"],wrongBinding));fatalError("wrong binding") }catch InventoryWire.Failure.binding {passed+=1}
+46:   let raw=try packet(["op":"status"]);let duplicate=Data((String(data:raw,encoding:.utf8)!.dropLast()+",\"version\":1}").utf8)
+47:   do {_ = try service.respond(duplicate);fatalError("duplicate") }catch InventoryWire.Failure.invalid {passed+=1}
+48:   check(!context.hasChanges)
+49:   let disabled=InventoryForegroundReadWorker(context:context);disabled.setActive(true);check(disabled.state=="unconfigured");disabled.setActive(false);check(disabled.state=="unconfigured")
+50:   check(try context.fetchCount(FetchDescriptor<Item>())==2)
+51:   let fake=DelayedFixtureTransport()
+52:   let worker=InventoryForegroundReadWorker(context:context,configuration:.init(device:binding.device,store:binding.store,client:binding.client,makeTransport:{fake}))
+53:   worker.setActive(true);worker.setActive(true)
+54:   for _ in 0..<100 {if fake.pending != nil {break};try await Task.sleep(nanoseconds:10_000_000)}
+55:   check(fake.calls.filter {$0=="worker/hello"}.count==1 && fake.pending != nil)
+56:   worker.setActive(false);check(worker.state=="inactive")
+57:   var late=fake.hello;late["version"]=1;late["request"]=UUID().uuidString.lowercased();late["arguments"]=["op":"status"];late["digest"]=try InventoryWire.digest(late)
+58:   fake.pending?.resume(returning:try InventoryWire.canonical(late));fake.pending=nil
+59:   try await Task.sleep(nanoseconds:100_000_000)
+60:   check(!fake.calls.contains("worker/result"));check(fake.closes>=1)
+61:   for endpoint in ["http://example.invalid","http://localhost:12345","https://user:pass@example.invalid","https://example.invalid/path"] {
+62:    do {_ = try InventoryURLSessionTransport(endpoint:URL(string:endpoint)!,credential:"fixture",allowLoopbackHTTP:true);fatalError("invalid endpoint")}catch InventoryWire.Failure.invalid {passed+=1}
+63:   }
+64:   let otherContainer=try ModelContainer(for:schema,configurations:[ModelConfiguration("OtherFixture",schema:schema,url:base.appendingPathComponent("other.store"),cloudKitDatabase:.none)])
+65:   let otherContext=ModelContext(otherContainer);otherContext.autosaveEnabled=false;otherContext.insert(Item(name:"Other store"));try otherContext.save()
+66:   let otherService=InventorySessionReads(context:otherContext,binding:wrongBinding)
+67:   let otherReply=try InventoryWire.object(otherService.respond(packet(["op":"status"],wrongBinding)),limit:InventoryWire.responseLimit)
+68:   check(((otherReply["result"] as! [String:Any])["counts"] as! [String:Any])["items"] as? Int == 1)
+69:   check(try InventoryWire.object(otherService.respond(packet(["op":"show","kind":"items","id":one.id.uuidString.lowercased()],wrongBinding)),limit:InventoryWire.responseLimit)["error"] as? String == "notFound")
+70:   let abandonedTransport=DelayedFixtureTransport()
+71:   var abandoned:InventoryForegroundReadWorker?=InventoryForegroundReadWorker(context:context,configuration:.init(device:binding.device,store:binding.store,client:binding.client,makeTransport:{abandonedTransport}))
+72:   weak var observed=abandoned;abandoned?.setActive(true)
+73:   for _ in 0..<100 {if abandonedTransport.pending != nil {break};try await Task.sleep(nanoseconds:10_000_000)}
+74:   check(abandonedTransport.pending != nil);abandoned=nil
+75:   check(observed == nil && abandonedTransport.closes>=1)
+76:   abandonedTransport.pending?.resume(returning:Data("{}".utf8));abandonedTransport.pending=nil
+77:   try await Task.sleep(nanoseconds:20_000_000)
+78:   precondition(passed==30);print("PROTOCOL_RESULT="+String(passed))
+79:  }
+80: }
+
+## tests/inventory_session_roundtrip.py
+1: """Real loopback session→URLSession worker→temporary SwiftData→reply proof."""
+2: import sys,os,json,pathlib,subprocess,tempfile,platform,time,uuid,secrets,threading
+3: ROOT=pathlib.Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
+4: from tools.inventory_session.mailbox import Mailbox,Server,canonical,Fault
+5: from tools.inventory_session.client import Client
+6: from tests.inventory_session_protocol import registration,FILES
+7: 
+8: def main():
+9:  registration()
+10:  # A fixture host is necessary; compiling library classes alone is not delivery.
+11:  assert (ROOT/'tests/inventory_session_worker.swift').exists(),'Automatic worker consumer not implemented'
+12:  passed=[]
+13:  def check(name,value):
+14:   assert value,name;passed.append(name)
+15:  with tempfile.TemporaryDirectory(prefix='inventory-roundtrip-') as td:
+16:   p=pathlib.Path(td);ids={k:str(uuid.uuid4()) for k in ('device','store','client')};tokens={k:secrets.token_urlsafe(32) for k in ('client','worker')}
+17:   mailbox=Mailbox(**ids,client_token=tokens['client'],worker_token=tokens['worker']);server=Server(mailbox);client=Client(server.url,tokens['client']);proc=None
+18:   try:
+19:    try:client.post('hello',{});raise AssertionError('unexpected ready')
+20:    except Fault as e:check('inactive is unavailable',e.code=='unavailable')
+21:    names=['Location.swift','Item.swift','Tag.swift','ReviewHistory.swift','DuplicateExclusion.swift','InventoryReadAdapter.swift',*FILES]
+22:    command=['xcrun','swiftc','-swift-version','5','-target',platform.machine()+'-apple-macos14.0','-module-cache-path',str(p/'cache'),*[str(ROOT/'AllMyCrap'/n) for n in names],str(ROOT/'tests/inventory_session_worker.swift'),'-o',str(p/'worker')]
+23:    subprocess.run(command,check=True,timeout=100)
+24:    cfg=dict(ids,endpoint=server.url,token=tokens['worker']);(p/'config.json').write_bytes(canonical(cfg));os.chmod(p/'config.json',0o600)
+25:    log=(p/'worker.log').open('w');proc=subprocess.Popen([str(p/'worker'),str(p)],stdout=log,stderr=log)
+26:    def waitfor(path,timeout=10):
+27:     until=time.monotonic()+timeout
+28:     while not path.exists():
+29:      if proc.poll() is not None:raise AssertionError('worker exited: '+(p/'worker.log').read_text()[-2000:])
+30:      if time.monotonic()>until:raise AssertionError('fixture readiness timeout')
+31:      time.sleep(.02)
+32:     return json.loads(path.read_text())
+33:    ready=waitfor(p/'ready.json');binding=None
+34:    until=time.monotonic()+6
+35:    while binding is None:
+36:     try:binding=client.post('hello',{})
+37:     except Fault:
+38:      if time.monotonic()>until:raise
+39:      time.sleep(.05)
+40:    def read(args):return client.read(client.prepare(args),timeout=8)
+41:    status=read({'op':'status'});check('real worker status',status['result']['counts']['items']==3 and status['transactionalSnapshot'] is False)
+42:    args={'op':'list','kind':'items','archive':'all','size':2,'cursor':None}
+43:    first=read(args);args['cursor']=first['result']['next'];second=read(args)
+44:    records=first['result']['records']+second['result']['records'];found=sorted(r['item']['_0']['id'].lower() for r in records)
+45:    check('actual items and stable page cursor',found==sorted(ready['items']) and second['result']['complete'])
+46:    for kind,key in [('locations','locations'),('tags','tags')]:check('real '+kind+' list',read({'op':'list','kind':kind,'archive':'all','size':10,'cursor':None})['result']['total']==1)
+47:    show=read({'op':'show','kind':'items','id':ready['items'][0]});check('exact show',show['result']['record']['item']['_0']['id'].lower()==ready['items'][0])
+48:    check('not found remains error',read({'op':'show','kind':'items','id':str(uuid.uuid4())})['error']=='notFound')
+49:    request=client.prepare({'op':'status'});original=client.read(request,timeout=8);check('completed retry identical',client.read(request,timeout=8)==original)
+50:    changed=dict(request,arguments={'op':'show','kind':'items','id':ready['items'][0]});import hashlib;changed['digest']=hashlib.sha256(canonical({k:v for k,v in changed.items() if k!='digest'})).hexdigest()
+51:    try:client.post('submit',changed);raise AssertionError('conflict allowed')
+52:    except Fault as e:check('changed retry refused',e.code=='request_conflict')
+53:    sequence=0
+54:    def control(action):
+55:     nonlocal sequence
+56:     sequence+=1;tmp=p/'control.tmp';tmp.write_bytes(canonical({'sequence':sequence,'action':action}));tmp.replace(p/'control.json');return waitfor(p/f'control-{sequence}.json')
+57:    control('edit');check('pending caller edits preserved',read({'op':'status'})['error']=='pendingEdits')
+58:    check('fixture confirms edit remains',control('save')['pending_before_save'])
+59:    check('changed store stales prior cursor',read(args)['error']=='staleCursor')
+60:    control('inactive');count=len(mailbox.events);time.sleep(1.3);check('inactive stops polling',len(mailbox.events)==count)
+61:    control('active');time.sleep(.25);newbinding=client.post('hello',{});check('new activation changes scope',newbinding['scope']!=binding['scope'])
+62:    check('previous cursor rejected after restart',read(args)['error']=='invalidCursor')
+63:    cancelled=client.prepare({'op':'status'});flag=threading.Event();flag.set()
+64:    try:client.read(cancelled,timeout=8,cancel=flag);raise AssertionError('cancel failed')
+65:    except Fault as e:check('explicit cancellation',e.code=='cancelled')
+66:    control('inactive');delayed=client.prepare({'op':'status'})
+67:    try:client.read(delayed,timeout=.2);raise AssertionError('timeout failed')
+68:    except Fault as e:check('bounded pending deadline',e.code=='deadline')
+69:    control('active');time.sleep(.25)
+70:    try:client.post('result',{k:v for k,v in delayed.items() if k not in ('version','arguments')});raise AssertionError('late scope accepted')
+71:    except Fault as e:check('late result cannot change session',e.code=='binding')
+72:    check('no fixture mutation from reads',control('inspect')['item_count']==3)
+73:    control('stop');proc.wait(timeout=5);check('owned worker stopped',proc.returncode==0)
+74:    trace=[x['path'] for x in mailbox.events];check('actual HTTP claim and publish',mailbox.counts.get('/worker/result',0)>=11 and mailbox.counts.get('/worker/next',0)>=12)
+75:    from tests.inventory_transport_probes import run
+76:    passed.extend(run(p/'worker',p,ids,tokens['worker']))
+77:   finally:
+78:    if proc is not None and proc.poll() is None:
+79:     proc.terminate()
+80:     try:proc.wait(timeout=3)
+81:     except subprocess.TimeoutExpired:proc.kill();proc.wait(timeout=3)
+82:    server.close()
+83:    print(json.dumps({'partial_assertions':passed,'http_counts':mailbox.counts,'worker_events':[e for e in mailbox.events if e['path'].startswith('/worker/')],'worker_terminal':proc is None or proc.poll() is not None}))
+84:   print(json.dumps({'passed':len(passed),'assertions':passed,'real_loopback':True,'temporary_SwiftData':True,'real_inventory':False}));assert len(passed)==25
+85: if __name__=='__main__':main()
+
+## tests/inventory_session_worker.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: /// Disposable process entry only, never included in application target.
+5: @main struct FixtureWorker {
+6:  @MainActor static func main() async throws {
+7:   let root=URL(fileURLWithPath:CommandLine.arguments[1]);let cfg=try JSONSerialization.jsonObject(with:Data(contentsOf:root.appendingPathComponent("config.json"))) as! [String:String]
+8:   let schema=Schema([Location.self,Item.self,Tag.self,ReviewHistory.self,DuplicateExclusion.self])
+9:   let container=try ModelContainer(for:schema,configurations:[ModelConfiguration("HTTPFixture",schema:schema,url:root.appendingPathComponent("fixture.store"),cloudKitDatabase:.none)])
+10:   let context=ModelContext(container);context.autosaveEnabled=false
+11:   let location=Location(name:"Synthetic room"),tag=Tag(name:"Synthetic tag",color:"#123456")
+12:   context.insert(location);context.insert(tag)
+13:   let items=(0..<3).map {_ in Item(name:"Synthetic same name",location:location)}
+14:   for item in items {context.insert(item)}
+15:   try context.save()
+16:   let worker=InventoryForegroundReadWorker(context:context,configuration:.init(device:cfg["device"]!,store:cfg["store"]!,client:cfg["client"]!,makeTransport:{ try InventoryURLSessionTransport(endpoint:URL(string:cfg["endpoint"]!)!,credential:cfg["token"]!,allowLoopbackHTTP:true) }))
+17:   func write(_ name:String,_ value:[String:Any]) throws {try InventoryWire.canonical(value).write(to:root.appendingPathComponent(name),options:.atomic)}
+18:   worker.setActive(true)
+19:   try write("ready.json",["items":items.map {$0.id.uuidString.lowercased()},"locations":[location.id.uuidString.lowercased()],"tags":[tag.id.uuidString.lowercased()]])
+20:   var last=0;var stop=false;let deadline=Date().addingTimeInterval(90)
+21:   while !stop && Date()<deadline {
+22:    if let raw=try? Data(contentsOf:root.appendingPathComponent("control.json")),let c=try? JSONSerialization.jsonObject(with:raw) as? [String:Any],let sequence=c["sequence"] as? Int,sequence>last,let action=c["action"] as? String {
+23:     last=sequence;var result:[String:Any]=["sequence":sequence]
+24:     switch action {
+25:     case "edit":items[0].name="Synthetic changed"
+26:     case "save":result["pending_before_save"]=context.hasChanges;try context.save()
+27:     case "inactive":worker.setActive(false)
+28:     case "active":worker.setActive(true)
+29:     case "inspect":result["item_count"]=try context.fetchCount(FetchDescriptor<Item>())
+30:     case "stop":worker.setActive(false);stop=true
+31:     default:fatalError("Unknown synthetic control")
+32:     }
+33:     result["state"]=worker.state;try write("control-\(sequence).json",result)
+34:    }
+35:    try await Task.sleep(nanoseconds:10_000_000)
+36:   }
+37:   worker.setActive(false)
+38:   if !stop {throw InventoryWire.Failure.unavailable}
+39:  }
+40: }
+
+## tests/inventory_transport_probes.py
+1: """Actual URLSession refusal tests against disposable loopback-only listeners."""
+2: import json,os,subprocess,threading,time
+3: from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+4: from tools.inventory_session.mailbox import canonical
+5: 
+6: def run(binary,root,ids,token):
+7:  passed=[];sink_hits=[]
+8:  class Sink(BaseHTTPRequestHandler):
+9:   def log_message(self,*a):pass
+10:   def do_POST(self):
+11:    sink_hits.append(True);self.send_response(200);self.send_header('Content-Length','2');self.end_headers();self.wfile.write(b'{}')
+12:  sink=ThreadingHTTPServer(('127.0.0.1',0),Sink);thread=threading.Thread(target=sink.serve_forever,daemon=True);thread.start()
+13:  try:
+14:   for mode in ('redirect','oversized','unauthorized'):
+15:    origin_hits=[]
+16:    class Origin(BaseHTTPRequestHandler):
+17:     def log_message(self,*a):pass
+18:     def do_POST(self):
+19:      origin_hits.append(True)
+20:      self.send_response({'redirect':307,'oversized':200,'unauthorized':401}[mode])
+21:      if mode=='redirect':self.send_header('Location','http://127.0.0.1:'+str(sink.server_port)+'/sink')
+22:      self.send_header('Content-Length',str(2*1024*1024+1) if mode=='oversized' else '0');self.end_headers()
+23:    origin=ThreadingHTTPServer(('127.0.0.1',0),Origin);t=threading.Thread(target=origin.serve_forever,daemon=True);t.start()
+24:    folder=root/mode;folder.mkdir();(folder/'config.json').write_bytes(canonical(dict(ids,endpoint='http://127.0.0.1:'+str(origin.server_port),token=token)));os.chmod(folder/'config.json',0o600)
+25:    proc=None
+26:    try:
+27:     with (folder/'worker.log').open('w') as log:
+28:      proc=subprocess.Popen([str(binary),str(folder)],stdout=log,stderr=log)
+29:      def wait(path):
+30:       end=time.monotonic()+8
+31:       while not path.exists():
+32:        assert proc.poll() is None,'transport probe worker exited'
+33:        assert time.monotonic()<end,'transport probe timeout'
+34:        time.sleep(.02)
+35:       return json.loads(path.read_text())
+36:      wait(folder/'ready.json');time.sleep(.5)
+37:      state=None
+38:      for sequence in range(1,31):
+39:       (folder/'control.json').write_bytes(canonical({'sequence':sequence,'action':'inspect'}));state=wait(folder/f'control-{sequence}.json')['state']
+40:       if state=='unavailable':break
+41:       time.sleep(.1)
+42:      assert origin_hits and state=='unavailable',mode+' was not refused';passed.append('URLSession refuses '+mode)
+43:      assert not sink_hits,'redirect disclosed request to second listener'
+44:      (folder/'control.json').write_bytes(canonical({'sequence':100,'action':'stop'}));wait(folder/'control-100.json');proc.wait(timeout=5);assert proc.returncode==0
+45:    finally:
+46:     if proc is not None and proc.poll() is None:
+47:      proc.terminate()
+48:      try:proc.wait(timeout=3)
+49:      except subprocess.TimeoutExpired:proc.kill();proc.wait(timeout=3)
+50:     origin.shutdown();t.join(timeout=3);origin.server_close()
+51:   passed.append('redirect delivered no credential or body to sink')
+52:  finally:sink.shutdown();thread.join(timeout=3);sink.server_close()
+53:  return passed
+
+## tests/test_inventory_mailbox.py
+1: import copy,hashlib,json,sys,threading,time,unittest,uuid
+2: from pathlib import Path
+3: sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+4: from tools.inventory_session.mailbox import Mailbox,Fault,canonical,decode,validate_request,REQUEST_LIMIT,RESPONSE_LIMIT
+5: class MailboxTests(unittest.TestCase):
+6:  def setUp(self):
+7:   self.now=[1.];self.ids={k:str(uuid.uuid4()) for k in ('device','store','client')};self.m=Mailbox(**self.ids,client_token='synthetic-client',worker_token='synthetic-worker',clock=lambda:self.now[0]);self.binding=dict(self.ids,scope=str(uuid.uuid4()));self.call('worker','hello',self.binding)
+8:  def call(self,role,op,value):return self.m.dispatch('/'+role+'/'+op,value,'Bearer synthetic-'+role)
+9:  def request(self,arguments=None):
+10:   d=dict(self.binding,version=1,request=str(uuid.uuid4()),arguments=arguments or {'op':'status'});d['digest']=hashlib.sha256(canonical(d)).hexdigest();return d
+11:  def expect(self,code,body):
+12:   with self.assertRaises(Fault) as caught:body()
+13:   self.assertEqual(caught.exception.code,code)
+14:  def selector(self,r):return {k:v for k,v in r.items() if k not in ('version','arguments')}
+15:  def reply(self,r):return dict(self.selector(r),version=1,observed_at='2030-01-01T00:00:00Z',build='synthetic',transactionalSnapshot=False,error=None,result={'counts':{'items':0}})
+16:  def test_roles_and_bindings(self):
+17:   self.expect('unauthorized',lambda:self.m.dispatch('/worker/next',self.binding,'Bearer synthetic-client'))
+18:   self.expect('unauthorized',lambda:self.m.dispatch('/client/hello',{},'Bearer synthetic-worker'))
+19:   for key in ('device','store','client','scope'):
+20:    r=self.request();r[key]=str(uuid.uuid4());self.expect('binding',lambda:self.call('client','submit',r))
+21:  def test_argument_validation_and_digest(self):
+22:   for a in ({'op':'remove'},{'op':'status','file':'/SYNTHETIC'},{'op':'list','kind':'items','archive':'all','size':True,'cursor':None},{'op':'list','kind':'tags','archive':'active','size':1,'cursor':None}):self.expect('arguments',lambda:self.call('client','submit',self.request(a)))
+23:   r=self.request();r['digest']='bad';self.expect('digest',lambda:self.call('client','submit',r));self.assertEqual(self.m.rows,{})
+24:  def test_duplicate_nonfinite_oversized(self):
+25:   for raw in (b'{"x":1,"x":2}',b'{"x":NaN}',b'{"x":Infinity}'):
+26:    with self.assertRaises(Fault):decode(raw,REQUEST_LIMIT)
+27:   self.expect('oversized',lambda:decode(b' '* (REQUEST_LIMIT+1),REQUEST_LIMIT))
+28:  def test_response_numbers_need_not_be_byte_canonical(self):
+29:   self.assertEqual(decode(b'{"date":1.0e+20}',RESPONSE_LIMIT,False),{'date':1e20})
+30:   self.expect('duplicate_key',lambda:decode(b'{"date":1,"date":2}',RESPONSE_LIMIT,False))
+31:  def test_completed_retry_and_conflict(self):
+32:   r=self.request();self.call('client','submit',r);self.assertEqual(self.call('worker','next',self.binding),r);reply=self.reply(r);self.call('worker','result',reply)
+33:   self.now[0]+=5;self.assertEqual(self.call('client','submit',r),{'state':'complete'});self.assertEqual(self.call('client','result',self.selector(r))['response'],reply)
+34:   altered=dict(r,arguments={'op':'show','kind':'items','id':str(uuid.uuid4())});altered['digest']=hashlib.sha256(canonical({k:v for k,v in altered.items() if k!='digest'})).hexdigest();self.expect('request_conflict',lambda:self.call('client','submit',altered))
+35:  def test_cancellation_rejects_late_reply(self):
+36:   r=self.request();self.call('client','submit',r);self.call('worker','next',self.binding);self.call('client','cancel',self.selector(r));self.expect('cancelled',lambda:self.call('worker','result',self.reply(r)))
+37:  def test_expiry_keeps_tombstone(self):
+38:   r=self.request();self.call('client','submit',r);self.now[0]+=301;self.call('worker','next',self.binding)
+39:   self.assertEqual(self.call('client','submit',r),{'state':'expired'});self.assertEqual(self.call('worker','next',self.binding),{})
+40:  def test_liveness_and_scope_reset(self):
+41:   r=self.request();self.call('client','submit',r);self.now[0]+=5;self.expect('unavailable',lambda:self.call('client','hello',{}))
+42:   new=dict(self.binding,scope=str(uuid.uuid4()));self.call('worker','hello',new);self.expect('binding',lambda:self.call('worker','result',self.reply(r)))
+43:  def test_finite_custody(self):
+44:   for _ in range(32):self.call('client','submit',self.request())
+45:   self.expect('capacity',lambda:self.call('client','submit',self.request()));self.assertEqual(len(self.m.rows),32)
+46:  def test_response_binding_overflow_and_shape(self):
+47:   r=self.request();self.call('client','submit',r);self.call('worker','next',self.binding);reply=self.reply(r)
+48:   wrong=dict(reply,digest='bad');self.expect('request',lambda:self.call('worker','result',wrong))
+49:   wrong=dict(reply,result={'large':'x'*RESPONSE_LIMIT});self.expect('oversized',lambda:self.call('worker','result',wrong))
+50:   wrong=dict(reply,error='invented');self.expect('invalid_result',lambda:self.call('worker','result',wrong))
+51:   self.assertEqual(self.m.rows[r['request']]['state'],'claimed')
+52:  def test_unhashable_request_is_typed_refusal(self):
+53:   r=self.request();self.call('client','submit',r);selector=self.selector(r);selector['request']=[]
+54:   self.expect('identity',lambda:self.call('client','result',selector))
+55:   reply=self.reply(r);reply['request']=[];self.expect('identity',lambda:self.call('worker','result',reply))
+56: if __name__=='__main__':unittest.main()
+
+## tests/test_inventory_client_http.py
+1: import json,threading,time,unittest,uuid
+2: from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+3: from tools.inventory_session.mailbox import Fault,Mailbox,Server
+4: from tools.inventory_session.client import Client
+5: class HTTPTests(unittest.TestCase):
+6:  def test_actual_role_refusals(self):
+7:   ids={k:str(uuid.uuid4()) for k in ('device','store','client')};m=Mailbox(**ids,client_token='synthetic-client',worker_token='synthetic-worker');s=Server(m)
+8:   try:
+9:    with self.assertRaises(Fault) as e:Client(s.url,'synthetic-worker').post('hello',{})
+10:    self.assertEqual((e.exception.status,e.exception.code),(401,'unauthorized'))
+11:   finally:s.close()
+12:  def test_client_total_body_deadline(self):
+13:   class Slow(BaseHTTPRequestHandler):
+14:    def log_message(self,*a):pass
+15:    def do_POST(self):
+16:     self.send_response(200);self.send_header('Content-Length','3');self.end_headers();self.wfile.write(b'{');self.wfile.flush();time.sleep(.4)
+17:     try:self.wfile.write(b'} ')
+18:     except OSError:pass
+19:   s=ThreadingHTTPServer(('127.0.0.1',0),Slow);t=threading.Thread(target=s.serve_forever,daemon=True);t.start()
+20:   try:
+21:    began=time.monotonic()
+22:    with self.assertRaises(Fault) as e:Client('http://127.0.0.1:'+str(s.server_port),'synthetic').post('hello',{},timeout=.1)
+23:    self.assertEqual(e.exception.code,'deadline');self.assertLess(time.monotonic()-began,.35)
+24:   finally:s.shutdown();t.join(timeout=2);s.server_close()
+25:  def test_client_does_not_follow_redirect(self):
+26:   hits=[]
+27:   class Sink(BaseHTTPRequestHandler):
+28:    def log_message(self,*a):pass
+29:    def do_POST(self):hits.append(True);self.send_response(200);self.end_headers()
+30:   sink=ThreadingHTTPServer(('127.0.0.1',0),Sink);st=threading.Thread(target=sink.serve_forever,daemon=True);st.start()
+31:   class Redirect(BaseHTTPRequestHandler):
+32:    def log_message(self,*a):pass
+33:    def do_POST(self):self.send_response(307);self.send_header('Location','http://127.0.0.1:'+str(sink.server_port)+'/sink');self.send_header('Content-Length','0');self.end_headers()
+34:   s=ThreadingHTTPServer(('127.0.0.1',0),Redirect);t=threading.Thread(target=s.serve_forever,daemon=True);t.start()
+35:   try:
+36:    with self.assertRaises(Fault):Client('http://127.0.0.1:'+str(s.server_port),'synthetic').post('hello',{})
+37:    self.assertEqual(hits,[])
+38:   finally:s.shutdown();t.join(timeout=2);s.server_close();sink.shutdown();st.join(timeout=2);sink.server_close()
+39: if __name__=='__main__':unittest.main()
+
+## tests/test_inventory_http_budget.py
+1: """Synthetic sockets only: complete request deadlines must resist slow headers and bodies."""
+2: import socket, threading, time, unittest, uuid
+3: from tools.inventory_session.mailbox import Mailbox, Server
+4: from tools.inventory_session.client import Client
+5: 
+6: class RequestBudgetTests(unittest.TestCase):
+7:  def exercise(self, prefix, trickle):
+8:   ids={key:str(uuid.uuid4()) for key in ('device','store','client')}
+9:   mailbox=Mailbox(**ids,client_token='synthetic-client',worker_token='synthetic-worker',clock=lambda:1.)
+10:   binding=dict(ids,scope=str(uuid.uuid4()))
+11:   mailbox.dispatch('/worker/hello',binding,'Bearer synthetic-worker')
+12:   server=Server(mailbox);held=[];senders=[];stop=threading.Event()
+13:   def drip(connection):
+14:    while not stop.wait(.04):
+15:     try:connection.sendall(b' ')
+16:     except OSError:return
+17:   try:
+18:    client=Client(server.url,'synthetic-client')
+19:    self.assertEqual(client.post('hello',{}),binding)
+20:    for _ in range(8):
+21:     connection=socket.create_connection(('127.0.0.1',server.http.server_port),timeout=1)
+22:     connection.sendall(prefix);held.append(connection)
+23:     if trickle:
+24:      sender=threading.Thread(target=drip,args=(connection,),daemon=True);sender.start();senders.append(sender)
+25:    # More than the server's three-second WHOLE request deadline, even with progress.
+26:    time.sleep(3.5)
+27:    for connection in held:
+28:     connection.settimeout(.2)
+29:     try:self.assertEqual(connection.recv(4096),b'','expired connection remains open')
+30:     except (ConnectionResetError,BrokenPipeError):pass
+31:    self.assertEqual(client.post('hello',{},timeout=1),binding,'slots must be recovered for legitimate clients')
+32:    self.assertEqual(mailbox.rows,{})
+33:   finally:
+34:    stop.set()
+35:    for connection in held:connection.close()
+36:    for sender in senders:sender.join(timeout=1)
+37:    server.close()
+38:  def test_incomplete_request_headers_release_all_slots(self):
+39:   self.exercise(b'POST /client/hello HTTP/1.1\r\n',False)
+40:  def test_trickling_headers_do_not_extend_total_deadline(self):
+41:   self.exercise(b'POST /client/hello HTTP/1.1\r\nX-Synthetic: ',True)
+42:  def test_trickling_body_does_not_extend_total_deadline(self):
+43:   self.exercise(b'POST /client/hello HTTP/1.1\r\nContent-Type: application/json\r\nContent-Length: 1000\r\nAuthorization: Bearer synthetic-client\r\n\r\n',True)
+44: if __name__=='__main__':unittest.main()
+
+## AllMyCrap/InventoryReadAdapter.swift
+1: import Foundation
+2: import SwiftData
+3: import CryptoKit
+4: 
+5: /// Read-only, main-actor adapter for an already selected app-owned container.
+6: /// It never selects a path, creates a container, or saves/resets the caller.
+7: @MainActor
+8: final class InventoryReadAdapter {
+9:     enum Failure: Error, Equatable {
+10:         case pendingEdits, invalidQuery, notFound, invalidCursor, staleCursor
+11:         case rowLimit, fieldLimit, projectionLimit, responseLimit, invalidData, unsupportedSchema
+12:     }
+13:     enum Kind: String, Codable { case items, locations, tags }
+14:     enum ArchiveScope: String, Codable { case active, archived, all }
+15:     enum Plan: String, Codable {
+16:         case keep = "Keep", throwAway = "Throw Away", sell = "Sell", charity = "Charity", move = "Move", fix = "Fix"
+17:     }
+18:     struct PathEntry: Codable { let id: UUID; let name: String }
+19:     struct ItemValue: Codable {
+20:         let id: UUID; let name: String; let dateAdded: Date; let locationID: UUID?
+21:         let tagIDs: [UUID]; let plan: Plan?; let moveDestination: String?
+22:         let isBook: Bool; let bookTitle: String?; let bookAuthor: String?; let displayName: String
+23:         let isArchived: Bool; let archivedDate: Date?; let archivedPlan: Plan?
+24:     }
+25:     struct LocationValue: Codable {
+26:         let id: UUID; let name: String; let dateAdded: Date; let parentID: UUID?
+27:         let childIDs: [UUID]; let itemIDs: [UUID]; let isReviewed: Bool; let lastReviewedDate: Date?
+28:         let path: [PathEntry]
+29:     }
+30:     struct TagValue: Codable {
+31:         let id: UUID; let name: String; let color: String; let dateAdded: Date?; let itemIDs: [UUID]
+32:     }
+33:     struct HistoryValue: Codable {
+34:         let id: UUID; let date: Date; let action: ReviewAction; let isAutomatic: Bool; let locationID: UUID?
+35:     }
+36:     struct ExclusionValue: Codable {
+37:         let id: UUID; let itemID1: UUID; let itemID2: UUID; let dateCreated: Date
+38:     }
+39:     enum Record: Codable {
+40:         case item(ItemValue), location(LocationValue), tag(TagValue)
+41:         var id: UUID {
+42:             switch self { case .item(let v): return v.id; case .location(let v): return v.id; case .tag(let v): return v.id }
+43:         }
+44:     }
+45:     struct Counts: Codable {
+46:         let items: Int; let locations: Int; let tags: Int; let histories: Int; let exclusions: Int
+47:         let activeItems: Int; let archivedItems: Int
+48:     }
+49:     struct Status: Codable {
+50:         let scope: UUID; let revision: String; let counts: Counts
+51:         let complete: Bool; let transactionalSnapshot: Bool
+52:     }
+53:     struct Page: Codable {
+54:         let scope: UUID; let revision: String; let records: [Record]; let total: Int
+55:         let complete: Bool; let next: String?
+56:     }
+57:     struct Detail: Codable {
+58:         let scope: UUID; let revision: String; let record: Record
+59:         let histories: [HistoryValue]; let exclusions: [ExclusionValue]
+60:     }
+61:     private struct Projection: Codable {
+62:         let items: [ItemValue]; let locations: [LocationValue]; let tags: [TagValue]
+63:         let histories: [HistoryValue]; let exclusions: [ExclusionValue]
+64:         func records(_ kind: Kind, _ archive: ArchiveScope) -> [Record] {
+65:             switch kind {
+66:             case .items: return items.filter { archive == .all || $0.isArchived == (archive == .archived) }.map(Record.item)
+67:             case .locations: return locations.map(Record.location)
+68:             case .tags: return tags.map(Record.tag)
+69:             }
+70:         }
+71:     }
+72:     private struct Cursor: Codable {
+73:         let version: Int; let scope: UUID; let revision: String; let kind: Kind
+74:         let archive: ArchiveScope; let size: Int; let last: UUID
+75:     }
+76:     private let context: ModelContext
+77:     private let scope = UUID()
+78:     private let cursorKey = SymmetricKey(size: .bits256)
+79:     static let maximumRows = 5000
+80:     static let maximumFieldBytes = 16 * 1024
+81:     static let maximumProjectionBytes = 4 * 1024 * 1024
+82:     static let maximumResponseBytes = 1024 * 1024
+83: 
+84:     init(context: ModelContext) { self.context = context }
+85: 
+86:     private func encoded<T: Encodable>(_ value: T) throws -> Data {
+87:         let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+88:         encoder.dateEncodingStrategy = .secondsSince1970
+89:         return try encoder.encode(value)
+90:     }
+91:     private func bounded<T: Encodable>(_ value: T) throws -> T {
+92:         guard try encoded(value).count <= Self.maximumResponseBytes else { throw Failure.responseLimit }
+93:         return value
+94:     }
+95:     private func rows<T: PersistentModel>(_ type: T.Type, _ reader: ModelContext) throws -> [T] {
+96:         var descriptor = FetchDescriptor<T>(); descriptor.fetchLimit = Self.maximumRows + 1
+97:         let values = try reader.fetch(descriptor)
+98:         guard values.count <= Self.maximumRows else { throw Failure.rowLimit }
+99:         return values
+100:     }
+101:     private func text(_ values: String?...) throws {
+102:         guard values.allSatisfy({ ($0?.utf8.count ?? 0) <= Self.maximumFieldBytes }) else { throw Failure.fieldLimit }
+103:     }
+104:     private func dates(_ values: Date?...) throws {
+105:         guard values.allSatisfy({ $0?.timeIntervalSince1970.isFinite ?? true }) else { throw Failure.invalidData }
+106:     }
+107:     private func ids(_ values: [UUID]) throws -> [UUID] {
+108:         guard values.count <= Self.maximumRows, Set(values).count == values.count else { throw Failure.invalidData }
+109:         return values.sorted { $0.uuidString < $1.uuidString }
+110:     }
+111:     private func index<T>(_ values: [T], _ id: (T) -> UUID) throws -> [UUID: T] {
+112:         var result: [UUID: T] = [:]
+113:         for value in values { guard result.updateValue(value, forKey: id(value)) == nil else { throw Failure.invalidData } }
+114:         return result
+115:     }
+116:     private func charge<T: Encodable>(_ value: T, _ used: inout Int) throws {
+117:         used += try encoded(value).count
+118:         guard used <= Self.maximumProjectionBytes else { throw Failure.projectionLimit }
+119:     }
+120:     private func projection() throws -> (Projection, String) {
+121:         guard !context.hasChanges else { throw Failure.pendingEdits }
+122:         let names = Set(context.container.schema.entities.map { $0.name.split(separator: ".").last.map(String.init) ?? $0.name })
+123:         guard Set(["Location", "Item", "Tag", "ReviewHistory", "DuplicateExclusion"]).isSubset(of: names) else { throw Failure.unsupportedSchema }
+124:         let reader = ModelContext(context.container); reader.autosaveEnabled = false
+125:         // Independent fresh fetches are an observed projection, not a distributed snapshot.
+126:         let locations = try rows(Location.self, reader), items = try rows(Item.self, reader), tags = try rows(Tag.self, reader)
+127:         let histories = try rows(ReviewHistory.self, reader), exclusions = try rows(DuplicateExclusion.self, reader)
+128:         let lm = try index(locations, { $0.id }), im = try index(items, { $0.id }), tm = try index(tags, { $0.id })
+129:         _ = try index(histories, { $0.id }); _ = try index(exclusions, { $0.id })
+130:         var lv: [LocationValue] = [], iv: [ItemValue] = [], tv: [TagValue] = []
+131:         var hv: [HistoryValue] = [], ev: [ExclusionValue] = []
+132:         var encodedBytes = 0
+133:         for row in locations {
+134:             try text(row.name); try dates(row.dateAdded, row.lastReviewedDate)
+135:             var path: [PathEntry] = [], seen: Set<UUID> = [], current: Location? = row
+136:             while let node = current {
+137:                 guard lm[node.id] != nil, seen.insert(node.id).inserted, path.count < 15 else { throw Failure.invalidData }
+138:                 try text(node.name); path.append(PathEntry(id: node.id, name: node.name)); current = node.parent
+139:             }
+140:             let children = try ids(row.children.map(\.id)), contained = try ids(row.items.map(\.id))
+141:             guard children.allSatisfy({ lm[$0]?.parent?.id == row.id }), contained.allSatisfy({ im[$0]?.location?.id == row.id }) else { throw Failure.invalidData }
+142:             if let parent = row.parent { guard lm[parent.id]?.children.contains(where: { $0.id == row.id }) == true else { throw Failure.invalidData } }
+143:             lv.append(LocationValue(id: row.id, name: row.name, dateAdded: row.dateAdded, parentID: row.parent?.id, childIDs: children, itemIDs: contained, isReviewed: row.isReviewed, lastReviewedDate: row.lastReviewedDate, path: path.reversed()))
+144:             try charge(lv.last!, &encodedBytes)
+145:         }
+146:         for row in items {
+147:             try text(row.name, row.moveDestination, row.bookTitle, row.bookAuthor, row.displayName); try dates(row.dateAdded, row.archivedDate)
+148:             if let location = row.location { guard lm[location.id]?.items.contains(where: { $0.id == row.id }) == true else { throw Failure.invalidData } }
+149:             let tagIDs = try ids(row.tags.map(\.id))
+150:             guard tagIDs.allSatisfy({ tm[$0] != nil }) else { throw Failure.invalidData }
+151:             iv.append(ItemValue(id: row.id, name: row.name, dateAdded: row.dateAdded, locationID: row.location?.id, tagIDs: tagIDs, plan: row.plan.flatMap { Plan(rawValue: $0.rawValue) }, moveDestination: row.moveDestination, isBook: row.isBook, bookTitle: row.bookTitle, bookAuthor: row.bookAuthor, displayName: row.displayName, isArchived: row.isArchived, archivedDate: row.archivedDate, archivedPlan: row.archivedPlan.flatMap { Plan(rawValue: $0.rawValue) }))
+152:             try charge(iv.last!, &encodedBytes)
+153:         }
+154:         for row in tags {
+155:             try text(row.name, row.color); try dates(row.dateAdded)
+156:             let itemIDs = try ids(row.items.map(\.id))
+157:             guard itemIDs.allSatisfy({ im[$0] != nil }) else { throw Failure.invalidData }
+158:             tv.append(TagValue(id: row.id, name: row.name, color: row.color, dateAdded: row.dateAdded, itemIDs: itemIDs))
+159:             try charge(tv.last!, &encodedBytes)
+160:         }
+161:         for row in histories {
+162:             try dates(row.date)
+163:             if let location = row.location { guard lm[location.id] != nil else { throw Failure.invalidData } }
+164:             hv.append(HistoryValue(id: row.id, date: row.date, action: row.action, isAutomatic: row.isAutomatic, locationID: row.location?.id))
+165:             try charge(hv.last!, &encodedBytes)
+166:         }
+167:         for row in exclusions {
+168:             try dates(row.dateCreated)
+169:             guard im[row.itemID1] != nil, im[row.itemID2] != nil else { throw Failure.invalidData }
+170:             ev.append(ExclusionValue(id: row.id, itemID1: row.itemID1, itemID2: row.itemID2, dateCreated: row.dateCreated))
+171:             try charge(ev.last!, &encodedBytes)
+172:         }
+173:         let value = Projection(items: iv.sorted { $0.id.uuidString < $1.id.uuidString }, locations: lv.sorted { $0.id.uuidString < $1.id.uuidString }, tags: tv.sorted { $0.id.uuidString < $1.id.uuidString }, histories: hv.sorted { $0.id.uuidString < $1.id.uuidString }, exclusions: ev.sorted { $0.id.uuidString < $1.id.uuidString })
+174:         let data = try encoded(value)
+175:         guard data.count <= Self.maximumProjectionBytes else { throw Failure.projectionLimit }
+176:         return (value, SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined())
+177:     }
+178:     private func token(_ cursor: Cursor) throws -> String {
+179:         let data = try encoded(cursor)
+180:         let signature = Data(HMAC<SHA256>.authenticationCode(for: data, using: cursorKey))
+181:         return data.base64EncodedString() + "." + signature.base64EncodedString()
+182:     }
+183:     private func decode(_ raw: String) throws -> Cursor {
+184:         guard raw.utf8.count <= 2048 else { throw Failure.invalidCursor }
+185:         let parts = raw.split(separator: ".", omittingEmptySubsequences: false)
+186:         guard parts.count == 2, let data = Data(base64Encoded: String(parts[0])), let signature = Data(base64Encoded: String(parts[1])), HMAC<SHA256>.isValidAuthenticationCode(signature, authenticating: data, using: cursorKey) else { throw Failure.invalidCursor }
+187:         do { return try JSONDecoder().decode(Cursor.self, from: data) } catch { throw Failure.invalidCursor }
+188:     }
+189:     func status() throws -> Status {
+190:         let (p, revision) = try projection(); let archived = p.items.filter(\.isArchived).count
+191:         return try bounded(Status(scope: scope, revision: revision, counts: Counts(items: p.items.count, locations: p.locations.count, tags: p.tags.count, histories: p.histories.count, exclusions: p.exclusions.count, activeItems: p.items.count - archived, archivedItems: archived), complete: true, transactionalSnapshot: false))
+192:     }
+193:     func list(kind: Kind, archive: ArchiveScope, pageSize: Int, cursor: String? = nil) throws -> Page {
+194:         guard (1...100).contains(pageSize), kind == .items || archive == .all else { throw Failure.invalidQuery }
+195:         let decoded = try cursor.map(decode)
+196:         if let c = decoded { guard c.version == 1, c.scope == scope, c.kind == kind, c.archive == archive, c.size == pageSize else { throw Failure.invalidCursor } }
+197:         let (p, revision) = try projection(); let records = p.records(kind, archive)
+198:         var start = 0
+199:         if let c = decoded {
+200:             guard c.revision == revision else { throw Failure.staleCursor }
+201:             guard let previous = records.firstIndex(where: { $0.id == c.last }), previous + 1 < records.count else { throw Failure.invalidCursor }
+202:             start = previous + 1
+203:         }
+204:         let end = min(start + pageSize, records.count), batch = Array(records[start..<end])
+205:         let next = end < records.count ? try token(Cursor(version: 1, scope: scope, revision: revision, kind: kind, archive: archive, size: pageSize, last: batch.last!.id)) : nil
+206:         return try bounded(Page(scope: scope, revision: revision, records: batch, total: records.count, complete: next == nil, next: next))
+207:     }
+208:     func show(kind: Kind, id: UUID) throws -> Detail {
+209:         let (p, revision) = try projection()
+210:         guard let record = p.records(kind, .all).first(where: { $0.id == id }) else { throw Failure.notFound }
+211:         let relatedItems: Set<UUID>
+212:         if case .location(let location) = record { relatedItems = Set(location.itemIDs) }
+213:         else if case .item = record { relatedItems = [id] }
+214:         else { relatedItems = [] }
+215:         return try bounded(Detail(scope: scope, revision: revision, record: record, histories: kind == .locations ? p.histories.filter { $0.locationID == id } : [], exclusions: p.exclusions.filter { relatedItems.contains($0.itemID1) || relatedItems.contains($0.itemID2) }))
+216:     }
+217: }
+
+## AllMyCrap/Item.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: enum ItemPlan: String, CaseIterable, Codable {
+5:     case keep = "Keep"
+6:     case throwAway = "Throw Away"
+7:     case sell = "Sell"
+8:     case charity = "Charity"
+9:     case move = "Move"
+10:     case fix = "Fix"
+11: }
+12: 
+13: @Model
+14: final class Item {
+15:     @Attribute(.unique) var id: UUID
+16:     var name: String
+17:     var dateAdded: Date
+18:     var tags: [Tag] = []
+19:     var plan: ItemPlan?
+20:     var moveDestination: String?
+21:     
+22:     // Book-specific fields (nil for non-book items)
+23:     var isBook: Bool = false
+24:     var bookTitle: String?
+25:     var bookAuthor: String?
+26:     
+27:     // Archive fields
+28:     var isArchived: Bool = false
+29:     var archivedDate: Date?
+30:     var archivedPlan: ItemPlan?
+31: 
+32:     // Relationship to the location it's stored in
+33:     var location: Location?
+34:     
+35:     // Computed property for display name
+36:     var displayName: String {
+37:         if isBook, let title = bookTitle, let author = bookAuthor {
+38:             return "\(title) by \(author)"
+39:         }
+40:         return name
+41:     }
+42:     
+43:     init(name: String, location: Location? = nil) {
+44:         self.id = UUID()
+45:         self.name = name
+46:         self.dateAdded = Date()
+47:         self.location = location
+48:         self.tags = []
+49:         self.plan = nil
+50:         self.isBook = false
+51:     }
+52:     
+53:     // Convenience initializer for books
+54:     init(title: String, author: String, location: Location? = nil) {
+55:         self.id = UUID()
+56:         self.name = "\(title) by \(author)" // Store as name for compatibility
+57:         self.bookTitle = title
+58:         self.bookAuthor = author
+59:         self.isBook = true
+60:         self.dateAdded = Date()
+61:         self.location = location
+62:         self.tags = []
+63:         self.plan = nil
+64:     }
+65: }
+
+## AllMyCrap/Location.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: @Model
+5: final class Location {
+6:     @Attribute(.unique) var id: UUID
+7:     var name: String
+8:     var dateAdded: Date
+9: 
+10:     // A room’s parent == nil
+11:     var parent: Location?
+12: 
+13:     // Children containers
+14:     @Relationship(deleteRule: .cascade, inverse: \Location.parent)
+15:     var children: [Location] = []
+16: 
+17:     // Items stored here
+18:     @Relationship(deleteRule: .cascade, inverse: \Item.location)
+19:     var items: [Item] = []
+20:     
+21:     // Review tracking
+22:     var isReviewed: Bool = false
+23:     var lastReviewedDate: Date?
+24:     
+25:     // Review history
+26:     @Relationship(deleteRule: .cascade, inverse: \ReviewHistory.location)
+27:     var reviewHistory: [ReviewHistory] = []
+28: 
+29:     // MARK: - Convenience
+30: 
+31:     /// Depth of this node in the hierarchy (rooms are depth 1).
+32:     var depth: Int { (parent?.depth ?? 0) + 1 }
+33: 
+34:     /// Distance to the deepest descendant (0 if no children).
+35:     func deepestSubtreeDistance() -> Int {
+36:         guard !children.isEmpty else { return 0 }
+37:         return 1 + (children.map { $0.deepestSubtreeDistance() }.max() ?? 0)
+38:     }
+39: 
+40:     /// IDs of self + all descendants (helps block illegal move targets).
+41:     func collectIDs() -> Set<UUID> {
+42:         children.reduce(into: Set([id])) { partial, child in
+43:             partial.formUnion(child.collectIDs())
+44:         }
+45:     }
+46: 
+47:     init(name: String, parent: Location? = nil) {
+48:         self.id = UUID()
+49:         self.name = name
+50:         self.dateAdded = Date()
+51:         self.parent = parent
+52:     }
+53: }
+
+## AllMyCrap/Tag.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: @Model
+5: final class Tag {
+6:     @Attribute(.unique) var id: UUID
+7:     @Attribute(.unique) var name: String
+8:     var color: String // Hex color string
+9:     var dateAdded: Date?  // Made optional to allow migration
+10:     var items: [Item] = []
+11:     
+12:     init(name: String, color: String = "#007AFF") {
+13:         self.id = UUID()
+14:         self.name = name
+15:         self.color = color
+16:         self.dateAdded = Date()
+17:     }
+18: }
+
+## AllMyCrap/ReviewHistory.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: @Model
+5: final class ReviewHistory {
+6:     @Attribute(.unique) var id: UUID
+7:     var date: Date
+8:     var action: ReviewAction
+9:     var isAutomatic: Bool
+10:     
+11:     // Relationship to the location
+12:     var location: Location?
+13:     
+14:     init(action: ReviewAction, isAutomatic: Bool = false, location: Location? = nil) {
+15:         self.id = UUID()
+16:         self.date = Date()
+17:         self.action = action
+18:         self.isAutomatic = isAutomatic
+19:         self.location = location
+20:     }
+21: }
+22: 
+23: enum ReviewAction: String, Codable {
+24:     case markedReviewed = "Marked as Reviewed"
+25:     case markedUnreviewed = "Marked as Unreviewed"
+26: }
+
+## AllMyCrap/DuplicateExclusion.swift
+1: import Foundation
+2: import SwiftData
+3: 
+4: @Model
+5: final class DuplicateExclusion {
+6:     @Attribute(.unique) var id: UUID
+7:     var itemID1: UUID   // Canonical ordering: smaller UUID string first
+8:     var itemID2: UUID
+9:     var dateCreated: Date
+10: 
+11:     init(itemID1: UUID, itemID2: UUID) {
+12:         self.id = UUID()
+13:         self.dateCreated = Date()
+14: 
+15:         // Canonical ordering: smaller UUID string goes first
+16:         if itemID1.uuidString < itemID2.uuidString {
+17:             self.itemID1 = itemID1
+18:             self.itemID2 = itemID2
+19:         } else {
+20:             self.itemID1 = itemID2
+21:             self.itemID2 = itemID1
+22:         }
+23:     }
+24: 
+25:     /// Check if this exclusion covers the given pair (order-independent).
+26:     func covers(_ a: UUID, _ b: UUID) -> Bool {
+27:         let canonA = a.uuidString < b.uuidString ? a : b
+28:         let canonB = a.uuidString < b.uuidString ? b : a
+29:         return itemID1 == canonA && itemID2 == canonB
+30:     }
+31: }
+
+## Original app composition delta
+diff --git a/AllMyCrap/AllMyCrapApp.swift b/AllMyCrap/AllMyCrapApp.swift
+index 4a3013a..bb1cacf 100644
+--- a/AllMyCrap/AllMyCrapApp.swift
++++ b/AllMyCrap/AllMyCrapApp.swift
+@@ -1,17 +1,22 @@
+ import SwiftUI
+ import SwiftData
+ 
+ @main
+ struct AllMyCrapApp: App {
+     @AppStorage("reviewExpirationDays") private var reviewExpirationDays = 30
+     @StateObject private var backupManager = BackupManager()
+     
+-    let container: ModelContainer = {
++    @Environment(\.scenePhase) private var scenePhase
++    let container: ModelContainer
++    private let inventoryReads: InventoryForegroundReadWorker
++
++    init() {
++      let selected: ModelContainer = {
+         let schema = Schema([
+             Location.self,
+             Item.self,
+             Tag.self,
+             ReviewHistory.self,
+             DuplicateExclusion.self
+         ])
+         
+@@ -22,26 +27,34 @@ struct AllMyCrapApp: App {
+             cloudKitDatabase: .none  // Disable CloudKit sync
+         )
+         
+         do {
+             return try ModelContainer(for: schema, configurations: [modelConfiguration])
+         } catch {
+             fatalError("Could not create ModelContainer: \(error)")
+         }
+-    }()
++      }()
++      container = selected
++      // No pairing/configuration source is installed: transport remains unconfigured.
++      inventoryReads = InventoryForegroundReadWorker(context:selected.mainContext)
++    }
+     
+     var body: some Scene {
+         WindowGroup {
+             ContentView()
+                 .environmentObject(backupManager)
+                 .onAppear {
++                    inventoryReads.setActive(scenePhase == .active)
+                     scheduleReviewExpirationCheck()
+                     performAutoBackup()
+                 }
++                .onChange(of: scenePhase) { _, phase in
++                    inventoryReads.setActive(phase == .active)
++                }
+                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                     performAutoBackup()
+                 }
+         }
+         // This makes the data models available to the entire app.
+         .modelContainer(container)
+     }
+     
+
+
+## Actual local Understudy receipt fields (author-supplied evidence, not reviewer execution)
+{
+  "http-budget-red-01": {
+    "ok": false,
+    "exit_code": 1,
+    "timed_out": false,
+    "duration_s": 12.121
+  },
+  "http-budget-green-01": {
+    "ok": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 14.241
+  },
+  "roundtrip-08": {
+    "ok": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 23.149
+  },
+  "protocol-05": {
+    "ok": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 8.933
+  },
+  "ios-build-02": {
+    "ok": true,
+    "exit_code": 0,
+    "timed_out": false,
+    "duration_s": 5.022
+  }
+}
+Green Python17 cases; roundtrip25 assertions; protocol30 assertions; unsigned generic iOS Simulator target compiled, no app/simulator launch. Native and app inputs unchanged by candidate02 HTTP-only repair. Original failing deadline tests preserved.

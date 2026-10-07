@@ -1,0 +1,17 @@
+{
+  "project" : {
+    "configurations" : [
+      "Debug",
+      "Release"
+    ],
+    "name" : "AllMyCrap",
+    "schemes" : [
+      "AllMyCrap"
+    ],
+    "targets" : [
+      "AllMyCrap",
+      "AllMyCrapTests",
+      "AllMyCrapUITests"
+    ]
+  }
+}

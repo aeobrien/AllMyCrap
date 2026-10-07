@@ -1,0 +1,191 @@
+{
+  "id": "30d5670f-dece-47fa-a68d-bafae6ce2083",
+  "procedure": {
+    "id": "software-build",
+    "title": "Build or change software",
+    "start": "scope",
+    "instructions": "Use small slices and judgement. Read build-software.md. Saved stages do not authorise actions or prove gates passed. Revisit earlier stages with a recorded reason; follow current capability instructions.",
+    "sources": [
+      "/Users/aidan/Dev/SessionManual/catalogue/releases/r000030/sources/59579898e401c0fa9e1b1e05d6583a8b0ff8d744d6992c01bce9bc455392db15.md",
+      "/Users/aidan/Dev/SessionManual/catalogue/releases/r000030/sources/21e65df15334fb8a255b2deea49ef72551b8082151e417122e2f74067a1fcae4.md"
+    ],
+    "steps": [
+      {
+        "id": "scope",
+        "title": "Set the north star",
+        "instructions": "Record the intended outcome, current project state, accepted requirements and one useful slice. Maintain work-board.md as user feedback arrives. Read the full build protocol and platform branch. Arm the existing build/done-gate for the agreed plan; do not replace host permissions. Before designing a common feature, read REUSABLE-BUILDING-BLOCKS.md and record whether an existing solution can be reused, adapted or needs replacement. Check readiness and test evidence; listed source code is not automatically a drop-in module.",
+        "next": [
+          "red"
+        ],
+        "outputs": [
+          "work-board.md",
+          "brief.md"
+        ]
+      },
+      {
+        "id": "red",
+        "title": "Show the failure",
+        "instructions": "For a new build or repair, demonstrate a meaningful failing test or reproduction for this slice. Record actual failure evidence; do not claim a hypothetical failure ran.",
+        "next": [
+          "implement",
+          "scope"
+        ],
+        "outputs": [
+          "red-evidence.md"
+        ]
+      },
+      {
+        "id": "implement",
+        "title": "Build the small slice",
+        "instructions": "Make the coherent change, then demonstrate the relevant checks pass. Follow the JUCE/m4l/iOS/macOS branch when applicable. Keep unrelated user edits intact.",
+        "next": [
+          "review",
+          "red"
+        ],
+        "outputs": [
+          "green-evidence.md"
+        ]
+      },
+      {
+        "id": "review",
+        "title": "Check for blocking faults",
+        "instructions": "Get independent Astra and Fable reviews/tests of actual changed code. Fix concrete blocking faults; record non-blocking ideas without gold-plating loops. Missing review is a disclosed gap, not a pass.",
+        "next": [
+          "understudy",
+          "implement"
+        ],
+        "outputs": [
+          "review-disposition.md"
+        ]
+      },
+      {
+        "id": "understudy",
+        "title": "Test real behaviour",
+        "instructions": "Always run Understudy after blocking review faults are resolved. Design flows/battery for actual controls, state and failures; include UI where applicable. Prefer headless/render tests. Source audit is not UI execution; visible desktop control needs the current screen lease.",
+        "next": [
+          "gate",
+          "implement"
+        ],
+        "outputs": [
+          "test-evidence.md"
+        ]
+      },
+      {
+        "id": "gate",
+        "title": "Check the promised delivery",
+        "instructions": "Commit the change and run the existing done-gate/checkpoint against the promised deliverables. Preserve exact evidence and unresolved limitations; do not mark untested behaviour done.",
+        "next": [
+          "walkthrough",
+          "implement"
+        ],
+        "outputs": [
+          "completion-evidence.md"
+        ]
+      },
+      {
+        "id": "walkthrough",
+        "title": "Review the current build",
+        "instructions": "Read the complete walkthrough skill. Verify current executable and real controls, include needed app launches, and prepare only new or regressed behaviour in a fresh delta. Capture user feedback and iterate from the north star. User acceptance remains pending until actually received.",
+        "next": [
+          "scope",
+          "handover"
+        ],
+        "outputs": [
+          "feedback.md"
+        ]
+      },
+      {
+        "id": "handover",
+        "title": "Leave work ready to continue",
+        "instructions": "Record current stage, next actions and limitations, update the ledger/handover through current skills, and clean up only this job\u2019s temporary wake subscriptions and screen lease. A saved completion status does not itself prove user approval.",
+        "next": [
+          "scope"
+        ],
+        "outputs": [
+          "handover.md"
+        ]
+      }
+    ],
+    "source_origins": [
+      "/Users/aidan/Dev/SessionManual/protocols/build-software.md",
+      "/Users/aidan/Dev/SessionManual/docs/REUSABLE-BUILDING-BLOCKS.md"
+    ]
+  },
+  "release": "r000030",
+  "name": "Automatic foreground inventory reads",
+  "project": "/Users/aidan/Dev/AllMyCrap-foreground-reads",
+  "references": [
+    {
+      "path": "/Users/aidan/Dev/SessionManual/protocols/build-software.md",
+      "snapshot_path": "/Users/aidan/Dev/SessionManual/catalogue/releases/r000030/sources/59579898e401c0fa9e1b1e05d6583a8b0ff8d744d6992c01bce9bc455392db15.md",
+      "text": "# Build or change software\n\nUse this when implementing a feature or changing software behaviour. Routine document editing, account checks, reading code and maintaining this catalogue do not by themselves start a software build. A specific bug investigation may lead here once a repair is chosen. Review and testing remain distinct jobs and can be requested independently.\n\n## Start and keep the work visible\n\nState the north star: what outcome the user is trying to achieve. Read the project instructions and current work before changing files. Keep a work board with each requested item, acceptance evidence and stage; add new feedback as it arrives. Start a saved `software-build` run with `/Users/aidan/Dev/SessionManual/bin/manual-admin start software-build --client codex` (or `claude`). Save decisions and output references; use the existing run when continuing. The procedure guides judgement, not automatic approval.\n\nRead `/Users/aidan/.agents/skills/build/SKILL.md` and `/Users/aidan/.agents/skills/done-gate/SKILL.md`. For an agreed plan, use the existing `/Users/aidan/.claude/bin/build start PLAN --session SESSION_ID`; do not create a second autonomy engine or silently use an ungated mode. Read the complete plan after arming, and use `/Users/aidan/.claude/bin/build checkpoint --session SESSION_ID` after committed slice evidence. Keep that same explicit session ID for checkpoint, digest and resume commands; the tool's inferred default is not necessarily the Codex or Claude chat ID. New requests must remain visible on the work board and be incorporated through the gate's documented amendment flow, not dropped or hidden by a rewritten promise.\n\nKeep the process available at stage boundaries and on resumption. If a current Shaw build profile exists, read and use its actual interface; no such specific profile is verified by this protocol yet. The saved stage instructions provide the immediate reminder mechanism. Use Trigger Hub for supported wake/event subscriptions through `/Users/aidan/Dev/TriggerHub/bin/triggerhub`, reading its README and current `--help` first. Targets are configured aliases, not arbitrary chat IDs. Verify delivery capability and the correct session owner; never route a wake to another chat by guessing. Desktop thread automations must use the host's supported automation tools when the host requires them; record any missing Trigger Hub bridge instead of claiming one exists. Cancel only this job's temporary subscriptions after completion.\n\n## Reuse an existing solution when it fits\n\nBefore designing a common feature, read `/Users/aidan/Dev/SessionManual/docs/REUSABLE-BUILDING-BLOCKS.md` and look for a matching solved problem or component. Check its maintained source, supported platforms, example, test evidence and limits. Record whether you will reuse it, adapt it or build something new, and why. A catalogue entry is not proof of a ready package: the first live-voice entry points to Columbo source; extraction and an independent consumer remain queued. Transcription and chat-interface entries are research leads. Follow the current capability route when actually using a matched service. This discovery step grants no microphone, screen or account permission.\n\n## Implement a small slice\n\nDefine one useful change and observable acceptance conditions. All new builds use red-green TDD: demonstrate the relevant failure, implement the smallest coherent change, and show it passing. For a bug, preserve the failing reproduction. Do not write tests that merely copy the implementation. Keep earlier passing checks unless the change could affect them; broaden tests when evidence warrants it. Review feedback against the north star and iterate in small slices.\n\n## Independent checks, then Understudy\n\nHave separate **Astra** and **Fable** agents inspect and test the actual changed code. Give both the intended outcome, relevant source and exact evidence. Only genuine **blocking faults** block progress: incorrect required behaviour, broken integration, loss of data or a material permission problem. Style preferences and speculative additions go on the board as non-blocking suggestions. Fix demonstrated blockers and rerun affected checks; do not cycle into gold plating. Missing reviewer availability is a disclosed gap, not a fabricated pass or permission to replace an independent review with the author's account.\n\nOnce no blocking faults remain, always test through **Understudy**, including UI behaviour where there is a UI. Read `/Users/aidan/Dev/Understudy/USAGE.md` and `/Users/aidan/Dev/Understudy/skills/understudy-battery/SKILL.md`; choose realistic flows and assertions for the changed controls, persistence and relevant failure cases. A source-only audit does not prove UI execution. Prefer `cli-run`, headless web checks or non-intrusive render checks when they test the real behaviour. An in-memory window is not screen control. Before a test brings windows forward or controls the pointer/keyboard, use the current screen-access protocol and obtain the user's lease with purpose and estimated duration. A build lookup, test plan or Understudy enrolment does not grant screen permission.\n\n## Deliver the current version and review it with the user\n\nRun the done-gate against committed code and retain review/test evidence. A failing gate names unfinished work; repair it rather than manufacturing evidence. Read the **entire** `/Users/aidan/.claude/skills/walkthrough/SKILL.md` before creating or launching a walkthrough. Check that the launched application is the intended latest build, that every named control exists, and that required application launch actions are included in the walkthrough. Distinguish automated testing from the user's review. After feedback, create a fresh delta walkthrough covering addressed failures and newly visible changes; preserve accepted runs and omit unchanged passed behaviour.\n\nRecord the user's feedback on the work board, continue the next agreed small slice, and update the project ledger/handover using their current skills. Do not claim the user's review has happened because automated tests passed.\n\n## Platform branches\n\n- **JUCE device/plugin:** read `/Users/aidan/.agents/skills/juce-best-practises/SKILL.md` and the relevant references; enrol the folder or session in the existing JUCE Virgil domain using `/Users/aidan/Dev/Virgil/skills/domain/SKILL.md`. Prefer adding to existing domains rather than replacing them. Verify the domain store and host support; never invent an enrolment command. Check realtime/thread safety and test audio and UI separately.\n- **Max for Live device:** use the Max4LiveBuilder/Planck project instructions and the `m4l` Virgil domain. Verify Ableton/OSC availability; do not assume an Ableton MCP is installed. Prefer headless/render checks where meaningful; real Ableton control follows the screen protocol.\n- **iOS app:** identify the correct scheme, destination, bundle ID and installed build. Use Understudy's current simulator flow instructions; distinguish simulator automation from tests that take the physical desktop.\n- **macOS app:** verify the exact app bundle and executable being tested. Prefer non-intrusive render tests when they cover the change; visible app interaction needs the screen lease. Check persistence/relaunch against that same build.\n\nIf a tool, domain, wake target or platform capability is missing, record what is unavailable and continue independent work. Do not convert uncertainty about unrelated commands into blanket holds.\n"
+    },
+    {
+      "path": "/Users/aidan/Dev/SessionManual/docs/REUSABLE-BUILDING-BLOCKS.md",
+      "snapshot_path": "/Users/aidan/Dev/SessionManual/catalogue/releases/r000030/sources/21e65df15334fb8a255b2deea49ef72551b8082151e417122e2f74067a1fcae4.md",
+      "text": "# Reuse solutions before rebuilding them\n\nRequested on 4 October 2026. Add this as a discovery step within the shared building protocol: before implementing a common feature, search the catalogue of solved problems and reusable components, read the matched component's instructions, and reuse or deliberately adapt it. It supplements the build process; it is not a new mandatory hold on every command.\n\n## First entries\n\n1. Live conversational voice: GPT Live (`gpt-live-1`), using Columbo's existing native transport and local service as the starting point. Extract a component only after checking the current voice repair. Provide one independent consuming example to prove it is usable outside Columbo.\n2. Live transcription: catalogue the actual implementations and their limits. Distinguish realtime input text, archived recording transcription, partial/final text, corrections and saved provenance. No provider or reusable module is selected yet.\n3. Chat interfaces: inventory existing interfaces, session/message models, streaming and reconnect behaviour, and ownership/licence constraints before choosing one to reuse. No general drop-in chat UI is verified yet.\n\n## What each entry should contain\n\n- Job phrases and boundaries: what it solves, when to use it and nearby jobs it does not solve.\n- Maintained code location, version, owner, supported platforms and dependencies; distinguish existing app code from an extracted package.\n- A minimal working example, configuration, permissions and failure/recovery behaviour; no embedded secrets or surprise microphone activation.\n- Evidence: unit/integration tests, an independent consuming app, known limitations and the date/platform of real device checks.\n- Links to the relevant build-stage instructions, with adoption notes and regression cases so later fixes improve future builds.\n\n## Live voice extraction plan\n\nSeparate the audio connection and events from the application controller. Define inputs (provider/session configuration, voice, consent and application callbacks) and outputs (transcript fragments, connection state, audio/reply status and errors). Preserve correct cancellation, opening/resume behaviour, bounded context updates and idempotent delegated replies.\n\nStart with the native iOS/WebRTC and Python-service stack that exists in Columbo. Do not call it a web, macOS or arbitrary coding-session integration until each host has its own example and tests. A direct voice connection to a Codex/Claude session needs a verified host adapter and result ownership; a phone interview waiter is not a general live-session bridge.\n\nAcceptance: a minimal second consumer can install the module and complete start, turn-taking, interruption, mute, long reply, disconnect/reconnect, resume and end without importing Columbo's interview state. Test physical audio separately, preserve the current app and recovered answers, run independent Astra/Fable reviews and Understudy, and document remaining limits. The work is queued; this document is not evidence that extraction is finished.\n\n## Routing and catalogue work\n\nColumbo question delivery and live voice integration are separate published capabilities, with job-led routes, since r000006. A provider-specific voice regression test must not be converted into Syrinx narration. Both-client benchmarks retain positive narration cases and nearby live-conversation/test cases. Build guidance now includes this discovery step; the standalone component remains queued.\n"
+    }
+  ],
+  "current": "review",
+  "revision": 6,
+  "status": "active",
+  "documents": {
+    "work-board.md": "# Automatic inventory read work board\n\nNorth star: actual client request automatically travels through a foreground app-owned worker and existing reader, with a bound response. Local prototype, no installedphone claim.\n\n- New original build inventory-foreground-reads-20261006 / build-BUILD-INVENTORY-FOREGROUND-READS-26245baf, savedprocedure30d5670f-dece-47fa-a68d-bafae6ce2083. Full root-approved plan preserved plus explicit delivery headings. NO_STEPS initial arm retained; no active manifest reset.\n- Red: missing app target membership and absent automatic fixture consumer both fail through Understudy. Sandboxed macro-plugin failure preserved separately.\n- Implementation: actual reader/owner/protocol/URLSession worker registered and composed with same app container; no production config. Real prototype mailbox/client and synthetic host.\n- Current local evidence: protocol30; Python mailbox/HTTP14 cases; actual loopback25 on final frozen candidate PASS23.762s; actual unsigned iOS buildPASS.\n- Actual faults fixed: cross-language response float normalization (requests still canonical), bounded trace accounting/assertion count, total client response deadline, owner reference held across awaits. Earlier failures retained.\n- Next: final frozen candidate results, independent source reviews, post-review Understudy, exact commit/committed/original gates. No completion claim yet.\n- Excluded: livehost/pairing/credentials/realinventory/backup/UI/remote deployment; reader/models/mutation source untouched. Food-log remains separately held and parent-owned for its latest repair.\n"
+  },
+  "history": [
+    {
+      "at": "2026-10-06T20:33:07.642487+00:00",
+      "event": "start",
+      "client": "codex"
+    },
+    {
+      "at": "2026-10-06T20:56:24.957824+00:00",
+      "event": "save",
+      "name": "work-board.md",
+      "previous": null
+    },
+    {
+      "at": "2026-10-06T20:56:25.016656+00:00",
+      "event": "move",
+      "previous": "scope",
+      "next": "red",
+      "reason": "Actual missing registration and missing automatic consumer failures preserved under red-01 and roundtrip-red-01.",
+      "branch": false
+    },
+    {
+      "at": "2026-10-06T20:56:25.078364+00:00",
+      "event": "move",
+      "previous": "red",
+      "next": "implement",
+      "reason": "Read full approved plan; implementing automatic foreground local channel, with actual local transport tests and iOS compile evidence distinct.",
+      "branch": false
+    },
+    {
+      "at": "2026-10-06T20:57:46.281940+00:00",
+      "event": "save",
+      "name": "work-board.md",
+      "previous": "# Automatic inventory read work board\n\nNorth star: actual client request automatically travels through a foreground app-owned worker and existing reader, with a bound response. Local prototype, no installedphone claim.\n\n- New original build inventory-foreground-reads-20261006 / build-BUILD-INVENTORY-FOREGROUND-READS-26245baf, savedprocedure30d5670f-dece-47fa-a68d-bafae6ce2083. Full root-approved plan preserved plus explicit delivery headings. NO_STEPS initial arm retained; no active manifest reset.\n- Red: missing app target membership and absent automatic fixture consumer both fail through Understudy. Sandboxed macro-plugin failure preserved separately.\n- Implementation: actual reader/owner/protocol/URLSession worker registered and composed with same app container; no production config. Real prototype mailbox/client and synthetic host.\n- Current local evidence: protocol30; Python mailbox/HTTP14 cases; actual loopback25 on preceding candidate, final frozen candidate rerun in progress; actual unsigned iOS buildPASS.\n- Actual faults fixed: cross-language response float normalization (requests still canonical), bounded trace accounting/assertion count, total client response deadline, owner reference held across awaits. Earlier failures retained.\n- Next: final frozen candidate results, independent source reviews, post-review Understudy, exact commit/committed/original gates. No completion claim yet.\n- Excluded: livehost/pairing/credentials/realinventory/backup/UI/remote deployment; reader/models/mutation source untouched. Food-log remains separately held and parent-owned for its latest repair.\n"
+    },
+    {
+      "at": "2026-10-06T20:57:46.341608+00:00",
+      "event": "move",
+      "previous": "implement",
+      "next": "review",
+      "reason": "Frozen17 inputs: protocol30, loopback25, Python14 and actual unsigned iOS compile pass. Independent source reviews pending, no live deploy or completion claim.",
+      "branch": false
+    }
+  ],
+  "step": {
+    "id": "review",
+    "title": "Check for blocking faults",
+    "instructions": "Get independent Astra and Fable reviews/tests of actual changed code. Fix concrete blocking faults; record non-blocking ideas without gold-plating loops. Missing review is a disclosed gap, not a pass.",
+    "next": [
+      "understudy",
+      "implement"
+    ],
+    "outputs": [
+      "review-disposition.md"
+    ]
+  },
+  "note": "Saved progress is a work record, not proof of readiness, permission or user approval. Current capability protocols still apply."
+}

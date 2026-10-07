@@ -1,0 +1,67 @@
+{
+  "state": "candidate02_astra_pass_fable_held",
+  "session": "inventory-foreground-reads-20261006",
+  "manifest": "build-BUILD-INVENTORY-FOREGROUND-READS-26245baf",
+  "procedure": "30d5670f-dece-47fa-a68d-bafae6ce2083",
+  "baseline": "57d255ce04a0ac0734753dc80ff0e6f0540467c0",
+  "frozen_inputs": 18,
+  "evidence": {
+    "protocol": {
+      "run": "protocol-05",
+      "ok": true,
+      "duration_s": 8.933,
+      "exit_code": 0,
+      "timed_out": false,
+      "assertions": 30
+    },
+    "loopback": {
+      "run": "roundtrip-08",
+      "ok": true,
+      "duration_s": 23.149,
+      "exit_code": 0,
+      "timed_out": false,
+      "assertions": 25
+    },
+    "python": {
+      "run": "http-budget-green-01",
+      "ok": true,
+      "duration_s": 14.241,
+      "exit_code": 0,
+      "timed_out": false,
+      "test_cases": 17
+    },
+    "ios": {
+      "run": "ios-build-02",
+      "ok": true,
+      "duration_s": 5.022,
+      "exit_code": 0,
+      "timed_out": false
+    }
+  },
+  "scope": "automatic local foreground prototype; actual URLSession/SwiftData/loopback plus unsigned iOS compile",
+  "live_or_personal_data_access": false,
+  "deployed": false,
+  "source_committed": false,
+  "source_reviews_passed": false,
+  "original_build_complete": false,
+  "old_reader_source_unchanged": true,
+  "hash_manifest": "candidate-hashes-02.json",
+  "review_repair": {
+    "original_block": "reviews/astra-01/REVIEW.md",
+    "author_red": "http-budget-red-01",
+    "repair": "Absolute three-second owned-socket deadline before header parsing; capacity released on handler exit; original build retained."
+  },
+  "independent_astra": {
+    "verdict": "PASS",
+    "report": "reviews/astra-01/DELTA-02.md",
+    "checks": 21,
+    "duration_s": 16.161
+  },
+  "fable_preparation": {
+    "directory": "reviews/fable-preparation-01",
+    "bytes": 129099,
+    "payload_sha256": "29e9777f8fca2405926c56567201bd844138d6e48699d25ce6119a40322dadee",
+    "held": true,
+    "transmitted": false
+  }
+}
