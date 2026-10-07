@@ -1,0 +1,72 @@
+{
+  "build_id": "c80705fea20a6cf46c6b",
+  "cancel_requested": false,
+  "created_at": "2026-10-06T20:01:06Z",
+  "finished_at": "2026-10-06T20:02:09Z",
+  "log_paths": [],
+  "mode": "completion",
+  "outcome": "pass",
+  "pid": 92861,
+  "provider_results": [
+    {
+      "finished_at": "2026-10-06T20:01:06Z",
+      "items": [
+        {
+          "kind": "manifest",
+          "note": "sealed manifest build-BUILD-INVENTORY-READ-ADAPTER-f94f5ab0 present + parseable"
+        },
+        {
+          "kind": "dirty_tree",
+          "note": "working tree dirty \u2014 evidence evaluated at HEAD only"
+        }
+      ],
+      "note": "",
+      "outcome": "pass",
+      "provider": "integrity",
+      "required": true
+    },
+    {
+      "finished_at": "2026-10-06T20:02:09Z",
+      "items": [],
+      "note": "report: /Users/aidan/.claude/done-gate/reports/build-BUILD-INVENTORY-READ-ADAPTER-f94f5ab0-20261006T200209Z.md",
+      "outcome": "pass",
+      "provider": "mechanical",
+      "required": true
+    },
+    {
+      "finished_at": "2026-10-06T20:02:09Z",
+      "items": [],
+      "note": "no acceptance checks declared",
+      "outcome": "not_applicable",
+      "provider": "acceptance",
+      "required": false
+    },
+    {
+      "finished_at": "2026-10-06T20:02:09Z",
+      "items": [],
+      "note": "not required by current policy",
+      "outcome": "not_applicable",
+      "provider": "judged",
+      "required": false
+    },
+    {
+      "finished_at": "2026-10-06T20:02:09Z",
+      "items": [],
+      "note": "not required by current policy",
+      "outcome": "not_applicable",
+      "provider": "plan_end_audit",
+      "required": false
+    }
+  ],
+  "repository_root": "/Users/aidan/Dev/AllMyCrap-read-adapter",
+  "required_providers": [
+    "integrity",
+    "mechanical"
+  ],
+  "run_id": "run-1791316866-92861",
+  "schema_version": 1,
+  "started_at": "2026-10-06T20:01:06Z",
+  "state": "complete",
+  "target_head": "5ddf901e7587208386558f9b8ff1f6e7fd6e07ee",
+  "updated_at": "2026-10-06T20:02:09Z"
+}
