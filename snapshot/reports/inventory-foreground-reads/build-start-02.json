@@ -1,0 +1,10 @@
+{
+  "result": "armed",
+  "session_key": "inventory-foreground-reads-20261006",
+  "manifest_id": "build-BUILD-INVENTORY-FOREGROUND-READS-26245baf",
+  "manifest_reused": false,
+  "queue_id": null,
+  "frontier": 1,
+  "digest": "BUILD DIGEST plan=BUILD-INVENTORY-FOREGROUND-READS.md gate=build-BUILD-INVENTORY-FO\nsteps: 1=C 2=P 3=P 4=P\ncurrent 1: Register and retain the app-owned reader\naction: Read the full plan at /Users/aidan/Dev/AllMyCrap-foreground-reads/docs/BUILD-INVENTORY-FOREGROUND-READS.md before continuing.",
+  "action": "Read the full plan at /Users/aidan/Dev/AllMyCrap-foreground-reads/docs/BUILD-INVENTORY-FOREGROUND-READS.md before starting work."
+}

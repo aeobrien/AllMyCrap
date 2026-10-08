@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_s": 0.127,
+  "stdout_tail": "",
+  "stderr_tail": "test_budget_fails_before_key_or_source_send_and_retains_marker (__main__.LauncherTests) ... ok\ntest_invalid_or_missing_prices_are_rejected (__main__.LauncherTests) ... ok\ntest_maintained_backend_uses_low_reasoning_and_rejects_truncation (__main__.LauncherTests) ... ok\ntest_only_one_call_with_output_allowance_and_no_retries (__main__.LauncherTests) ... ok\ntest_requires_astra_pass_and_unchanged_report (__main__.LauncherTests) ... ok\ntest_transport_mechanism_drift_stops_before_network (__main__.LauncherTests) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.006s\n\nOK\n",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 0,
+      "ok": true
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

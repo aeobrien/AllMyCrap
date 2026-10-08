@@ -1,0 +1,23 @@
+{
+  "capture_finished_at_utc": "2026-10-08T03:12:33Z",
+  "capture_started_at_utc": "2026-10-08T03:12:28Z",
+  "captured_at_utc": "2026-10-08T03:12:28Z",
+  "captured_byte_estimate": 4092566,
+  "captured_path_count": 273,
+  "consistency_retry_count": 0,
+  "excluded": [],
+  "github_hard_limit_bytes": 100000000,
+  "guardian_version": "2.0-sidecar",
+  "head_state": "symbolic",
+  "host": "aidans-laptop",
+  "racy_capture": false,
+  "repository_id": "AllMyCrap-foreground-reads-c7fc72879f7d",
+  "schema_version": 1,
+  "snapshot_blob_threshold_bytes": 94371840,
+  "snapshot_consistency": "stable",
+  "source_branch": "allmycrap/foreground-reads",
+  "source_head_oid": "57d255ce04a0ac0734753dc80ff0e6f0540467c0",
+  "source_index_sha256": "8bbc048f8dbcabdcc4aba3cea34962b51005d48ad3e9ea8770f6abc8c72cdb8b",
+  "source_path": "/Users/aidan/Dev/AllMyCrap-foreground-reads",
+  "upstream_observed": null
+}
