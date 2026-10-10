@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-06T21:16:20.140524+00:00",
+  "outcome": "rejected_before_process_creation",
+  "private_source_payload_bytes": 129099,
+  "payload_sha256": "29e9777f8fca2405926c56567201bd844138d6e48699d25ce6119a40322dadee",
+  "request_body_bytes": 132381,
+  "destination": "https://openrouter.ai/api/v1/chat/completions",
+  "model": "anthropic/claude-fable-5.1",
+  "reason": "The action would transmit a new 129,099-byte private inventory source package to OpenRouter/Fable; retained approvals cover different packages and do not authorize this payload and destination.",
+  "exact_permission_requested": true,
+  "permission_received": false,
+  "attempt_marker_exists": false,
+  "response_exists": false,
+  "retry": false
+}
