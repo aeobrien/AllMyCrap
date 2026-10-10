@@ -1,0 +1,48 @@
+{
+  "blocker": null,
+  "build_id": "c80705fea20a6cf46c6b",
+  "created_at": "2026-10-06T19:30:51Z",
+  "current_step_id": null,
+  "declared_scope": {
+    "components": [],
+    "integration_seams": [],
+    "paths": []
+  },
+  "last_stop_decision": "ALLOW_COMPLETE",
+  "last_verification_run_id": "run-1791316866-92861",
+  "lifecycle": "complete",
+  "manifest": {
+    "digest": null,
+    "id": "build-BUILD-INVENTORY-READ-ADAPTER-f94f5ab0",
+    "revision": null,
+    "sealed_item_count": null
+  },
+  "observed_progress": {
+    "last_head": "3337ecaeba0c6a0bec733201f190443d21e56b42",
+    "last_manifest_revision": null,
+    "last_passing_check_count": 0,
+    "last_progress_at": "2026-10-06T19:30:51Z",
+    "repeated_failure_fingerprint": null
+  },
+  "repository": {
+    "base_commit": "3337ecaeba0c6a0bec733201f190443d21e56b42",
+    "head_commit": "3337ecaeba0c6a0bec733201f190443d21e56b42",
+    "root": "/Users/aidan/Dev/AllMyCrap-read-adapter"
+  },
+  "schema_version": 1,
+  "sequence": 2,
+  "session_id": "inventory-read-adapter-20261006",
+  "session_key": "15bdf81d94ab2295",
+  "source": {
+    "amendment_revision": 0,
+    "current_sha256": "f94f5ab088d1b762405f52f525af80a8cab29a2fdc240ab8719947bbb66f2173",
+    "original_sha256": "f94f5ab088d1b762405f52f525af80a8cab29a2fdc240ab8719947bbb66f2173",
+    "plan_path": "/Users/aidan/Dev/AllMyCrap-read-adapter/docs/BUILD-INVENTORY-READ-ADAPTER.md",
+    "plan_snapshot_path": "/Users/aidan/.claude/autonomy/builds/c80705fea20a6cf46c6b/plan.snapshot.md",
+    "repository_count": 1
+  },
+  "steps": [],
+  "unresolved_gap_ids": [],
+  "updated_at": "2026-10-06T19:30:51Z",
+  "wait": null
+}

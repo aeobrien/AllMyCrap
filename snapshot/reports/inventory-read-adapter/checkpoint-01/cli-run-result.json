@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_s": 104.076,
+  "stdout_tail": "{\n  \"result\": \"advanced\",\n  \"session_key\": \"inventory-read-adapter-20261006\",\n  \"manifest_id\": \"build-BUILD-INVENTORY-READ-ADAPTER-f94f5ab0\",\n  \"previous_frontier\": 1,\n  \"frontier\": 4,\n  \"full_reread_required\": true,\n  \"judged_pending\": [],\n  \"audit_pending\": false,\n  \"action\": \"Read the full plan at /Users/aidan/Dev/AllMyCrap-read-adapter/docs/BUILD-INVENTORY-READ-ADAPTER.md before continuing.\",\n  \"error\": null\n}\n",
+  "stderr_tail": "",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 0,
+      "ok": true
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

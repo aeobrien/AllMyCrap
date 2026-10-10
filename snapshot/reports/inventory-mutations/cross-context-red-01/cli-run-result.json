@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_s": 6.837,
+  "stdout_tail": "{\"checks\": 18, \"passed\": true, \"scope\": \"Unmodified SwiftData models, temporary disk store, CloudKit disabled; no app, backup manager, UI, phone or real records accessed\", \"source_sha256\": {\"DuplicateExclusion.swift\": \"de60c54ba1d94ef084c74b1eebdccf402821a6bdea46af7bcfcaa0c8da227f09\", \"InventoryMutations.swift\": \"88cead7faeae95bdf8c54bff756f6dec6f6930b0c233847597a3fad7b7a3c40b\", \"Item.swift\": \"a0c82bc8ddc2c6774f989bd17be9bbad10d001e3a926db5814d500095f07dd11\", \"Location.swift\": \"3ac3fc03f43a51310f0023cae8de2295dccb9bab3b420cd3ff17ab4bea2a1f9c\", \"ReviewHistory.swift\": \"bff673e82442b9a4126402987367f2bf82f617f686d8f176724e4b490c9b63fc\", \"Tag.swift\": \"c0cd11859f63e2df0d638c5649c685746baf106db84459590b199abf69d44958\"}}\n",
+  "stderr_tail": "",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 0,
+      "ok": true
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}
