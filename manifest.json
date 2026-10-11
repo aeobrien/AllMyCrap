@@ -1,0 +1,23 @@
+{
+  "capture_finished_at_utc": "2026-10-11T01:56:24Z",
+  "capture_started_at_utc": "2026-10-11T01:56:21Z",
+  "captured_at_utc": "2026-10-11T01:56:21Z",
+  "captured_byte_estimate": 3132791,
+  "captured_path_count": 184,
+  "consistency_retry_count": 0,
+  "excluded": [],
+  "github_hard_limit_bytes": 100000000,
+  "guardian_version": "2.0-sidecar",
+  "head_state": "symbolic",
+  "host": "aidans-laptop",
+  "racy_capture": false,
+  "repository_id": "AllMyCrap-4418271aa56c",
+  "schema_version": 1,
+  "snapshot_blob_threshold_bytes": 94371840,
+  "snapshot_consistency": "stable",
+  "source_branch": "main",
+  "source_head_oid": "57d255ce04a0ac0734753dc80ff0e6f0540467c0",
+  "source_index_sha256": "d817b83409ef4205707a0b4bf4abd889c0a240487dd7f52fb83a09cdcd26ce71",
+  "source_path": "/Users/aidan/Dev/AllMyCrap",
+  "upstream_observed": "origin/main"
+}
