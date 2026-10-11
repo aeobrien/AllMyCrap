@@ -1,0 +1,28 @@
+{
+  "ok": false,
+  "exit_code": 1,
+  "timed_out": false,
+  "duration_s": 31.376,
+  "stdout_tail": "\n/var/folders/4q/7s70w8ys4f5gwsf4grw_njlh0000gn/T/inventory-reader-j19uitqo/ReadTests.swift:141:18: error: type 'InventoryReadAdapter.Failure' has no member 'unsupportedSchema'\n139 |         let incompleteSchema = Schema([DuplicateExclusion.self])\n140 |         let incomplete = try ModelContainer(for: incompleteSchema, configurations: [ModelConfiguration(\"Incomplete\", schema: incompleteSchema, url: url.deletingLastPathComponent().appendingPathComponent(\"incomplete.store\"), cloudKitDatabase: .none)])\n141 |         refuses(.unsupportedSchema) { _ = try InventoryReadAdapter(context: ModelContext(incomplete)).status() }\n    |                  `- error: type 'InventoryReadAdapter.Failure' has no member 'unsupportedSchema'\n142 |         print(\"READ_RESULT=\" + String(data: try JSONSerialization.data(withJSONObject: [\"passed\": passed]), encoding: .utf8)!)\n143 |     }\n\n",
+  "stderr_tail": "",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 1,
+      "ok": false
+    },
+    {
+      "kind": "stdout.contains",
+      "expected": "source_sha256",
+      "actual": null,
+      "ok": false
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

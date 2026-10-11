@@ -1,0 +1,23 @@
+{
+  "capture_finished_at_utc": "2026-10-11T01:56:00Z",
+  "capture_started_at_utc": "2026-10-11T01:55:56Z",
+  "captured_at_utc": "2026-10-11T01:55:56Z",
+  "captured_byte_estimate": 4411107,
+  "captured_path_count": 198,
+  "consistency_retry_count": 0,
+  "excluded": [],
+  "github_hard_limit_bytes": 100000000,
+  "guardian_version": "2.0-sidecar",
+  "head_state": "symbolic",
+  "host": "aidans-laptop",
+  "racy_capture": false,
+  "repository_id": "AllMyCrap-read-adapter-832a74666140",
+  "schema_version": 1,
+  "snapshot_blob_threshold_bytes": 94371840,
+  "snapshot_consistency": "stable",
+  "source_branch": "feature/inventory-read-adapter",
+  "source_head_oid": "98217d06aaa0f67a024773861cb45fa26ea31e11",
+  "source_index_sha256": "b4604ae50d95088083d21a6dd62aeb20ff81df0776423190f466506af260757d",
+  "source_path": "/Users/aidan/Dev/AllMyCrap-read-adapter",
+  "upstream_observed": null
+}
