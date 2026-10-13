@@ -1,0 +1,349 @@
+{
+  "candidate": "candidate02",
+  "model": "anthropic/claude-fable-5.1",
+  "destination": "https://openrouter.ai/api/v1/chat/completions",
+  "bytes": 129099,
+  "payload_sha256": "29e9777f8fca2405926c56567201bd844138d6e48699d25ce6119a40322dadee",
+  "preface_bytes": 286,
+  "user_message_bytes": 129385,
+  "user_message_sha256": "db585e0b08861aed1cd1f357e3e9da68234bc039706c8d69dfa46e04529a5314",
+  "request_body_bytes": 132381,
+  "request_body_sha256": "5e55947969f4aeb97b3de2554d3911fb028f6531a033f34bfe4fc7175f0224dc",
+  "budget_usd": 3,
+  "max_tokens": 12000,
+  "reasoning_effort": "low",
+  "maximum_calls": 1,
+  "retries": 0,
+  "request_timeout_seconds": 180,
+  "total_launcher_bound_seconds": 230,
+  "baseline": "57d255ce04a0ac0734753dc80ff0e6f0540467c0",
+  "files": {
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/docs/BUILD-INVENTORY-FOREGROUND-READS.md": {
+      "bytes": 20327,
+      "sha256": "26245baf72730167088bd834dd26a1829a5bc7984c2991c5d04dfaa7b15863aa",
+      "included_ranges": [
+        [
+          1,
+          115
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/docs/INVENTORY-FOREGROUND-READS.md": {
+      "bytes": 6344,
+      "sha256": "4a660b66eac719c260569c0816547fed9c37b725db4a2ff9aae09a82bc5cfa36",
+      "included_ranges": [
+        [
+          1,
+          29
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/AllMyCrapApp.swift": {
+      "bytes": 4279,
+      "sha256": "5bc01a58c91e966c14d1e1264f7cf416fe3868e3afe6a3f995145a093aa08ca5",
+      "included_ranges": [
+        [
+          1,
+          128
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap.xcodeproj/project.pbxproj": {
+      "bytes": 37335,
+      "sha256": "20e0ab9f6979062f5d9af02c23409dc0c46cb269d85e5042f22159c6d27778fa",
+      "included_ranges": [],
+      "representation": "Exact git diff against baseline 57d255ce04a0ac0734753dc80ff0e6f0540467c0, 10 context lines; unrelated target/build settings omitted."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/InventoryReadProtocol.swift": {
+      "bytes": 4429,
+      "sha256": "53e130a512b266ed350f8008c573d933687e1be9076cced7683b3724c5326496",
+      "included_ranges": [
+        [
+          1,
+          67
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/InventorySessionReads.swift": {
+      "bytes": 1788,
+      "sha256": "bc3b1dd90b273d9cf6632d12f9eb4e1579340a04685ccba4ce92d9f05849507c",
+      "included_ranges": [
+        [
+          1,
+          36
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/InventoryMailboxTransport.swift": {
+      "bytes": 2908,
+      "sha256": "d638941b2fde120fcf492f760cf7e65f507efbfd96faa2a215a2d92b971b9ce4",
+      "included_ranges": [
+        [
+          1,
+          45
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/InventoryForegroundReadWorker.swift": {
+      "bytes": 3030,
+      "sha256": "80baac7837bba725d8806cd0c2fe039299d176af8d20463a0d638f0ff94a8fcc",
+      "included_ranges": [
+        [
+          1,
+          59
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tools/inventory_session/mailbox.py": {
+      "bytes": 9862,
+      "sha256": "db555d8301848445560a64831a200e6bc8ce2364ac58ef0769747194a3ad7d30",
+      "included_ranges": [
+        [
+          1,
+          169
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tools/inventory_session/client.py": {
+      "bytes": 3979,
+      "sha256": "58975bfa5621cc5d5801f33001d776132266bf990ed1afd11910f80e4743e45f",
+      "included_ranges": [
+        [
+          1,
+          63
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_protocol.py": {
+      "bytes": 1215,
+      "sha256": "394edc6a7da9507b6d42e7164e55f5bad8068abdb0c0caeb00fbdf5f49462a84",
+      "included_ranges": [
+        [
+          1,
+          15
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_protocol.swift": {
+      "bytes": 7018,
+      "sha256": "0f076a67aff815bd786bbda484a625141e76df0c445d5a6e079a464602fb1784",
+      "included_ranges": [
+        [
+          1,
+          80
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_roundtrip.py": {
+      "bytes": 6728,
+      "sha256": "536d37831a2fe211e68653e3f076b6654c918ead4507256f77be16737fd64c3e",
+      "included_ranges": [
+        [
+          1,
+          85
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_worker.swift": {
+      "bytes": 2691,
+      "sha256": "0511205f68527813725fb2fbffbb2ee4880d690740714367493d0a05e530cec5",
+      "included_ranges": [
+        [
+          1,
+          40
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_transport_probes.py": {
+      "bytes": 2942,
+      "sha256": "339ff59b5b2f7b406fe640e2bf1b5dc5801486fb98e58ce3e3eaffdec3969839",
+      "included_ranges": [
+        [
+          1,
+          53
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/test_inventory_mailbox.py": {
+      "bytes": 5299,
+      "sha256": "70f566d60653cf7666a16370e679cc490025c0eb5cee32f3ce68690f30108527",
+      "included_ranges": [
+        [
+          1,
+          56
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/test_inventory_client_http.py": {
+      "bytes": 2407,
+      "sha256": "5cf2012be7fecb8644ed070190e82f06340355b1bea0372565844c9c01d4f92e",
+      "included_ranges": [
+        [
+          1,
+          39
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/test_inventory_http_budget.py": {
+      "bytes": 2308,
+      "sha256": "a99ad8e1d79aed155965719d40c135c41330a2feea64be18fea833e03ba33f98",
+      "included_ranges": [
+        [
+          1,
+          44
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/InventoryReadAdapter.swift": {
+      "bytes": 14239,
+      "sha256": "e883aff339e8004145a5279cafd4a979957e0fb9fb9f2acd470a668f58a8286d",
+      "included_ranges": [
+        [
+          1,
+          217
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/Item.swift": {
+      "bytes": 1678,
+      "sha256": "a0c82bc8ddc2c6774f989bd17be9bbad10d001e3a926db5814d500095f07dd11",
+      "included_ranges": [
+        [
+          1,
+          65
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/Location.swift": {
+      "bytes": 1483,
+      "sha256": "3ac3fc03f43a51310f0023cae8de2295dccb9bab3b420cd3ff17ab4bea2a1f9c",
+      "included_ranges": [
+        [
+          1,
+          53
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/Tag.swift": {
+      "bytes": 443,
+      "sha256": "c0cd11859f63e2df0d638c5649c685746baf106db84459590b199abf69d44958",
+      "included_ranges": [
+        [
+          1,
+          18
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/ReviewHistory.swift": {
+      "bytes": 641,
+      "sha256": "bff673e82442b9a4126402987367f2bf82f617f686d8f176724e4b490c9b63fc",
+      "included_ranges": [
+        [
+          1,
+          26
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/AllMyCrap/DuplicateExclusion.swift": {
+      "bytes": 924,
+      "sha256": "de60c54ba1d94ef084c74b1eebdccf402821a6bdea46af7bcfcaa0c8da227f09",
+      "included_ranges": [
+        [
+          1,
+          31
+        ]
+      ],
+      "representation": "Complete source, line-numbered."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/reports/inventory-foreground-reads/http-budget-red-01/cli-run-result.json": {
+      "bytes": 3886,
+      "sha256": "91dd8bdee4fffca02136bd524c0e2480bcdb5794fa2fe12887e650f351c00230",
+      "included_ranges": [],
+      "representation": "Projection only: ok, exit_code, timed_out, duration_s; no logs or raw response bodies."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/reports/inventory-foreground-reads/http-budget-green-01/cli-run-result.json": {
+      "bytes": 2603,
+      "sha256": "aedc7b58af460cc7522bfdec55618014b1d4587f4120ad193e126040904ef909",
+      "included_ranges": [],
+      "representation": "Projection only: ok, exit_code, timed_out, duration_s; no logs or raw response bodies."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/reports/inventory-foreground-reads/roundtrip-08/cli-run-result.json": {
+      "bytes": 3749,
+      "sha256": "4483cd36c5cf7b71a0b830187d26869f817f15b7fdb252d2332d5eb1eebfd15e",
+      "included_ranges": [],
+      "representation": "Projection only: ok, exit_code, timed_out, duration_s; no logs or raw response bodies."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/reports/inventory-foreground-reads/protocol-05/cli-run-result.json": {
+      "bytes": 479,
+      "sha256": "1c4bc1e5834be392d302956f958c90193ffcfd4eaf17db7420e218ab7cb4eb78",
+      "included_ranges": [],
+      "representation": "Projection only: ok, exit_code, timed_out, duration_s; no logs or raw response bodies."
+    },
+    "/Users/aidan/Dev/AllMyCrap-foreground-reads/reports/inventory-foreground-reads/ios-build-02/cli-run-result.json": {
+      "bytes": 50834,
+      "sha256": "31b49acf8fa7e6bc4030784a802f838f9ba2ca8d6b7f5fc4718cc92559704687",
+      "included_ranges": [],
+      "representation": "Projection only: ok, exit_code, timed_out, duration_s; no logs or raw response bodies."
+    }
+  },
+  "frozen_candidate_inputs": {
+    "AllMyCrap/AllMyCrapApp.swift": "5bc01a58c91e966c14d1e1264f7cf416fe3868e3afe6a3f995145a093aa08ca5",
+    "AllMyCrap.xcodeproj/project.pbxproj": "20e0ab9f6979062f5d9af02c23409dc0c46cb269d85e5042f22159c6d27778fa",
+    "AllMyCrap/InventoryReadProtocol.swift": "53e130a512b266ed350f8008c573d933687e1be9076cced7683b3724c5326496",
+    "AllMyCrap/InventorySessionReads.swift": "bc3b1dd90b273d9cf6632d12f9eb4e1579340a04685ccba4ce92d9f05849507c",
+    "AllMyCrap/InventoryMailboxTransport.swift": "d638941b2fde120fcf492f760cf7e65f507efbfd96faa2a215a2d92b971b9ce4",
+    "AllMyCrap/InventoryForegroundReadWorker.swift": "80baac7837bba725d8806cd0c2fe039299d176af8d20463a0d638f0ff94a8fcc",
+    "tools/inventory_session/mailbox.py": "db555d8301848445560a64831a200e6bc8ce2364ac58ef0769747194a3ad7d30",
+    "tools/inventory_session/client.py": "58975bfa5621cc5d5801f33001d776132266bf990ed1afd11910f80e4743e45f",
+    "tests/inventory_session_protocol.py": "394edc6a7da9507b6d42e7164e55f5bad8068abdb0c0caeb00fbdf5f49462a84",
+    "tests/inventory_session_protocol.swift": "0f076a67aff815bd786bbda484a625141e76df0c445d5a6e079a464602fb1784",
+    "tests/inventory_session_roundtrip.py": "536d37831a2fe211e68653e3f076b6654c918ead4507256f77be16737fd64c3e",
+    "tests/inventory_session_worker.swift": "0511205f68527813725fb2fbffbb2ee4880d690740714367493d0a05e530cec5",
+    "tests/inventory_transport_probes.py": "339ff59b5b2f7b406fe640e2bf1b5dc5801486fb98e58ce3e3eaffdec3969839",
+    "tests/test_inventory_mailbox.py": "70f566d60653cf7666a16370e679cc490025c0eb5cee32f3ce68690f30108527",
+    "tests/test_inventory_client_http.py": "5cf2012be7fecb8644ed070190e82f06340355b1bea0372565844c9c01d4f92e",
+    "docs/BUILD-INVENTORY-FOREGROUND-READS.md": "26245baf72730167088bd834dd26a1829a5bc7984c2991c5d04dfaa7b15863aa",
+    "docs/INVENTORY-FOREGROUND-READS.md": "4a660b66eac719c260569c0816547fed9c37b725db4a2ff9aae09a82bc5cfa36",
+    "tests/test_inventory_http_budget.py": "a99ad8e1d79aed155965719d40c135c41330a2feea64be18fea833e03ba33f98"
+  },
+  "unchanged_reader_models": {
+    "AllMyCrap/InventoryReadAdapter.swift": "e883aff339e8004145a5279cafd4a979957e0fb9fb9f2acd470a668f58a8286d",
+    "AllMyCrap/Item.swift": "a0c82bc8ddc2c6774f989bd17be9bbad10d001e3a926db5814d500095f07dd11",
+    "AllMyCrap/Location.swift": "3ac3fc03f43a51310f0023cae8de2295dccb9bab3b420cd3ff17ab4bea2a1f9c",
+    "AllMyCrap/Tag.swift": "c0cd11859f63e2df0d638c5649c685746baf106db84459590b199abf69d44958",
+    "AllMyCrap/ReviewHistory.swift": "bff673e82442b9a4126402987367f2bf82f617f686d8f176724e4b490c9b63fc",
+    "AllMyCrap/DuplicateExclusion.swift": "de60c54ba1d94ef084c74b1eebdccf402821a6bdea46af7bcfcaa0c8da227f09"
+  },
+  "candidate_manifest_sha256": "ea2418da7ff8ea91f58212f7a743242390097163149f4128311504219ddc3e05",
+  "scope": "Private application source, project-registration diff, exact read adapter/model context, full approved plan and synthetic tests; local paths and source metadata are present. No real inventory, backups, credentials, private records or data bodies. Bearer values in tests are synthetic fixtures only.",
+  "transport": "Maintained Understudy.openrouter_judge.make_invoke retries=1, prepends NO_SHELL_PREFACE; aijudge performs one OpenRouter POST with low reasoning and 12000 output tokens.",
+  "budget_note": "Conservative preflight at then-reported public model rates: source bytes plus preface plus4096 allowance as input tokens, maximum output and request fee; refuses if estimate exceeds$3. This is a local preflight bound, not a provider-side hard billing cap.",
+  "held": true,
+  "reason": "Local preparation only. Root controls independent Astra release and normal source-transfer approval; no key loading, price lookup, network or launch performed.",
+  "mechanism_hashes": {
+    "/Users/aidan/Dev/Understudy/src/understudy/openrouter_judge.py": "3f29b9f0f16ff9cf36965743f7e31d660359ff9e95be4129dd99abb98d14f5cf",
+    "/Users/aidan/Dev/Understudy/src/understudy/aijudge.py": "870320054a8fb13f80419e8d1a34a1c71e08b760693ce91dd0a97ee067e7963e"
+  }
+}

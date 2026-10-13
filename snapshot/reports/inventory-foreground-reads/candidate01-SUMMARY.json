@@ -1,0 +1,48 @@
+{
+  "state": "frozen_candidate_independent_reviews_pending",
+  "session": "inventory-foreground-reads-20261006",
+  "manifest": "build-BUILD-INVENTORY-FOREGROUND-READS-26245baf",
+  "procedure": "30d5670f-dece-47fa-a68d-bafae6ce2083",
+  "baseline": "57d255ce04a0ac0734753dc80ff0e6f0540467c0",
+  "frozen_inputs": 17,
+  "evidence": {
+    "protocol": {
+      "run": "protocol-05",
+      "ok": true,
+      "duration_s": 8.933,
+      "exit_code": 0,
+      "timed_out": false,
+      "assertions": 30
+    },
+    "loopback": {
+      "run": "roundtrip-07",
+      "ok": true,
+      "duration_s": 23.762,
+      "exit_code": 0,
+      "timed_out": false,
+      "assertions": 25
+    },
+    "python": {
+      "run": "python-contracts-03",
+      "ok": true,
+      "duration_s": 2.13,
+      "exit_code": 0,
+      "timed_out": false,
+      "test_cases": 14
+    },
+    "ios": {
+      "run": "ios-build-02",
+      "ok": true,
+      "duration_s": 5.022,
+      "exit_code": 0,
+      "timed_out": false
+    }
+  },
+  "scope": "automatic local foreground prototype; actual URLSession/SwiftData/loopback plus unsigned iOS compile",
+  "live_or_personal_data_access": false,
+  "deployed": false,
+  "source_committed": false,
+  "source_reviews_passed": false,
+  "original_build_complete": false,
+  "old_reader_source_unchanged": true
+}

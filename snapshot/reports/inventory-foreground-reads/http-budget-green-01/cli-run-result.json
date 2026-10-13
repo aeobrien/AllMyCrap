@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_s": 14.241,
+  "stdout_tail": "",
+  "stderr_tail": "test_incomplete_request_headers_release_all_slots (tests.test_inventory_http_budget.RequestBudgetTests.test_incomplete_request_headers_release_all_slots) ... ok\ntest_trickling_body_does_not_extend_total_deadline (tests.test_inventory_http_budget.RequestBudgetTests.test_trickling_body_does_not_extend_total_deadline) ... ok\ntest_trickling_headers_do_not_extend_total_deadline (tests.test_inventory_http_budget.RequestBudgetTests.test_trickling_headers_do_not_extend_total_deadline) ... ok\ntest_argument_validation_and_digest (tests.test_inventory_mailbox.MailboxTests.test_argument_validation_and_digest) ... ok\ntest_cancellation_rejects_late_reply (tests.test_inventory_mailbox.MailboxTests.test_cancellation_rejects_late_reply) ... ok\ntest_completed_retry_and_conflict (tests.test_inventory_mailbox.MailboxTests.test_completed_retry_and_conflict) ... ok\ntest_duplicate_nonfinite_oversized (tests.test_inventory_mailbox.MailboxTests.test_duplicate_nonfinite_oversized) ... ok\ntest_expiry_keeps_tombstone (tests.test_inventory_mailbox.MailboxTests.test_expiry_keeps_tombstone) ... ok\ntest_finite_custody (tests.test_inventory_mailbox.MailboxTests.test_finite_custody) ... ok\ntest_liveness_and_scope_reset (tests.test_inventory_mailbox.MailboxTests.test_liveness_and_scope_reset) ... ok\ntest_response_binding_overflow_and_shape (tests.test_inventory_mailbox.MailboxTests.test_response_binding_overflow_and_shape) ... ok\ntest_response_numbers_need_not_be_byte_canonical (tests.test_inventory_mailbox.MailboxTests.test_response_numbers_need_not_be_byte_canonical) ... ok\ntest_roles_and_bindings (tests.test_inventory_mailbox.MailboxTests.test_roles_and_bindings) ... ok\ntest_unhashable_request_is_typed_refusal (tests.test_inventory_mailbox.MailboxTests.test_unhashable_request_is_typed_refusal) ... ok\ntest_actual_role_refusals (tests.test_inventory_client_http.HTTPTests.test_actual_role_refusals) ... ok\ntest_client_does_not_follow_redirect (tests.test_inventory_client_http.HTTPTests.test_client_does_not_follow_redirect) ... ok\ntest_client_total_body_deadline (tests.test_inventory_client_http.HTTPTests.test_client_total_body_deadline) ... ok\n\n----------------------------------------------------------------------\nRan 17 tests in 14.119s\n\nOK\n",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 0,
+      "ok": true
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

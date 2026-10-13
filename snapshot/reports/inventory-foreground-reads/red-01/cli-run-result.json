@@ -1,0 +1,22 @@
+{
+  "ok": false,
+  "exit_code": 1,
+  "timed_out": false,
+  "duration_s": 0.079,
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_protocol.py\", line 10, in <module>\n    registration()\n    ~~~~~~~~~~~~^^\n  File \"/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_protocol.py\", line 8, in registration\n    assert text.count('/* '+name+' in Sources */')==2, 'Missing/duplicate app target registration: '+name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Missing/duplicate app target registration: InventoryReadAdapter.swift\n",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 1,
+      "ok": false
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

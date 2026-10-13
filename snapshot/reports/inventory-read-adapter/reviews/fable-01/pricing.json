@@ -1,0 +1,12 @@
+{
+  "model": "anthropic/claude-fable-5.1",
+  "pricing": {
+    "prompt": "0.00001",
+    "completion": "0.00005",
+    "web_search": "0.01",
+    "input_cache_read": "0.00000025",
+    "input_cache_write": "0.0000125",
+    "input_cache_write_1h": "0.00002"
+  },
+  "conservative_bound_usd": 0.9739200000000001
+}
