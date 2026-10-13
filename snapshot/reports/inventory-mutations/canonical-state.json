@@ -1,0 +1,72 @@
+{
+  "build_id": "b94404c65d7688e3a4cb",
+  "cancel_requested": false,
+  "created_at": "2026-10-06T06:45:49Z",
+  "finished_at": "2026-10-06T06:45:57Z",
+  "log_paths": [],
+  "mode": "completion",
+  "outcome": "pass",
+  "pid": 83237,
+  "provider_results": [
+    {
+      "finished_at": "2026-10-06T06:45:49Z",
+      "items": [
+        {
+          "kind": "manifest",
+          "note": "sealed manifest build-BUILD-INVENTORY-MUTATIONS-747505ee present + parseable"
+        },
+        {
+          "kind": "dirty_tree",
+          "note": "working tree dirty \u2014 evidence evaluated at HEAD only"
+        }
+      ],
+      "note": "",
+      "outcome": "pass",
+      "provider": "integrity",
+      "required": true
+    },
+    {
+      "finished_at": "2026-10-06T06:45:57Z",
+      "items": [],
+      "note": "report: /Users/aidan/.claude/done-gate/reports/build-BUILD-INVENTORY-MUTATIONS-747505ee-20261006T064557Z.md",
+      "outcome": "pass",
+      "provider": "mechanical",
+      "required": true
+    },
+    {
+      "finished_at": "2026-10-06T06:45:57Z",
+      "items": [],
+      "note": "no acceptance checks declared",
+      "outcome": "not_applicable",
+      "provider": "acceptance",
+      "required": false
+    },
+    {
+      "finished_at": "2026-10-06T06:45:57Z",
+      "items": [],
+      "note": "not required by current policy",
+      "outcome": "not_applicable",
+      "provider": "judged",
+      "required": false
+    },
+    {
+      "finished_at": "2026-10-06T06:45:57Z",
+      "items": [],
+      "note": "not required by current policy",
+      "outcome": "not_applicable",
+      "provider": "plan_end_audit",
+      "required": false
+    }
+  ],
+  "repository_root": "/Users/aidan/Dev/AllMyCrap",
+  "required_providers": [
+    "integrity",
+    "mechanical"
+  ],
+  "run_id": "run-1791269149-83237",
+  "schema_version": 1,
+  "started_at": "2026-10-06T06:45:49Z",
+  "state": "complete",
+  "target_head": "d657b7aec0587ab4487784d93aedaa296ab6d17e",
+  "updated_at": "2026-10-06T06:45:57Z"
+}

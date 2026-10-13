@@ -1,0 +1,24 @@
+{
+  "sha256": "8ab81df45e235ee8c76a4162c0fc563d18f6a08d05d1bfa4af77592f0e596456",
+  "bytes": 66312,
+  "hashes": {
+    "BUILD-INVENTORY-MUTATIONS.md": "747505ee17aaccb3f6fbf425af8d191959c3c98220a491c60dd4a1b01bc1338b",
+    "AllMyCrap/InventoryMutations.swift": "88cead7faeae95bdf8c54bff756f6dec6f6930b0c233847597a3fad7b7a3c40b",
+    "AllMyCrap/LocationDetailView.swift": "67f3a66a926cc94dd9f60ce4376f7bca4d1886339dd8d474399c0888b7ffaf3c",
+    "AllMyCrap/MoveDestinationPicker.swift": "3862b27253d0cfba781ba7b152fba9ff062f2db602d00465c789133718ed5e32",
+    "AllMyCrap/Location.swift": "3ac3fc03f43a51310f0023cae8de2295dccb9bab3b420cd3ff17ab4bea2a1f9c",
+    "AllMyCrap/Item.swift": "a0c82bc8ddc2c6774f989bd17be9bbad10d001e3a926db5814d500095f07dd11",
+    "AllMyCrap/Tag.swift": "c0cd11859f63e2df0d638c5649c685746baf106db84459590b199abf69d44958",
+    "AllMyCrap/ReviewHistory.swift": "bff673e82442b9a4126402987367f2bf82f617f686d8f176724e4b490c9b63fc",
+    "AllMyCrap/DuplicateExclusion.swift": "de60c54ba1d94ef084c74b1eebdccf402821a6bdea46af7bcfcaa0c8da227f09",
+    "tests/inventory_mutations.swift": "801063cdbf4d4aac6a82b55c58896b7c2f7951d80e2428a9e84b26fa0d3e743f",
+    "tests/inventory_mutations.py": "20876324e4c84d9cd4ab9ad54d95a6437ee1b338087bf57da95860d0315a8eec"
+  },
+  "model": "anthropic/claude-fable-5.1",
+  "budget_usd": 3,
+  "sent": true,
+  "attempt_budget_usd": 2.3,
+  "prior_attempt_cost_usd": 0.67989,
+  "executed_tests": false,
+  "visible_review": true
+}
