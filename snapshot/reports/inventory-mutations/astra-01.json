@@ -1,0 +1,23 @@
+{
+  "verdict": "PASS",
+  "scope": "Shared exact-ID move/deletion service and single move UI integration only",
+  "source_sha256": {
+    "AllMyCrap/InventoryMutations.swift": "88cead7faeae95bdf8c54bff756f6dec6f6930b0c233847597a3fad7b7a3c40b",
+    "AllMyCrap/LocationDetailView.swift": "67f3a66a926cc94dd9f60ce4376f7bca4d1886339dd8d474399c0888b7ffaf3c",
+    "AllMyCrap/MoveDestinationPicker.swift": "3862b27253d0cfba781ba7b152fba9ff062f2db602d00465c789133718ed5e32",
+    "AllMyCrap.xcodeproj/project.pbxproj": "66be933ef8d71c9b9ccf9e2ac7ec46f0d47f3e7e735d4359186b344d4134611a"
+  },
+  "independent_checks": 4,
+  "execution": "astra-probes-03/cli-run-result.json",
+  "duration_s": 10.162,
+  "earlier_attempts": [
+    "astra-probes-01: Swift macro sandbox failure, no behavior exercised",
+    "astra-probes-02: independent test assertion compile error, no production fault"
+  ],
+  "limits": [
+    "No session transport, authentication or real consent capture; approved bool is a caller assertion.",
+    "Batch move and existing deletion handlers do not yet use this service.",
+    "No real inventory, application UI, phone or deployment tested.",
+    "Serial main-actor cooperating callers assumed; no cross-process database transaction guarantee."
+  ]
+}

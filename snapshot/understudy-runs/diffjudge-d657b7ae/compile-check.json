@@ -1,0 +1,11 @@
+{
+  "verdict": "pass",
+  "checked_files": [
+    "AllMyCrap/InventoryMutations.swift",
+    "AllMyCrap/LocationDetailView.swift",
+    "AllMyCrap/MoveDestinationPicker.swift",
+    "tests/inventory_mutations.swift"
+  ],
+  "diagnostics": "",
+  "detail": "swiftc -parse exit 0 on 4 file(s) in 2 target group(s)"
+}
