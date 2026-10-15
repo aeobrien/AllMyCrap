@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F06000000000000000000401 /* InventoryForegroundReadWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000402 /* InventoryForegroundReadWorker.swift */; };
+		F06000000000000000000301 /* InventoryMailboxTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000302 /* InventoryMailboxTransport.swift */; };
+		F06000000000000000000201 /* InventorySessionReads.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000202 /* InventorySessionReads.swift */; };
+		F06000000000000000000101 /* InventoryReadProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000102 /* InventoryReadProtocol.swift */; };
+		F06000000000000000000001 /* InventoryReadAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06000000000000000000002 /* InventoryReadAdapter.swift */; };
 		A10C60010000000000000001 /* InventoryMutations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10C60010000000000000002 /* InventoryMutations.swift */; };
 		AA000001AAAA000100000001 /* ActionModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001AAAA000100000002 /* ActionModeView.swift */; };
 		AA000002AAAA000200000001 /* ArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002AAAA000200000002 /* ArchiveView.swift */; };
@@ -60,6 +65,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F06000000000000000000402 /* InventoryForegroundReadWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryForegroundReadWorker.swift; sourceTree = "<group>"; };
+		F06000000000000000000302 /* InventoryMailboxTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryMailboxTransport.swift; sourceTree = "<group>"; };
+		F06000000000000000000202 /* InventorySessionReads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventorySessionReads.swift; sourceTree = "<group>"; };
+		F06000000000000000000102 /* InventoryReadProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryReadProtocol.swift; sourceTree = "<group>"; };
+		F06000000000000000000002 /* InventoryReadAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryReadAdapter.swift; sourceTree = "<group>"; };
 		A10C60010000000000000002 /* InventoryMutations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryMutations.swift; sourceTree = "<group>"; };
 		AA000001AAAA000100000002 /* ActionModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionModeView.swift; sourceTree = "<group>"; };
 		AA000002AAAA000200000002 /* ArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveView.swift; sourceTree = "<group>"; };
@@ -168,6 +178,11 @@
 				DD3E27A82E58CDD900BE10DF /* ItemStandardizationView.swift */,
 				DDB89A452E08550900A24E47 /* Location.swift */,
 				A10C60010000000000000002 /* InventoryMutations.swift */,
+				F06000000000000000000402 /* InventoryForegroundReadWorker.swift */,
+				F06000000000000000000302 /* InventoryMailboxTransport.swift */,
+				F06000000000000000000202 /* InventorySessionReads.swift */,
+				F06000000000000000000102 /* InventoryReadProtocol.swift */,
+				F06000000000000000000002 /* InventoryReadAdapter.swift */,
 				DDB89A472E08550900A24E47 /* LocationDetailView.swift */,
 				DDB89A492E08550900A24E47 /* LocationEditView.swift */,
 				DDB89A5D2E08550900A24E47 /* MoveDestinationPicker.swift */,
@@ -350,6 +365,11 @@
 				DDB89A422E08550900A24E47 /* ItemEditView.swift in Sources */,
 				DDB89A442E08550900A24E47 /* Location.swift in Sources */,
 				A10C60010000000000000001 /* InventoryMutations.swift in Sources */,
+				F06000000000000000000401 /* InventoryForegroundReadWorker.swift in Sources */,
+				F06000000000000000000301 /* InventoryMailboxTransport.swift in Sources */,
+				F06000000000000000000201 /* InventorySessionReads.swift in Sources */,
+				F06000000000000000000101 /* InventoryReadProtocol.swift in Sources */,
+				F06000000000000000000001 /* InventoryReadAdapter.swift in Sources */,
 				DDB89A462E08550900A24E47 /* LocationDetailView.swift in Sources */,
 				DDB89A482E08550900A24E47 /* LocationEditView.swift in Sources */,
 				DDB89A4A2E08550900A24E47 /* BulkItemAddView.swift in Sources */,
