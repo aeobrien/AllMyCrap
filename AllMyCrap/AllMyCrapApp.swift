@@ -6,7 +6,12 @@ struct AllMyCrapApp: App {
     @AppStorage("reviewExpirationDays") private var reviewExpirationDays = 30
     @StateObject private var backupManager = BackupManager()
     
-    let container: ModelContainer = {
+    @Environment(\.scenePhase) private var scenePhase
+    let container: ModelContainer
+    private let inventoryReads: InventoryForegroundReadWorker
+
+    init() {
+      let selected: ModelContainer = {
         let schema = Schema([
             Location.self,
             Item.self,
@@ -27,15 +32,23 @@ struct AllMyCrapApp: App {
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
-    }()
+      }()
+      container = selected
+      // No pairing/configuration source is installed: transport remains unconfigured.
+      inventoryReads = InventoryForegroundReadWorker(context:selected.mainContext)
+    }
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(backupManager)
                 .onAppear {
+                    inventoryReads.setActive(scenePhase == .active)
                     scheduleReviewExpirationCheck()
                     performAutoBackup()
+                }
+                .onChange(of: scenePhase) { _, phase in
+                    inventoryReads.setActive(phase == .active)
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
                     performAutoBackup()
