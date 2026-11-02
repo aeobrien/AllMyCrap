@@ -6,7 +6,7 @@
 
 **Lane:** personal
 **Phase:** Maintenance / Refinement — app is functional and in active use
-**Last updated:** 2026-04-04
+**Last updated:** 2026-11-02
 
 ## Overview
 
@@ -20,6 +20,8 @@ AllMyCrap is a SwiftUI + SwiftData iOS app for cataloguing household items. Item
 - **Bulk input** — add multiple items or sub-locations at once (with OpenAI-powered voice transcription)
 - **Book detection** — special handling for books with title/author parsing
 - **Duplicate detection** — fuzzy matching with exclusion list
+- **Inventory access** — bounded typed reads, validated moves, and approved removals
+- **Item-name standardization** — OpenAI-powered bulk review and renaming
 - **Search** — by name, tag, plan, or book-specific search
 - **Review tracking** — mark locations as reviewed, auto-expire after configurable days
 - **Backup/restore** — JSON backups to iCloud Drive, auto-backup on app resign/launch
@@ -55,6 +57,8 @@ AllMyCrap is a SwiftUI + SwiftData iOS app for cataloguing household items. Item
 | Review tracking | Stable | Auto-expiry with configurable threshold |
 | Backup/restore | Stable | iCloud Drive, auto-backup, versioned JSON format (v2) |
 | Duplicate detection | Stable | Fuzzy matching with exclusion pairs |
+| Inventory access | Available | `InventoryReadAdapter.swift` provides bounded typed reads; `InventoryMutations.swift` validates moves and removals |
+| Item-name standardization | Available | OpenAI-powered bulk review and renaming from Settings |
 | Archive | Stable | Preserves plan, filterable, restorable |
 
 ## Key Decisions
@@ -75,5 +79,6 @@ See [decisions/LOG.md](decisions/LOG.md) for the full decision log.
 ## Notes
 
 - Last commit was 2026-02-09 (approximately). The app has been in steady use without code changes since then.
+- Checked 2026-11-02: the latest commit is `57d255c` from 2026-10-06; `InventoryReadAdapter.swift` and `InventoryMutations.swift` are present.
 - Backup format is at version 2 (added archive fields, duplicate exclusions).
 - The app stores an OpenAI API key in UserDefaults for bulk voice input.
