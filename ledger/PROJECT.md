@@ -13,7 +13,7 @@
 AllMyCrap is a SwiftUI + SwiftData iOS app for cataloguing household items. Items live in a hierarchical location tree (rooms contain sub-locations which contain items). Each item can be tagged, assigned a plan (Keep, Throw Away, Sell, Charity, Move, Fix), and archived once actioned. Books are a first-class item type with separate title/author fields.
 
 ### Core Features
-- **Location hierarchy** — rooms > sub-locations, unlimited nesting depth
+- **Location hierarchy** — rooms > sub-locations, nested up to 15 levels
 - **Item management** — add, edit, tag, assign plans, archive
 - **Tinder Mode ("Quick Sort")** — swipe-style rapid plan assignment with filters (location, plan status, tags, books)
 - **Action Mode** — view items grouped by plan, check them off, archive when actioned
@@ -48,7 +48,7 @@ AllMyCrap is a SwiftUI + SwiftData iOS app for cataloguing household items. Item
 | Subsystem | Status | Notes |
 |-----------|--------|-------|
 | Data model & persistence | Stable | SwiftData with 5 model types |
-| Location hierarchy | Stable | Unlimited depth, cascade delete |
+| Location hierarchy | Stable | Up to 15 levels (enforced on create and move), cascade delete |
 | Item CRUD | Stable | Including book variant |
 | Tinder Mode | Stable | Location/plan/tag/book filters, undo, skip |
 | Action Mode | Stable | Group by plan, check off, archive |
@@ -57,7 +57,7 @@ AllMyCrap is a SwiftUI + SwiftData iOS app for cataloguing household items. Item
 | Review tracking | Stable | Auto-expiry with configurable threshold |
 | Backup/restore | Stable | iCloud Drive, auto-backup, versioned JSON format (v2) |
 | Duplicate detection | Stable | Fuzzy matching with exclusion pairs |
-| Inventory access | Available | `InventoryReadAdapter.swift` provides bounded typed reads; `InventoryMutations.swift` validates moves and removals |
+| Inventory access | Built, not connected | `InventoryReadAdapter.swift` provides bounded typed reads; `InventoryMutations.swift` validates moves and removals. A foreground worker (`InventoryForegroundReadWorker`, `InventoryMailboxTransport`, `InventorySessionReads`) is installed at launch, but no pairing source is installed, so its transport stays unconfigured (`AllMyCrapApp.swift`). |
 | Item-name standardization | Available | OpenAI-powered bulk review and renaming from Settings |
 | Archive | Stable | Preserves plan, filterable, restorable |
 
@@ -78,7 +78,6 @@ See [decisions/LOG.md](decisions/LOG.md) for the full decision log.
 
 ## Notes
 
-- Last commit was 2026-02-09 (approximately). The app has been in steady use without code changes since then.
-- Checked 2026-11-02: the latest commit is `57d255c` from 2026-10-06; `InventoryReadAdapter.swift` and `InventoryMutations.swift` are present.
+- Checked 2026-11-03: code changed after February (inventory access, 6 to 15 Oct 2026); the latest commit is a 2 Nov doc fix. `InventoryReadAdapter.swift` and `InventoryMutations.swift` are present; the foreground transport has no pairing source.
 - Backup format is at version 2 (added archive fields, duplicate exclusions).
 - The app stores an OpenAI API key in UserDefaults for bulk voice input.
