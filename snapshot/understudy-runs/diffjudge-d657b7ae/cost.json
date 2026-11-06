@@ -1,0 +1,12 @@
+{
+  "run_id": "diffjudge-d657b7ae",
+  "backend": "openrouter:google/gemini-2.5-pro",
+  "duration_seconds": 30.91,
+  "usage": {
+    "input_tokens": 12959,
+    "cached_input_tokens": 0,
+    "output_tokens": 3383,
+    "reasoning_output_tokens": 0
+  },
+  "estimated_cost_usd": 0.05
+}
