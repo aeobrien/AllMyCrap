@@ -6,7 +6,7 @@
 
 **Lane:** personal
 **Phase:** Maintenance / Refinement — app is functional and in active use
-**Last updated:** 2026-11-02
+**Last updated:** 2026-11-07
 
 ## Overview
 
@@ -78,6 +78,6 @@ See [decisions/LOG.md](decisions/LOG.md) for the full decision log.
 
 ## Notes
 
-- Checked 2026-11-03: code changed after February (inventory access, 6 to 15 Oct 2026); the latest commit is a 2 Nov doc fix. `InventoryReadAdapter.swift` and `InventoryMutations.swift` are present; the foreground transport has no pairing source.
+- Checked 2026-11-03: code changed after February (inventory access, 6 to 15 Oct 2026); later commits (Nov 2026) are ledger corrections only. `InventoryReadAdapter.swift` and `InventoryMutations.swift` are present; the foreground transport has no pairing source.
 - Backup format is at version 2 (added archive fields, duplicate exclusions).
 - The app stores an OpenAI API key in UserDefaults for bulk voice input.
