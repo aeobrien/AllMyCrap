@@ -1,0 +1,22 @@
+{
+  "ok": false,
+  "exit_code": 1,
+  "timed_out": false,
+  "duration_s": 13.058,
+  "stdout_tail": "/var/folders/4q/7s70w8ys4f5gwsf4grw_njlh0000gn/T/possessions-session-audit-4tsoalnf/InventoryMutations.swift:133:9: error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions\n131 |         // silently accepted. No settings or backup credentials enter this token.\n132 |         var rows: [[String]] = locations.values.map { [\"location\", $0.id.uuidString, $0.name, $0.parent?.id.uuidString ?? \"\", String($0.isReviewed), String(describing: $0.lastReviewedDate)] }\n133 |         rows += allItems.map { [\"item\", $0.id.uuidString, $0.name, $0.location?.id.uuidString ?? \"\", $0.tags.map { $0.id.uuidString }.sorted().joined(separator: \",\"), $0.plan?.rawValue ?? \"\", $0.moveDestination ?? \"\", String($0.isArchived), String(describing: $0.archivedDate), $0.archivedPlan?.rawValue ?? \"\", String($0.isBook), $0.bookTitle ?? \"\", $0.bookAuthor ?? \"\"] }\n    |         `- error: the compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions\n134 |         rows += allHistory.map { [\"history\", $0.id.uuidString, $0.location?.id.uuidString ?? \"\", $0.action.rawValue, String($0.isAutomatic), String($0.date.timeIntervalSince1970)] }\n135 |         rows += allExclusions.map { [\"exclusion\", $0.id.uuidString, $0.itemID1.uuidString, $0.itemID2.uuidString] }\n\n",
+  "stderr_tail": "",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 1,
+      "ok": false
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}
