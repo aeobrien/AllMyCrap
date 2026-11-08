@@ -1,0 +1,41 @@
+run_id: diffjudge-d657b7ae
+start_ts: '2026-10-06T06:44:57+00:00'
+end_ts: null
+status: active
+disposition: null
+project_root: /Users/aidan/Dev/AllMyCrap
+base_branch: 875ba89
+base_commit: 875ba89548061c1d2a02bf838f7a8f170bd94088
+declared_scope:
+- .
+declared_outputs:
+- type: other
+  path: AllMyCrap.xcodeproj/project.pbxproj
+  required: false
+- type: swift_source
+  path: AllMyCrap/InventoryMutations.swift
+  required: false
+- type: swift_source
+  path: AllMyCrap/LocationDetailView.swift
+  required: false
+- type: swift_source
+  path: AllMyCrap/MoveDestinationPicker.swift
+  required: false
+- type: markdown
+  path: BUILD-INVENTORY-MUTATIONS.md
+  required: false
+- type: other
+  path: BUILD-INVENTORY-MUTATIONS.md.done-gate-id
+  required: false
+- type: py_source
+  path: tests/inventory_mutations.py
+  required: false
+- type: swift_source
+  path: tests/inventory_mutations.swift
+  required: false
+network_allowlist:
+- openrouter.ai
+configured_origins: []
+formatting_scope: []
+seeds: {}
+repro_script: null
