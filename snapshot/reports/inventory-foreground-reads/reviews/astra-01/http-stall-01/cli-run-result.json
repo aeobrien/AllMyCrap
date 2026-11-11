@@ -1,0 +1,22 @@
+{
+  "ok": false,
+  "exit_code": 1,
+  "timed_out": false,
+  "duration_s": 4.85,
+  "stdout_tail": "[{\"case\": \"healthy initial request\", \"pass\": true}, {\"case\": \"incomplete unauthenticated headers release slots within finite request budget\", \"pass\": false, \"error\": \"transport\", \"held_connections\": 8, \"wait_seconds\": 4.2}]\n",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/Users/aidan/Dev/AllMyCrap-foreground-reads/reports/inventory-foreground-reads/reviews/astra-01/probe_http_stall.py\", line 26, in <module>\n    print(json.dumps(rows));assert all(x['pass'] for x in rows),'Eight incomplete HTTP requests permanently occupy all mailbox handlers'\n                                   ~~~^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Eight incomplete HTTP requests permanently occupy all mailbox handlers\n",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 1,
+      "ok": false
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

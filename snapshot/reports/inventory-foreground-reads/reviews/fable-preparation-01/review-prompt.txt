@@ -1,0 +1,12 @@
+Review the actual candidate02 automatic foreground inventory-read implementation below independently for concrete blocking defects. You have only these inlined sources, plan and reported receipts; you cannot execute tests, open files or inspect a live app. Cite supplied file:line locations for each finding. Do not claim execution or adopt the author's conclusions.
+
+The approved deliverable is a LOCAL automatic foreground prototype: synthetic session client -> authenticated disposable loopback mailbox -> actual URLSession Swift worker -> app-owned retained reader/explicit context -> request-bound reply. The app target must register and compose the reader and worker correctly, but remains unconfigured until future production pairing is implemented. The unchanged reader/model sources are context, not new schema/mutation work. Physical iOS runtime, production hosting/deployment/pairing, real possessions, backup reads, session discovery and mutations are explicitly outside this slice. Do not block just because an excluded future feature is absent.
+
+Review the entire included implementation, in particular:
+1. App source membership, same-container injection, main-actor/store ownership, retained reader and paging, lifecycle cancellation/owner release, late-response scope binding.
+2. Typed read operations, canonical request/digest agreement across languages, exact identity/auth roles, unsupported keys/operations, errors versus empty results, pending edits/no read mutations.
+3. Actual URLSession and Python HTTP clients: target/redirect/proxy behavior, body and time bounds, authentication disclosure, request/reply binding, cancellation and retry semantics.
+4. Mailbox finite capacity/retention, incomplete request lines/headers and trickling bodies, handler-slot recovery, deadline timer lifetime and shutdown; examine the actual new deadline code and tests rather than assuming the repair works.
+5. Evidence quality: real success path versus mocks, scope of the compiled Swift fixtures versus actual unsigned app build, actual remaining unproved delivery. Results shown are local receipts, not something you executed.
+
+Return a concise PASS or BLOCK for the stated source scope, followed by any blocking findings with severity, exact file:line citations, trigger, user-visible effect and smallest correction. Separate optional improvements from blockers. Do not require gold-plating or invent environmental facts. A source-review PASS does not assert deployment, user acceptance, test execution by you or completion of the original build gates.

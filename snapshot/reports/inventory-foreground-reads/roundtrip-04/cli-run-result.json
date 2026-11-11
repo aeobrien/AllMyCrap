@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "exit_code": 0,
+  "timed_out": false,
+  "duration_s": 21.08,
+  "stdout_tail": "{\"partial_assertions\": [\"inactive is unavailable\", \"real worker status\", \"actual items and stable page cursor\", \"real locations list\", \"real tags list\", \"exact show\", \"not found remains error\", \"completed retry identical\", \"changed retry refused\", \"pending caller edits preserved\", \"fixture confirms edit remains\", \"changed store stales prior cursor\", \"inactive stops polling\", \"new activation changes scope\", \"previous cursor rejected after restart\", \"explicit cancellation\", \"bounded pending deadline\", \"late result cannot change session\", \"no fixture mutation from reads\", \"owned worker stopped\", \"actual HTTP claim and publish\"], \"http_counts\": {\"/client/hello\": 17, \"/worker/hello\": 3, \"/worker/next\": 14, \"/client/submit\": 15, \"/client/result\": 214, \"/worker/result\": 11, \"/client/cancel\": 1}, \"worker_events\": [{\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/hello\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}, {\"path\": \"/worker/result\", \"code\": \"200\"}, {\"path\": \"/worker/hello\", \"code\": \"200\"}, {\"path\": \"/worker/next\", \"code\": \"200\"}], \"worker_terminal\": true}\n{\"passed\": 21, \"assertions\": [\"inactive is unavailable\", \"real worker status\", \"actual items and stable page cursor\", \"real locations list\", \"real tags list\", \"exact show\", \"not found remains error\", \"completed retry identical\", \"changed retry refused\", \"pending caller edits preserved\", \"fixture confirms edit remains\", \"changed store stales prior cursor\", \"inactive stops polling\", \"new activation changes scope\", \"previous cursor rejected after restart\", \"explicit cancellation\", \"bounded pending deadline\", \"late result cannot change session\", \"no fixture mutation from reads\", \"owned worker stopped\", \"actual HTTP claim and publish\"], \"real_loopback\": true, \"temporary_SwiftData\": true, \"real_inventory\": false}\n",
+  "stderr_tail": "",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 0,
+      "ok": true
+    },
+    {
+      "kind": "stdout.contains",
+      "expected": "\"passed\": 21",
+      "actual": null,
+      "ok": true
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

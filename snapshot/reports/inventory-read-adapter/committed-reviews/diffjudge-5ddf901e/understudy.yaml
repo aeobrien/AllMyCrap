@@ -1,0 +1,136 @@
+run_id: diffjudge-5ddf901e
+start_ts: '2026-10-06T19:52:50+00:00'
+end_ts: null
+status: active
+disposition: null
+project_root: /Users/aidan/Dev/AllMyCrap-read-adapter
+base_branch: 3337ecaeba0c6a0bec733201f190443d21e56b42
+base_commit: 3337ecaeba0c6a0bec733201f190443d21e56b42
+declared_scope:
+- .
+declared_outputs:
+- type: swift_source
+  path: AllMyCrap/InventoryReadAdapter.swift
+  required: false
+- type: markdown
+  path: docs/BUILD-INVENTORY-READ-ADAPTER.md
+  required: false
+- type: other
+  path: docs/BUILD-INVENTORY-READ-ADAPTER.md.done-gate-id
+  required: false
+- type: markdown
+  path: docs/INVENTORY-READ-ADAPTER.md
+  required: false
+- type: markdown
+  path: reports/inventory-read-adapter/VALIDATION.md
+  required: false
+- type: markdown
+  path: reports/inventory-read-adapter/WORKBOARD.md
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/candidate-01.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/edges-green-01/cli-run-result.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/edges-red-01/cli-run-result.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/fetch-error-01/cli-run-result.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/green-01/cli-run-result.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/green-02/cli-run-result.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/post-review-01/cli-run-result.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/post-review-hashes.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/procedure-stage-01.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/procedure-stage-02.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/procedure-stage-03.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/procedure-stage-04.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/procedure-stage-05.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/procedure-stage-06.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/procedure-start.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/red-01/cli-run-result.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/red-host-01/cli-run-result.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/astra-independent-01/attempt.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/astra-independent-01/disclosure.json
+  required: false
+- type: other
+  path: reports/inventory-read-adapter/reviews/astra-independent-01/prompt.txt
+  required: false
+- type: other
+  path: reports/inventory-read-adapter/reviews/astra-independent-01/raw.jsonl
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/astra-independent-01/receipt.json
+  required: false
+- type: markdown
+  path: reports/inventory-read-adapter/reviews/astra-independent-01/review.md
+  required: false
+- type: py_source
+  path: reports/inventory-read-adapter/reviews/astra-independent-01/run_review.py
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/fable-01/attempt.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/fable-01/disclosure.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/fable-01/payload.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/fable-01/pricing.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/fable-01/receipt.json
+  required: false
+- type: json
+  path: reports/inventory-read-adapter/reviews/fable-01/response.json
+  required: false
+- type: markdown
+  path: reports/inventory-read-adapter/reviews/fable-01/review.md
+  required: false
+- type: py_source
+  path: reports/inventory-read-adapter/reviews/fable-01/send_once.py
+  required: false
+- type: py_source
+  path: tests/inventory_read_adapter.py
+  required: false
+- type: swift_source
+  path: tests/inventory_read_adapter.swift
+  required: false
+network_allowlist: []
+configured_origins: []
+formatting_scope: []
+seeds: {}
+repro_script: null

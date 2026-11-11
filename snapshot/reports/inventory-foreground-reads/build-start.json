@@ -1,0 +1,6 @@
+{
+  "result": "error",
+  "error": "NO_STEPS",
+  "message": "no parseable ordered steps (## Step N: \u2026) in the plan",
+  "action": "Add explicit '## Step N: <intent>' headings, or build without /build."
+}

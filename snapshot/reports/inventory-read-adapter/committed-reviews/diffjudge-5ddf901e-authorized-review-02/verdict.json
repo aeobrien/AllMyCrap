@@ -1,0 +1,51 @@
+{
+  "run_id": "diffjudge-5ddf901e-authorized-review-02",
+  "adjudicated_at": "2026-10-06T19:56:02+00:00",
+  "overall_lane": "Informational",
+  "summary": "all checks pass",
+  "missing_sensing": [],
+  "rubric_results": [
+    {
+      "check_id": 1,
+      "name": "scope_guard",
+      "verdict": "pass",
+      "evidence": "The declared scope is the project root (\".\"), which covers every changed path listed in the persisted change."
+    },
+    {
+      "check_id": 2,
+      "name": "determinism_check",
+      "verdict": "n/a",
+      "evidence": "The manifest declares no repro_script."
+    },
+    {
+      "check_id": 3,
+      "name": "network_egress",
+      "verdict": "pass",
+      "evidence": "The introduced review clients in reports/inventory-read-adapter/reviews/astra-independent-01/run_review.py and reports/inventory-read-adapter/reviews/fable-01/send_once.py target openrouter.ai, the sole literal host in network_allowlist; no other introduced outbound destination is identified."
+    },
+    {
+      "check_id": 4,
+      "name": "artifact_integrity",
+      "verdict": "pass",
+      "evidence": "All declared output paths are represented by non-empty additions in the persisted change; declared JSON artifacts are structured JSON, Python sources are parseable scripts, Markdown/other artifacts are non-empty, and the supplied Swift parse result confirms both declared Swift sources parse successfully."
+    },
+    {
+      "check_id": 5,
+      "name": "console_diagnostics",
+      "verdict": "pass",
+      "evidence": "No tool-call log exists; the rubric explicitly requires pass when runtime console output is unavailable in diff mode."
+    },
+    {
+      "check_id": 6,
+      "name": "diff_minimisation",
+      "verdict": "pass",
+      "evidence": "The declared scope is \".\", so all changed files fall within the allowed scope and none require separate formatting_scope coverage."
+    },
+    {
+      "check_id": 7,
+      "name": "attempted_compile",
+      "verdict": "pass",
+      "evidence": "swiftc -parse exit 0 on 2 file(s) in 2 target group(s)"
+    }
+  ]
+}
