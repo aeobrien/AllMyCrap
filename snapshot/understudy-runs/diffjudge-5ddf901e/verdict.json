@@ -1,0 +1,51 @@
+{
+  "run_id": "diffjudge-5ddf901e",
+  "adjudicated_at": "2026-10-06T19:53:27+00:00",
+  "overall_lane": "Block",
+  "summary": "The change adds scripts that can send data to external model services, but the manifest authorizes no network destinations or configured service origins.",
+  "missing_sensing": [],
+  "rubric_results": [
+    {
+      "check_id": 1,
+      "name": "scope_guard",
+      "verdict": "pass",
+      "evidence": "All changed paths are within the repository-wide declared scope \".\"."
+    },
+    {
+      "check_id": 2,
+      "name": "determinism_check",
+      "verdict": "n/a",
+      "evidence": "The manifest declares no repro_script."
+    },
+    {
+      "check_id": 3,
+      "name": "network_egress",
+      "verdict": "fail",
+      "evidence": "The diff introduces outbound HTTP review clients in reports/inventory-read-adapter/reviews/fable-01/send_once.py and reports/inventory-read-adapter/reviews/astra-independent-01/run_review.py, including requests-based calls to external model services. Both network_allowlist and configured_origins are empty, so these newly introduced destinations are unauthorized."
+    },
+    {
+      "check_id": 4,
+      "name": "artifact_integrity",
+      "verdict": "pass",
+      "evidence": "The declared outputs are present and non-empty in the post-change tree; declared JSON, Python, Swift, and Markdown artifacts are parse-valid at their respective syntax level."
+    },
+    {
+      "check_id": 5,
+      "name": "console_diagnostics",
+      "verdict": "pass",
+      "evidence": "No tool-call log exists; under the rubric, absence of that log passes this check."
+    },
+    {
+      "check_id": 6,
+      "name": "diff_minimisation",
+      "verdict": "pass",
+      "evidence": "The declared scope is the entire repository (\".\"), so no changed repository file falls outside declared_scope plus formatting_scope."
+    },
+    {
+      "check_id": 7,
+      "name": "attempted_compile",
+      "verdict": "pass",
+      "evidence": "swiftc -parse exit 0 on 2 file(s) in 2 target group(s)"
+    }
+  ]
+}

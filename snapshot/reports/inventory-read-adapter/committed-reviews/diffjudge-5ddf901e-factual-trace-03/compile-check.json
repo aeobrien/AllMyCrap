@@ -1,0 +1,9 @@
+{
+  "verdict": "pass",
+  "checked_files": [
+    "AllMyCrap/InventoryReadAdapter.swift",
+    "tests/inventory_read_adapter.swift"
+  ],
+  "diagnostics": "",
+  "detail": "swiftc -parse exit 0 on 2 file(s) in 2 target group(s)"
+}
