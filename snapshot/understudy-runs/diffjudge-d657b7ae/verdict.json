@@ -1,0 +1,54 @@
+{
+  "run_id": "diffjudge-d657b7ae",
+  "adjudicated_at": "2026-10-06T06:45:29+00:00",
+  "overall_lane": "Informational",
+  "summary": "All checks pass. The change introduces a new `InventoryMutations` service for safe data manipulation within SwiftData, along with corresponding UI updates and a test suite. The changes are self-contained and do not introduce network egress.",
+  "missing_sensing": [
+    "network_egress",
+    "console_diagnostics"
+  ],
+  "rubric_results": [
+    {
+      "check_id": 1,
+      "name": "scope_guard",
+      "verdict": "pass",
+      "evidence": "All modified files are within the declared scope of `.`."
+    },
+    {
+      "check_id": 2,
+      "name": "determinism_check",
+      "verdict": "n/a",
+      "evidence": "No repro_script was declared in the manifest."
+    },
+    {
+      "check_id": 3,
+      "name": "network_egress",
+      "verdict": "pass",
+      "evidence": "Static analysis of the diff shows no new network APIs being introduced. The use of `subprocess` in `tests/inventory_mutations.py` is for running local compiler tools, not network communication."
+    },
+    {
+      "check_id": 4,
+      "name": "artifact_integrity",
+      "verdict": "pass",
+      "evidence": "All declared outputs are present in the diff, are non-empty, and appear to be syntactically valid for their declared types."
+    },
+    {
+      "check_id": 5,
+      "name": "console_diagnostics",
+      "verdict": "pass",
+      "evidence": "No tool-call log was available for this run."
+    },
+    {
+      "check_id": 6,
+      "name": "diff_minimisation",
+      "verdict": "pass",
+      "evidence": "All modified files are within the `declared_scope` of `.`."
+    },
+    {
+      "check_id": 7,
+      "name": "attempted_compile",
+      "verdict": "pass",
+      "evidence": "swiftc -parse exit 0 on 4 file(s) in 2 target group(s)"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "run_id": "diffjudge-5ddf901e-authorized-review-02",
+  "backend": "codex",
+  "duration_seconds": 36.52787637499932,
+  "usage": {
+    "input_tokens": 180249,
+    "cached_input_tokens": 129664,
+    "output_tokens": 1101,
+    "reasoning_output_tokens": 358
+  },
+  "estimated_cost_usd": 0.094
+}

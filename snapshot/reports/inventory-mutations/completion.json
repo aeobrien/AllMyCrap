@@ -1,0 +1,10 @@
+{
+  "source_commit": "d657b7aec0587ab4487784d93aedaa296ab6d17e",
+  "evidence_commit": "875ba89",
+  "judge": "diffjudge-d657b7ae",
+  "canonical_run": "run-1791269149-83237",
+  "state": "complete",
+  "outcome": "pass",
+  "session": "01a0fcb2-7788-7d21-9627-c24c34f60149-inventory-mutations",
+  "scope": "local mutation prerequisite and compiling caller; no live/session/UI runtime claim"
+}
