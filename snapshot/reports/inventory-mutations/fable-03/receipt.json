@@ -1,0 +1,10 @@
+{
+  "scope": "alert placement delta only",
+  "budget_usd": 1.8,
+  "sha256": "293785d7c17744d97102afa3fac1260021ebf4b85202535486583d0780a3e25a",
+  "sent": true,
+  "attempt_budget_usd": 1.8,
+  "prior_attempt_cost_usd": 1.13841,
+  "executed_tests": false,
+  "visible_review": true
+}
