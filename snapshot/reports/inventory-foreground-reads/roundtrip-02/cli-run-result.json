@@ -1,0 +1,22 @@
+{
+  "ok": false,
+  "exit_code": 1,
+  "timed_out": false,
+  "duration_s": 16.81,
+  "stdout_tail": "{\"partial_assertions\": [\"inactive is unavailable\", \"real worker status\"], \"http_counts\": {\"/client/hello\": 5, \"/worker/hello\": 1, \"/worker/next\": 3, \"/client/submit\": 2, \"/client/result\": 166, \"/worker/result\": 2}, \"worker_terminal\": true}\n",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_roundtrip.py\", line 83, in <module>\n    if __name__=='__main__':main()\n                            ~~~~^^\n  File \"/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_roundtrip.py\", line 43, in main\n    first=read(args);args['cursor']=first['result']['next'];second=read(args)\n  File \"/Users/aidan/Dev/AllMyCrap-foreground-reads/tests/inventory_session_roundtrip.py\", line 40, in read\n    def read(args):return client.read(client.prepare(args),timeout=8)\n                          ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/aidan/Dev/AllMyCrap-foreground-reads/tools/inventory_session/client.py\", line 33, in read\n    if remaining<=0:raise Fault(408,'deadline')\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntools.inventory_session.mailbox.Fault: (408, 'deadline')\n",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 1,
+      "ok": false
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "duration_s": 5.022,
+  "objects": {
+    "InventoryReadAdapter": [
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/arm64/InventoryReadAdapter.o",
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/x86_64/InventoryReadAdapter.o"
+    ],
+    "InventoryReadProtocol": [
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/arm64/InventoryReadProtocol.o",
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/x86_64/InventoryReadProtocol.o"
+    ],
+    "InventorySessionReads": [
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/arm64/InventorySessionReads.o",
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/x86_64/InventorySessionReads.o"
+    ],
+    "InventoryMailboxTransport": [
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/arm64/InventoryMailboxTransport.o",
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/x86_64/InventoryMailboxTransport.o"
+    ],
+    "InventoryForegroundReadWorker": [
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/arm64/InventoryForegroundReadWorker.o",
+      "Build/Intermediates.noindex/AllMyCrap.build/Debug-iphonesimulator/AllMyCrap.build/Objects-normal/x86_64/InventoryForegroundReadWorker.o"
+    ]
+  },
+  "binary": "/private/tmp/allmycrap-foreground-build-20261006-01/Build/Products/Debug-iphonesimulator/AllMyCrap.app/AllMyCrap",
+  "binary_sha256": "85d6d804879f1012d8178fb5a490aaa7fe6d0b04db650a1077d19155a3894978",
+  "app_inputs": {
+    "AllMyCrap/AllMyCrapApp.swift": "5bc01a58c91e966c14d1e1264f7cf416fe3868e3afe6a3f995145a093aa08ca5",
+    "AllMyCrap.xcodeproj/project.pbxproj": "20e0ab9f6979062f5d9af02c23409dc0c46cb269d85e5042f22159c6d27778fa",
+    "AllMyCrap/InventoryReadProtocol.swift": "53e130a512b266ed350f8008c573d933687e1be9076cced7683b3724c5326496",
+    "AllMyCrap/InventorySessionReads.swift": "bc3b1dd90b273d9cf6632d12f9eb4e1579340a04685ccba4ce92d9f05849507c",
+    "AllMyCrap/InventoryMailboxTransport.swift": "d638941b2fde120fcf492f760cf7e65f507efbfd96faa2a215a2d92b971b9ce4",
+    "AllMyCrap/InventoryForegroundReadWorker.swift": "80baac7837bba725d8806cd0c2fe039299d176af8d20463a0d638f0ff94a8fcc"
+  },
+  "no_app_launch_or_simulator_boot": true
+}

@@ -1,0 +1,19 @@
+{
+  "AllMyCrap/AllMyCrapApp.swift": "5bc01a58c91e966c14d1e1264f7cf416fe3868e3afe6a3f995145a093aa08ca5",
+  "AllMyCrap.xcodeproj/project.pbxproj": "20e0ab9f6979062f5d9af02c23409dc0c46cb269d85e5042f22159c6d27778fa",
+  "AllMyCrap/InventoryReadProtocol.swift": "53e130a512b266ed350f8008c573d933687e1be9076cced7683b3724c5326496",
+  "AllMyCrap/InventorySessionReads.swift": "bc3b1dd90b273d9cf6632d12f9eb4e1579340a04685ccba4ce92d9f05849507c",
+  "AllMyCrap/InventoryMailboxTransport.swift": "d638941b2fde120fcf492f760cf7e65f507efbfd96faa2a215a2d92b971b9ce4",
+  "AllMyCrap/InventoryForegroundReadWorker.swift": "80baac7837bba725d8806cd0c2fe039299d176af8d20463a0d638f0ff94a8fcc",
+  "tools/inventory_session/mailbox.py": "b00a2c57ae4849455e07115675df3a2caf09874f01e858cb7e957173f563352b",
+  "tools/inventory_session/client.py": "58975bfa5621cc5d5801f33001d776132266bf990ed1afd11910f80e4743e45f",
+  "tests/inventory_session_protocol.py": "394edc6a7da9507b6d42e7164e55f5bad8068abdb0c0caeb00fbdf5f49462a84",
+  "tests/inventory_session_protocol.swift": "0f076a67aff815bd786bbda484a625141e76df0c445d5a6e079a464602fb1784",
+  "tests/inventory_session_roundtrip.py": "536d37831a2fe211e68653e3f076b6654c918ead4507256f77be16737fd64c3e",
+  "tests/inventory_session_worker.swift": "0511205f68527813725fb2fbffbb2ee4880d690740714367493d0a05e530cec5",
+  "tests/inventory_transport_probes.py": "339ff59b5b2f7b406fe640e2bf1b5dc5801486fb98e58ce3e3eaffdec3969839",
+  "tests/test_inventory_mailbox.py": "70f566d60653cf7666a16370e679cc490025c0eb5cee32f3ce68690f30108527",
+  "tests/test_inventory_client_http.py": "5cf2012be7fecb8644ed070190e82f06340355b1bea0372565844c9c01d4f92e",
+  "docs/BUILD-INVENTORY-FOREGROUND-READS.md": "26245baf72730167088bd834dd26a1829a5bc7984c2991c5d04dfaa7b15863aa",
+  "docs/INVENTORY-FOREGROUND-READS.md": "b5ae317eb32b42f291d5803b5ab7c09ffd86be5bd98ccec70ef090aab1052070"
+}

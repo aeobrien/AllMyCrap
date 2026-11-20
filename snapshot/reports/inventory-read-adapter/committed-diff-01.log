@@ -1,0 +1,16 @@
+2026-10-06 20:52:51,384 [INFO] understudy.compile_check: [COMPILE] running swiftc -parse on 1 file(s)
+2026-10-06 20:52:51,664 [INFO] understudy.compile_check: [COMPILE] running swiftc -parse on 1 file(s)
+2026-10-06 20:52:51,910 [INFO] understudy.compile_check: [COMPILE] swiftc -parse PASS on ['AllMyCrap/InventoryReadAdapter.swift', 'tests/inventory_read_adapter.swift']
+2026-10-06 20:52:51,911 [INFO] understudy.diffjudge: [DIFFJUDGE] run=diffjudge-5ddf901e files=40 check7=pass introduced=2670
+2026-10-06 20:52:51,912 [WARNING] understudy.rubric: [DIFFJUDGE] diff is 403037 chars (> 400000) — not inlined; the judge must read /Users/aidan/Dev/AllMyCrap-read-adapter/understudy-runs/diffjudge-5ddf901e/phase.diff from disk
+2026-10-06 20:52:51,912 [INFO] understudy.codex: [CODEX] invoking: codex exec --json --ignore-user-config --ignore-rules --ephemeral --skip-git-repo-check --sandbox read-only --model gpt-5.6-sol (timeout=300s)
+2026-10-06 20:53:27,216 [INFO] understudy.codex: [CODEX] exit=0 duration=35.3s in=160443 out=1313 reasoning=542
+2026-10-06 20:53:27,348 [INFO] understudy.diffjudge: [DIFFJUDGE] run=diffjudge-5ddf901e lane=Block cost=$0.0848
+[UNDERSTUDY] diff-judge done
+  run_id:        diffjudge-5ddf901e
+  range:         3337ecaeba0c6a0bec733201f190443d21e56b42..HEAD
+  backend:       codex
+  files judged:  40
+  overall_lane:  Block
+  summary:       The change adds scripts that can send data to external model services, but the manifest authorizes no network destinations or configured service origins.
+  cost:          $0.0848
