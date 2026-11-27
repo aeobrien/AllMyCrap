@@ -1,0 +1,12 @@
+{
+  "run_id": "diffjudge-5ddf901e",
+  "backend": "codex",
+  "duration_seconds": 35.30274287500106,
+  "usage": {
+    "input_tokens": 160443,
+    "cached_input_tokens": 119424,
+    "output_tokens": 1313,
+    "reasoning_output_tokens": 542
+  },
+  "estimated_cost_usd": 0.0848
+}

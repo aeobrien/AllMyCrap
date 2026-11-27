@@ -1,0 +1,28 @@
+{
+  "ok": false,
+  "exit_code": 251,
+  "timed_out": false,
+  "duration_s": 29.625,
+  "stdout_tail": "\nSwift/ErrorType.swift:254: Fatal error: Error raised at top level: main.InventoryReadAdapter.Failure.invalidData\n\n",
+  "stderr_tail": "",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 251,
+      "ok": false
+    },
+    {
+      "kind": "stdout.contains",
+      "expected": "source_sha256",
+      "actual": null,
+      "ok": false
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}

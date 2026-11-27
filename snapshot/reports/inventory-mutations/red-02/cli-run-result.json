@@ -1,0 +1,22 @@
+{
+  "ok": false,
+  "exit_code": 1,
+  "timed_out": false,
+  "duration_s": 4.709,
+  "stdout_tail": "/var/folders/4q/7s70w8ys4f5gwsf4grw_njlh0000gn/T/possessions-session-audit-lb11ro9r/Audit.swift:25:23: error: cannot find 'InventoryMutations' in scope\n23 |         for i in [item, doomed, survivor] { c.insert(i) }\n24 |         c.insert(history); c.insert(exclusion); c.insert(unrelated); try c.save()\n25 |         let service = InventoryMutations(context: c)\n   |                       `- error: cannot find 'InventoryMutations' in scope\n26 |         try service.moveItem(id: item.id, destinationID: other.id)\n27 |         precondition(item.location?.id == other.id); checks += 1\n\n/var/folders/4q/7s70w8ys4f5gwsf4grw_njlh0000gn/T/possessions-session-audit-lb11ro9r/Audit.swift:41:30: error: call can throw, but it is executed in a non-throwing autoclosure\n39 |         try service.applyDeletion(current, approved: true)\n40 |         let reader = ModelContext(container)\n41 |         precondition(Set(try reader.fetch(FetchDescriptor<Item>()).map(\\.id)) == Set([item.id, survivor.id])); checks += 1\n   |                              `- error: call can throw, but it is executed in a non-throwing autoclosure\n42 |         precondition(try reader.fetch(FetchDescriptor<ReviewHistory>()).isEmpty); checks += 1\n43 |         precondition(try reader.fetch(FetchDescriptor<DuplicateExclusion>()).map(\\.id) == [unrelated.id]); checks += 1\n\n/var/folders/4q/7s70w8ys4f5gwsf4grw_njlh0000gn/T/possessions-session-audit-lb11ro9r/Audit.swift:42:26: error: call can throw, but it is executed in a non-throwing autoclosure\n40 |         let reader = ModelContext(container)\n41 |         precondition(Set(try reader.fetch(FetchDescriptor<Item>()).map(\\.id)) == Set([item.id, survivor.id])); checks += 1\n42 |         precondition(try reader.fetch(FetchDescriptor<ReviewHistory>()).isEmpty); checks += 1\n   |                          `- error: call can throw, but it is executed in a non-throwing autoclosure\n43 |         precondition(try reader.fetch(FetchDescriptor<DuplicateExclusion>()).map(\\.id) == [unrelated.id]); checks += 1\n44 |         expectFailure { try service.applyDeletion(current, approved: true) }\n\n/var/folders/4q/7s70w8ys4f5gwsf4grw_njlh0000gn/T/possessions-session-audit-lb11ro9r/Audit.swift:43:26: error: call can throw, but it is executed in a non-throwing autoclosure\n41 |         precondition(Set(try reader.fetch(FetchDescriptor<Item>()).map(\\.id)) == Set([item.id, survivor.id])); checks += 1\n42 |         precondition(try reader.fetch(FetchDescriptor<ReviewHistory>()).isEmpty); checks += 1\n43 |         precondition(try reader.fetch(FetchDescriptor<DuplicateExclusion>()).map(\\.id) == [unrelated.id]); checks += 1\n   |                          `- error: call can throw, but it is executed in a non-throwing autoclosure\n44 |         expectFailure { try service.applyDeletion(current, approved: true) }\n45 |         var parent = other\n\n",
+  "stderr_tail": "",
+  "truncated": false,
+  "assertions": [
+    {
+      "kind": "exit==",
+      "expected": 0,
+      "actual": 1,
+      "ok": false
+    }
+  ],
+  "files": {
+    "created": [],
+    "modified": [],
+    "deleted": []
+  }
+}
